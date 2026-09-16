@@ -29,8 +29,8 @@ local.properties
 /CLAUDE.md
 /.claude/
 
-# Espelho (desatualizado) do CLAUDE.md gerado por outra ferramenta de agente —
-# mesmo tratamento: só local, não versionado.
+# Referência estável (arquitetura, protocolo, convenções) — CLAUDE.md é o espelho
+# dela pro Claude Code. Mesmo tratamento: só local, não versionado.
 /AGENTS.md
 /.agents/
 
