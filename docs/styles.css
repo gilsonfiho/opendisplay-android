@@ -94,30 +94,6 @@ header.site nav a.gh-stars:hover { border-color: var(--border-hover); text-decor
 header.site nav a.gh-stars svg { width: 14px; height: 14px; flex: none; stroke: currentColor; fill: none; }
 @media (max-width: 760px) { header.site nav a:not(.gh-stars) { display: none; } }
 
-/* Seletor de idioma: flutua sobre o topo da página e rola junto com o
-   conteúdo (não fica preso ao header sticky) — os itens de navegação têm
-   prioridade sobre o espaço do header. */
-.lang-switch { position: absolute; top: 76px; right: 24px; z-index: 5; }
-.lang-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px;
-  background: none; color: var(--text-dim); font: inherit; font-size: 0.85rem; cursor: pointer;
-  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
-}
-.lang-btn:hover { color: var(--text); border-color: var(--border-hover); }
-.lang-btn svg { width: 14px; height: 14px; flex: none; stroke: currentColor; fill: none; }
-.lang-menu {
-  position: absolute; top: calc(100% + 8px); right: 0; z-index: 20;
-  min-width: 170px; padding: 6px;
-  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
-  flex-direction: column; gap: 1px;
-}
-.lang-menu:not([hidden]) { display: flex; }
-.lang-menu a { padding: 7px 10px; border-radius: 6px; color: var(--text-dim); font-size: 0.88rem; }
-.lang-menu a:hover { background: var(--bg-elev-2); color: var(--text); text-decoration: none; }
-.lang-menu a.active { color: var(--text); font-weight: 600; }
-
 /* ---------- Hero ---------- */
 
 .hero { padding: 96px 0 56px; border-top: none; }
