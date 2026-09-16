@@ -22,8 +22,8 @@ android {
         applicationId = "io.github.josepacelli.opendisplay"
         minSdk = 26
         targetSdk = 36
-        versionCode = 38
-        versionName = "0.0.38"
+        versionCode = 39
+        versionName = "0.0.39"
     }
 
     signingConfigs {
