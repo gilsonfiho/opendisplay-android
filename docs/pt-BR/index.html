@@ -143,6 +143,22 @@
   </div>
 </header>
 
+<div class="lang-switch">
+  <button type="button" class="lang-btn" id="lang-btn" aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 4 6 4 9s-1.5 6.4-4 9c-2.5-2.6-4-6-4-9s1.5-6.4 4-9z"></path></svg>
+    <span>PT-BR</span>
+  </button>
+  <div class="lang-menu" id="lang-menu" hidden>
+    <a href="/">English</a>
+    <a href="/es/">Español</a>
+    <a href="/pt-BR/" class="active" aria-current="page">Português (Brasil)</a>
+    <a href="/pt-PT/">Português (Portugal)</a>
+    <a href="/zh-Hans/">中文</a>
+    <a href="/ja/">日本語</a>
+    <a href="/ko/">한국어</a>
+  </div>
+</div>
+
 <div class="wrap">
 
   <section class="hero">
@@ -507,6 +523,24 @@
 </footer>
 
 
+<script>
+  (() => {
+    const btn = document.getElementById("lang-btn");
+    const menu = document.getElementById("lang-menu");
+    if (!btn || !menu) return;
+    const close = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const wasHidden = menu.hidden;
+      menu.hidden = !wasHidden;
+      btn.setAttribute("aria-expanded", String(wasHidden));
+    });
+    document.addEventListener("click", (e) => {
+      if (!menu.hidden && !menu.contains(e.target) && e.target !== btn) close();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  })();
+</script>
 <script>
   fetch("https://api.github.com/repos/josepacelli/opendisplay-android")
     .then((r) => (r.ok ? r.json() : null))
