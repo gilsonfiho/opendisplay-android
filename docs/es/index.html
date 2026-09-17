@@ -144,6 +144,21 @@ ba<!doctype html>
       </div>
       <button class="nav-scroll nav-scroll-end" type="button" aria-label="Desplazar navegación a la derecha">›</button>
     </nav>
+    <div class="lang-switch">
+      <button type="button" class="lang-btn" id="lang-btn" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 4 6 4 9s-1.5 6.4-4 9c-2.5-2.6-4-6-4-9s1.5-6.4 4-9z"></path></svg>
+        <span>ES</span>
+      </button>
+      <div class="lang-menu" id="lang-menu" hidden>
+        <a href="/">English</a>
+        <a href="/es/" class="active" aria-current="page">Español</a>
+        <a href="/pt-BR/">Português (Brasil)</a>
+        <a href="/pt-PT/">Português (Portugal)</a>
+        <a href="/zh-Hans/">中文</a>
+        <a href="/ja/">日本語</a>
+        <a href="/ko/">한국어</a>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -515,6 +530,7 @@ ba<!doctype html>
 
 
 <script src="../nav-scroll.js"></script>
+<script src="../lang-switch.js"></script>
 <script>
   fetch("https://api.github.com/repos/josepacelli/opendisplay-android")
     .then((r) => (r.ok ? r.json() : null))
