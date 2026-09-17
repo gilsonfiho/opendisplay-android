@@ -4,6 +4,9 @@
 package io.github.josepacelli.opendisplay.net
 
 import android.content.Context
+import android.media.MediaCodec
+import android.media.MediaCodecList
+import android.media.MediaFormat
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -297,6 +300,13 @@ class PhoneReceiver(context: Context) {
     var deviceScale: Double = 1.0; private set
 
     val installId: String by lazy { loadOrCreateInstallId() }
+
+    /** This device's AVC hardware-decode ceiling, queried once and cached — a device's
+     * decode capability doesn't change mid-session, so there's no reason to redo it per
+     * `hello`. `null` when it can't be determined, which just omits `hello.maxEncodeWide/High`
+     * (PROTOCOL.md §6.5) and falls back to the Mac's previous behavior (stream follows the
+     * panel size and quality setting only). */
+    private val decodeCeiling: Pair<Int, Int>? by lazy { queryDecodeCeiling() }
 
     /**
      * Starts listening. Call [setPanelSize] at least once BEFORE this so the
@@ -808,8 +818,41 @@ class PhoneReceiver(context: Context) {
             .put("device", "Android")
             .put("id", installId)
             .put("pv", WireProtocol.VERSION)
+        decodeCeiling?.let { (maxWide, maxHigh) ->
+            message.put("maxEncodeWide", maxWide)
+            message.put("maxEncodeHigh", maxHigh)
+        }
         sendControl(message)
-        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x)")
+        val ceilingLog = decodeCeiling?.let { (w, h) -> ", decode ceiling ${w}x$h" } ?: ""
+        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x$ceilingLog)")
+    }
+
+    /** Finds the decoder [video.VideoDecoder][io.github.josepacelli.opendisplay.video.VideoDecoder]
+     * will actually get from `MediaCodec.createDecoderByType` and reads the largest AVC frame
+     * size it claims to sustain — `hello.maxEncodeWide/High` (PROTOCOL.md §6.5), so the Mac can
+     * cap the stream instead of handing this device a panel-sized encode it can't keep up with.
+     * @return the widest jointly-supported (width, height) pair, or `null` if it can't be
+     * determined (older API surface, no AVC decoder, anything throws). */
+    private fun queryDecodeCeiling(): Pair<Int, Int>? {
+        return try {
+            val probe = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+            val name = probe.name
+            probe.release()
+            val info = MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos
+                .firstOrNull { it.name == name } ?: return null
+            val videoCaps = info.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC)
+                .videoCapabilities ?: return null
+            val width = videoCaps.supportedWidths.upper
+            val height = if (videoCaps.isSizeSupported(width, videoCaps.supportedHeights.upper)) {
+                videoCaps.supportedHeights.upper
+            } else {
+                videoCaps.getSupportedHeightsFor(width).upper
+            }
+            width to height
+        } catch (e: Exception) {
+            Log.warn("could not query decode ceiling", e)
+            null
+        }
     }
 
     /** Parses one JSON control payload and dispatches it by its `type` field.
