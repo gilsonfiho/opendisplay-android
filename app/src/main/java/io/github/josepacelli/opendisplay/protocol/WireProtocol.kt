@@ -9,9 +9,14 @@ package io.github.josepacelli.opendisplay.protocol
  * see .claude/skills/wire-protocol/SKILL.md.
  */
 object WireProtocol {
-    const val VERSION = 2
+    const val VERSION = 3
     const val MIN_SUPPORTED_PEER = 1
     const val ASSUMED_WHEN_ABSENT = 1
+
+    /** The Mac must have negotiated at least this `pv` before `pencil` is sendable — below
+     * it, an old Mac would just ignore the unknown type and the stylus would go dead, so
+     * PROTOCOL.md §6.1 requires degrading to `touch` instead. See [io.github.josepacelli.opendisplay.net.PhoneReceiver.peerSupportsPencil]. */
+    const val PENCIL_MIN_PEER = 3
 }
 
 /** Control-message `type` string constants (mirrors Swift `WireMessage`). */
@@ -21,6 +26,7 @@ object WireMessage {
     const val PONG = "pong"
     const val TOUCH = "touch"
     const val SCROLL = "scroll"
+    const val PENCIL = "pencil"
     const val KEYFRAME_REQUEST = "kf"
     const val CURSOR = "cursor"
     const val CURSOR_IMAGE = "cursorImg"
