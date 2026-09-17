@@ -127,18 +127,22 @@
       OpenDisplay <span class="brand-sub">Android</span>
     </div>
     <nav>
-      <a href="#features">Features</a>
-      <a href="#how-it-works">How it works</a>
-      <a href="#screenshots">Screenshots</a>
-      <a href="#install">Install</a>
-      <a href="#compare">Compare</a>
-      <a href="#faq">FAQ</a>
-      <a class="gh-stars" href="https://github.com/josepacelli/opendisplay-android" id="gh-stars">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-        </svg>
-        GitHub <span id="gh-stars-count">···</span>
-      </a>
+      <button class="nav-scroll nav-scroll-start" type="button" aria-label="Scroll navigation left">‹</button>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#install">Install</a>
+        <a href="#compare">Compare</a>
+        <a href="#faq">FAQ</a>
+        <a class="gh-stars" href="https://github.com/josepacelli/opendisplay-android" id="gh-stars">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          GitHub <span id="gh-stars-count">···</span>
+        </a>
+      </div>
+      <button class="nav-scroll nav-scroll-end" type="button" aria-label="Scroll navigation right">›</button>
     </nav>
   </div>
 </header>
@@ -505,6 +509,7 @@
 </footer>
 
 
+<script src="nav-scroll.js"></script>
 <script>
   fetch("https://api.github.com/repos/josepacelli/opendisplay-android")
     .then((r) => (r.ok ? r.json() : null))

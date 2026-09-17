@@ -127,18 +127,22 @@
       OpenDisplay <span class="brand-sub">Android</span>
     </div>
     <nav>
-      <a href="#features">기능</a>
-      <a href="#how-it-works">작동 방식</a>
-      <a href="#screenshots">스크린샷</a>
-      <a href="#install">설치</a>
-      <a href="#compare">비교</a>
-      <a href="#faq">자주 묻는 질문</a>
-      <a class="gh-stars" href="https://github.com/josepacelli/opendisplay-android" id="gh-stars">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-        </svg>
-        GitHub <span id="gh-stars-count">···</span>
-      </a>
+      <button class="nav-scroll nav-scroll-start" type="button" aria-label="탐색을 왼쪽으로 스크롤">‹</button>
+      <div class="nav-links">
+        <a href="#features">기능</a>
+        <a href="#how-it-works">작동 방식</a>
+        <a href="#screenshots">스크린샷</a>
+        <a href="#install">설치</a>
+        <a href="#compare">비교</a>
+        <a href="#faq">자주 묻는 질문</a>
+        <a class="gh-stars" href="https://github.com/josepacelli/opendisplay-android" id="gh-stars">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          GitHub <span id="gh-stars-count">···</span>
+        </a>
+      </div>
+      <button class="nav-scroll nav-scroll-end" type="button" aria-label="탐색을 오른쪽으로 스크롤">›</button>
     </nav>
   </div>
 </header>
@@ -503,6 +507,7 @@
 </footer>
 
 
+<script src="../nav-scroll.js"></script>
 <script>
   fetch("https://api.github.com/repos/josepacelli/opendisplay-android")
     .then((r) => (r.ok ? r.json() : null))

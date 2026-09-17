@@ -81,8 +81,9 @@ header.site .wrap {
 .brand-mark { width: 24px; height: 24px; color: var(--accent); flex: none; }
 .brand-sub { color: var(--text-dim); font-weight: 500; }
 
-header.site nav { display: flex; align-items: center; gap: 22px; font-size: 0.9rem; overflow-x: auto; scrollbar-width: none; }
-header.site nav::-webkit-scrollbar { display: none; }
+header.site nav { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; min-width: 0; }
+header.site nav .nav-links { display: flex; align-items: center; gap: 22px; overflow-x: auto; scrollbar-width: none; }
+header.site nav .nav-links::-webkit-scrollbar { display: none; }
 header.site nav a { color: var(--text-dim); white-space: nowrap; transition: color 0.15s var(--ease); }
 header.site nav a:hover { color: var(--text); text-decoration: none; }
 header.site nav a.gh-stars {
@@ -92,6 +93,14 @@ header.site nav a.gh-stars {
 }
 header.site nav a.gh-stars:hover { border-color: var(--border-hover); text-decoration: none; }
 header.site nav a.gh-stars svg { width: 14px; height: 14px; flex: none; stroke: currentColor; fill: none; }
+header.site nav .nav-scroll {
+  display: none; flex: none; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0; border: none; background: none;
+  color: var(--text-dim); font-size: 1.1rem; line-height: 1; cursor: pointer;
+}
+header.site nav .nav-scroll:hover { color: var(--text); }
+header.site nav.can-scroll-start .nav-scroll-start,
+header.site nav.can-scroll-end .nav-scroll-end { display: inline-flex; }
 @media (max-width: 760px) { header.site nav a:not(.gh-stars) { display: none; } }
 
 /* ---------- Hero ---------- */
