@@ -1,5 +1,6 @@
 package io.github.josepacelli.opendisplay.ui
 
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,6 +34,11 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
 private const val TOUCH_SLOP_PX = 24f
+
+/** Perpendicular-to-the-screen altitude (PROTOCOL.md §6.1: "altitude pi/2 = perpendicular") —
+ * the default reported for a stylus `down` event, whose real tilt isn't available yet (see
+ * [handleStylusGesture]). */
+private const val PERPENDICULAR_ALTITUDE = Math.PI / 2
 
 /** Distance change (px) a two-finger gesture needs before it's recognized as a pinch
  * rather than a two-finger scroll — mirrors [TOUCH_SLOP_PX]'s role for one-finger drags. */
@@ -193,6 +200,10 @@ private suspend fun AwaitPointerEventScope.handleGesture(
     zoomEnabled: Boolean,
 ) {
     val first = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Main)
+    if (first.type == PointerType.Stylus && receiver.peerSupportsPencil) {
+        handleStylusGesture(first, receiver, zoomScale.value, zoomPan.value)
+        return
+    }
     val startPos = first.position
     var committedMode: GestureMode = GestureMode.UNDECIDED
     var lastCentroid = startPos
@@ -337,6 +348,80 @@ private suspend fun AwaitPointerEventScope.handleGesture(
             }
         }
     }
+}
+
+/**
+ * One stylus contact -> `pencil` down/move/up (PROTOCOL.md §6.1, pv 3). Deliberately its own
+ * single-pointer loop instead of a branch inside [handleGesture]'s multi-touch state machine:
+ * a stylus stroke has none of that machinery's concerns (no pinch/pan/scroll, no ambiguity to
+ * resolve between modes), so folding it in there would only add a rarely-exercised branch to
+ * already-dense code. Any other pointer that joins mid-stroke is ignored — palm-rejection
+ * false positives aside, drawing with a second finger down isn't a real use case here.
+ *
+ * Tilt (azimuth/altitude) isn't on [PointerInputChange] — only the raw [MotionEvent] carries
+ * it, and [awaitFirstDown] doesn't hand that back, so the `down` phase reports
+ * [PERPENDICULAR_ALTITUDE]/`0` (harmless: the real tilt lands within the first `move`, a few
+ * milliseconds later for any real stroke). Every event after that comes from
+ * [AwaitPointerEventScope.awaitPointerEvent] directly, whose [PointerEvent.motionEvent] does
+ * carry it.
+ *
+ * @param first the stylus's first-down change.
+ * @param receiver where resulting `pencil` messages are sent.
+ * @param zoomScale current pinch-zoom scale, same convention as [handleGesture]'s `normalized`.
+ * @param zoomPan current pinch-zoom pan offset, same convention as [handleGesture]'s `normalized`.
+ */
+private suspend fun AwaitPointerEventScope.handleStylusGesture(
+    first: PointerInputChange,
+    receiver: PhoneReceiver,
+    zoomScale: Float,
+    zoomPan: Offset,
+) {
+    fun normalized(x: Float, y: Float): Pair<Double, Double> {
+        val contentX = (x - zoomPan.x) / zoomScale
+        val contentY = (y - zoomPan.y) / zoomScale
+        return (contentX / size.width).toDouble().coerceIn(0.0, 1.0) to
+            (contentY / size.height).toDouble().coerceIn(0.0, 1.0)
+    }
+
+    val (dx, dy) = normalized(first.position.x, first.position.y)
+    receiver.sendPencil("down", dx, dy, first.pressure.toDouble(), azimuth = 0.0, altitude = PERPENDICULAR_ALTITUDE)
+
+    var loggedFirstMove = false
+    while (true) {
+        val event = awaitPointerEvent()
+        val change = event.changes.firstOrNull { it.id == first.id } ?: return
+        val (nx, ny) = normalized(change.position.x, change.position.y)
+        val (azimuth, altitude) = tiltOf(event.motionEvent)
+        if (!change.pressed) {
+            receiver.sendPencil("up", nx, ny, 0.0, azimuth, altitude)
+            return
+        }
+        if (!loggedFirstMove) {
+            loggedFirstMove = true
+            Log.info("pencil move (pressure=${change.pressure}, azimuth=$azimuth, altitude=$altitude)")
+        }
+        receiver.sendPencil("move", nx, ny, change.pressure.toDouble(), azimuth, altitude)
+    }
+}
+
+/** Reads stylus tilt off the raw [MotionEvent] Compose's [PointerInputChange] doesn't expose.
+ * Always reads pointer index 0 — Compose's [PointerInputChange.id] is a Compose-internal
+ * sequence number, not the native `MotionEvent` pointer id, so there's no reliable way to
+ * correlate a specific [PointerInputChange] against a specific index in a batched native
+ * event; index 0 is correct for the actual case this runs in ([handleStylusGesture] only
+ * tracks one pointer at a time; a second one being simultaneously down is a co-touch corner
+ * case that already falls outside this function's precision contract).
+ * @param motionEvent the event backing this [PointerEvent], or `null` for a synthetic one.
+ * @return (azimuth, altitude) in radians, or `(0.0, PERPENDICULAR_ALTITUDE)` if unavailable. */
+private fun tiltOf(motionEvent: MotionEvent?): Pair<Double, Double> {
+    val event = motionEvent ?: return 0.0 to PERPENDICULAR_ALTITUDE
+    if (event.pointerCount == 0) return 0.0 to PERPENDICULAR_ALTITUDE
+    // Android's AXIS_TILT is the angle FROM perpendicular (0 = pen straight up); the wire
+    // protocol's altitude is the angle FROM the screen plane (pi/2 = straight up) — same
+    // physical quantity, complementary reference.
+    val tilt = event.getAxisValue(MotionEvent.AXIS_TILT, 0).toDouble()
+    val altitude = PERPENDICULAR_ALTITUDE - tilt
+    return event.getOrientation(0).toDouble() to altitude
 }
 
 /** Which wire message (or local effect, for [GestureMode.ZOOM]/[GestureMode.PAN]) a gesture in
