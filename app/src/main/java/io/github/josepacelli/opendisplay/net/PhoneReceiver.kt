@@ -295,6 +295,11 @@ class PhoneReceiver(context: Context) {
 
     @Volatile private var clockOffsetMs: Double? = null
 
+    /** The connected Mac's negotiated `pv`, from `welcome.pv` — see [peerSupportsPencil].
+     * Reset to [WireProtocol.ASSUMED_WHEN_ABSENT] on every new connection in
+     * [acceptConnection], since a Mac that sends no `welcome` at all must be assumed `pv` 1. */
+    @Volatile private var peerProtocolVersion: Int = WireProtocol.ASSUMED_WHEN_ABSENT
+
     var devicePixelsWide: Int = 0; private set
     var devicePixelsHigh: Int = 0; private set
     var deviceScale: Double = 1.0; private set
@@ -583,6 +588,39 @@ class PhoneReceiver(context: Context) {
         )
     }
 
+    /** Whether the connected Mac has negotiated `pv` >= [WireProtocol.PENCIL_MIN_PEER] — the
+     * gate callers (see [io.github.josepacelli.opendisplay.ui.VideoSurface]) must check before
+     * calling [sendPencil], degrading to [sendTouch] instead when this is `false`. Starts
+     * `false` on every new connection ([acceptConnection]) since a Mac that never sends
+     * `welcome` at all must be assumed `pv` 1 (PROTOCOL.md §6.2). */
+    val peerSupportsPencil: Boolean get() = peerProtocolVersion >= WireProtocol.PENCIL_MIN_PEER
+
+    /** Sends a `pencil` control message (PROTOCOL.md §6.1, pv 3) — only valid once
+     * [peerSupportsPencil] is `true`; callers must check it themselves.
+     * @param phase one of `"down"`, `"move"`, `"up"`, `"hover"`.
+     * @param x normalized 0-1 X against the displayed video rect.
+     * @param y normalized 0-1 Y against the displayed video rect.
+     * @param pressure 0 (no contact) to 1 (max pressure).
+     * @param azimuth stylus compass heading, radians.
+     * @param altitude stylus angle off the screen plane, radians — pi/2 is perpendicular.
+     */
+    fun sendPencil(phase: String, x: Double, y: Double, pressure: Double, azimuth: Double, altitude: Double) {
+        val message = JSONObject()
+            .put("type", WireMessage.PENCIL)
+            .put("phase", phase)
+            .put("x", x)
+            .put("y", y)
+            .put("pressure", pressure)
+            .put("azimuth", azimuth)
+            .put("altitude", altitude)
+            .put("rotation", 0.0)
+        clockOffsetMs?.let { message.put("t", nowMs() + it) }
+        sendControl(message)
+        if (phase == "down") {
+            Log.info("pencil down (pressure=$pressure, azimuth=$azimuth, altitude=$altitude)")
+        }
+    }
+
     /** Ask the Mac for a fresh IDR — call when the decoder loses sync. */
     fun requestKeyframe() {
         sendControl(JSONObject().put("type", WireMessage.KEYFRAME_REQUEST))
@@ -667,6 +705,7 @@ class PhoneReceiver(context: Context) {
             Log.warn("peer changed mid-session: $previousLabel -> ${newLink.label}")
             _peerSignal.value = PeerSignal.PeerReplaced(previousLabel, newLink.label)
         }
+        peerProtocolVersion = WireProtocol.ASSUMED_WHEN_ABSENT
         link = newLink
         outputStream = newLink.output
         lastDataReceivedAt = System.currentTimeMillis()
@@ -869,6 +908,7 @@ class PhoneReceiver(context: Context) {
 
             WireMessage.WELCOME -> {
                 val macVersion = obj.optInt("pv", WireProtocol.ASSUMED_WHEN_ABSENT)
+                peerProtocolVersion = macVersion
                 if (macVersion < WireProtocol.MIN_SUPPORTED_PEER) {
                     _peerSignal.value = PeerSignal.UpdateMac(
                         "O OpenDisplay no seu Mac está desatualizado para este app Android. " +
