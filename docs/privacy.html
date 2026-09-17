@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy Policy — OpenDisplay Android</title>
-<meta name="description" content="Privacy policy for the OpenDisplay Android app: no accounts, no analytics, no telemetry, no data collection.">
+<title>Política de Privacidade — OpenDisplay Android</title>
+<meta name="description" content="Política de privacidade do app OpenDisplay Android: sem contas, sem analytics, sem telemetria, sem coleta de dados.">
 <link rel="canonical" href="https://opendisplay.jpmo.dev.br/privacy.html">
-<link rel="alternate" hreflang="en" href="https://opendisplay.jpmo.dev.br/privacy.html">
+<link rel="alternate" hreflang="en" href="https://opendisplay.jpmo.dev.br/en/privacy.html">
 <link rel="alternate" hreflang="es" href="https://opendisplay.jpmo.dev.br/es/privacy.html">
-<link rel="alternate" hreflang="pt-BR" href="https://opendisplay.jpmo.dev.br/pt-BR/privacy.html">
+<link rel="alternate" hreflang="pt-BR" href="https://opendisplay.jpmo.dev.br/privacy.html">
 <link rel="alternate" hreflang="pt-PT" href="https://opendisplay.jpmo.dev.br/pt-PT/privacy.html">
 <link rel="alternate" hreflang="zh-Hans" href="https://opendisplay.jpmo.dev.br/zh-Hans/privacy.html">
 <link rel="alternate" hreflang="ja" href="https://opendisplay.jpmo.dev.br/ja/privacy.html">
@@ -67,65 +67,65 @@
 <body>
 <div class="wrap">
 
-  <h1>Privacy Policy</h1>
-  <div class="updated">OpenDisplay Android · last updated 2026-08-15</div>
+  <h1>Política de Privacidade</h1>
+  <div class="updated">OpenDisplay Android · última atualização em 15/08/2026</div>
 
-  <p>OpenDisplay Android is an open-source client that turns an Android device into a second
-  monitor for a Mac running the original <a href="https://opendisplay.app/">OpenDisplay</a> app.
-  This policy covers what the app does and does not do with your data.</p>
+  <p>OpenDisplay Android é um cliente open source que transforma um aparelho Android
+  num segundo monitor pra um Mac rodando o app original <a href="https://opendisplay.app/">OpenDisplay</a>.
+  Esta política cobre o que o app faz e não faz com os seus dados.</p>
 
-  <h2>Short version</h2>
+  <h2>Resumo rápido</h2>
   <ul>
-    <li>No account, no sign-up, no login.</li>
-    <li>No analytics, no crash reporting, no advertising SDKs.</li>
-    <li>No data is sent to any server operated by the developer — there isn't one.</li>
-    <li>All network traffic is a direct connection between your Android device and your own Mac,
-    over your local network (or a USB cable via <code>adb forward</code>).</li>
+    <li>Sem conta, sem cadastro, sem login.</li>
+    <li>Sem analytics, sem relatório de erros, sem SDKs de anúncios.</li>
+    <li>Nenhum dado é enviado a servidor operado pelo desenvolvedor — não existe um.</li>
+    <li>Todo o tráfego de rede é uma conexão direta entre o seu aparelho Android e o
+    seu próprio Mac, pela sua rede local (ou um cabo USB via <code>adb forward</code>).</li>
   </ul>
 
-  <h2>What the app does on the network</h2>
-  <p>The app listens on a local TCP port and advertises itself via mDNS
-  (<code>_opensidecar._tcp</code>) so the OpenDisplay Mac app can find and connect to it on the
-  same network. Once connected, it exchanges video frames (screen content from your Mac) and
-  input events (touch/scroll you send back) directly with that Mac — nothing is relayed through,
-  or stored on, any third-party or developer-owned server.</p>
+  <h2>O que o app faz na rede</h2>
+  <p>O app escuta numa porta TCP local e se anuncia via mDNS
+  (<code>_opensidecar._tcp</code>) pra que o app de Mac do OpenDisplay possa encontrá-lo e conectar
+  na mesma rede. Depois de conectado, ele troca frames de vídeo (conteúdo da tela do seu Mac) e
+  eventos de entrada (toque/scroll que você manda de volta) diretamente com aquele Mac — nada é
+  repassado por, ou armazenado em, nenhum servidor de terceiros ou do desenvolvedor.</p>
 
-  <h2>Permissions used</h2>
+  <h2>Permissões usadas</h2>
   <table>
-    <tr><th>Permission</th><th>Why</th></tr>
-    <tr><td><code>INTERNET</code></td><td>Open the local TCP socket the Mac connects to. Used only for the direct Mac connection described above — not for any internet service.</td></tr>
-    <tr><td><code>ACCESS_WIFI_STATE</code>, <code>CHANGE_WIFI_MULTICAST_STATE</code></td><td>mDNS discovery on the local WiFi network, so the Mac can find the device automatically.</td></tr>
-    <tr><td><code>FOREGROUND_SERVICE</code>, <code>FOREGROUND_SERVICE_CONNECTED_DEVICE</code></td><td>Keep the connection to the Mac alive while the app is acting as an external display, even if it's not the app on screen.</td></tr>
-    <tr><td><code>POST_NOTIFICATIONS</code></td><td>Show the required status notification for the foreground service above.</td></tr>
+    <tr><th>Permissão</th><th>Por quê</th></tr>
+    <tr><td><code>INTERNET</code></td><td>Abre o socket TCP local ao qual o Mac se conecta. Usado só pra conexão direta com o Mac descrita acima — não pra nenhum serviço de internet.</td></tr>
+    <tr><td><code>ACCESS_WIFI_STATE</code>, <code>CHANGE_WIFI_MULTICAST_STATE</code></td><td>Descoberta por mDNS na rede WiFi local, pra que o Mac encontre o aparelho automaticamente.</td></tr>
+    <tr><td><code>FOREGROUND_SERVICE</code>, <code>FOREGROUND_SERVICE_CONNECTED_DEVICE</code></td><td>Mantém viva a conexão com o Mac enquanto o app atua como monitor externo, mesmo que não seja o app em primeiro plano.</td></tr>
+    <tr><td><code>POST_NOTIFICATIONS</code></td><td>Mostra a notificação de status exigida pelo serviço em primeiro plano acima.</td></tr>
   </table>
 
-  <h2>Data storage</h2>
-  <p>The only thing the app persists locally on the device is its own settings (the mDNS device
-  name) — kept in local app preferences, never transmitted anywhere, and removed if you uninstall
-  the app.</p>
+  <h2>Armazenamento de dados</h2>
+  <p>A única coisa que o app guarda localmente no aparelho são as suas próprias
+  configurações (o nome mDNS do aparelho) — guardadas nas preferências locais do app, nunca
+  transmitidas pra lugar nenhum, e removidas se você desinstalar o app.</p>
 
-  <h2>Third parties</h2>
-  <p>None. The app has no third-party SDKs, no ad network, no analytics provider, no cloud
-  backend.</p>
+  <h2>Terceiros</h2>
+  <p>Nenhum. O app não tem SDKs de terceiros, rede de anúncios, provedor de analytics,
+  nem backend na nuvem.</p>
 
-  <h2>Changes to this policy</h2>
-  <p>Any change to what the app does with data will be reflected on this page, with the "last
-  updated" date above.</p>
+  <h2>Mudanças nesta política</h2>
+  <p>Qualquer mudança no que o app faz com os dados vai ser refletida nesta página, com
+  a data de "última atualização" acima.</p>
 
-  <h2>Contact</h2>
-  <p>Questions or concerns: open an issue on the
-  <a href="https://github.com/josepacelli/opendisplay-android/issues">GitHub repository</a>.</p>
+  <h2>Contato</h2>
+  <p>Dúvidas ou preocupações: abra uma issue no
+  <a href="https://github.com/josepacelli/opendisplay-android/issues">repositório do GitHub</a>.</p>
 
   <div class="links langs" style="display:flex;gap:20px;flex-wrap:wrap;margin-top:40px;">
-    <span class="lang-current" aria-current="page" style="color:var(--text);font-weight:600;">EN</span>
+    <a href="/en/privacy.html">EN</a>
       <a href="/es/privacy.html">ES</a>
-      <a href="/pt-BR/privacy.html">PT-BR</a>
+      <span class="lang-current" aria-current="page" style="color:var(--text);font-weight:600;">PT-BR</span>
       <a href="/pt-PT/privacy.html">PT-PT</a>
       <a href="/zh-Hans/privacy.html">中文</a>
       <a href="/ja/privacy.html">日本語</a>
       <a href="/ko/privacy.html">한국어</a>
   </div>
-  <a class="back" href="index.html">← Back to OpenDisplay Android</a>
+  <a class="back" href="index.html">← Voltar pro OpenDisplay Android</a>
 
 </div>
 </body>
