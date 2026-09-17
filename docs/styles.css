@@ -129,6 +129,16 @@ header.site nav.can-scroll-end .nav-scroll-end { display: inline-flex; }
 .lang-menu a:hover { background: var(--bg-elev-2); color: var(--text); text-decoration: none; }
 .lang-menu a.active { color: var(--text); font-weight: 600; }
 
+/* Realce do link do nav enquanto a seção correspondente está na tela. */
+header.site nav .nav-links a.active:not(.gh-stars) { color: var(--text); font-weight: 600; }
+
+/* Seções "voam pra dentro" da tela ao entrar no viewport — a classe
+   reveal-pending só existe quando o JS confirma suporte a IntersectionObserver
+   e o usuário não pediu prefers-reduced-motion, então sem JS o conteúdo
+   sempre aparece normalmente (ver scroll-reveal.js). */
+.reveal-pending { opacity: 0; transform: translateY(28px) scale(0.985); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.reveal-pending.in-view { opacity: 1; transform: none; }
+
 /* ---------- Hero ---------- */
 
 .hero { padding: 96px 0 56px; border-top: none; }
