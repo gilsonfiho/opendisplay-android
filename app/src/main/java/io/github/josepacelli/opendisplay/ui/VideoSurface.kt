@@ -416,13 +416,19 @@ private suspend fun AwaitPointerEventScope.handleStylusGesture(
 private fun tiltOf(motionEvent: MotionEvent?): Pair<Double, Double> {
     val event = motionEvent ?: return 0.0 to PERPENDICULAR_ALTITUDE
     if (event.pointerCount == 0) return 0.0 to PERPENDICULAR_ALTITUDE
-    // Android's AXIS_TILT is the angle FROM perpendicular (0 = pen straight up); the wire
-    // protocol's altitude is the angle FROM the screen plane (pi/2 = straight up) — same
-    // physical quantity, complementary reference.
-    val tilt = event.getAxisValue(MotionEvent.AXIS_TILT, 0).toDouble()
-    val altitude = PERPENDICULAR_ALTITUDE - tilt
-    return event.getOrientation(0).toDouble() to altitude
+    val tilt = event.getAxisValue(MotionEvent.AXIS_TILT, 0)
+    return event.getOrientation(0).toDouble() to altitudeFromAndroidTilt(tilt)
 }
+
+/** Android's `AXIS_TILT` is the angle FROM perpendicular (0 = pen straight up); the wire
+ * protocol's altitude (PROTOCOL.md §6.1) is the angle FROM the screen plane (pi/2 = straight
+ * up) — same physical quantity, complementary reference, hence the subtraction. Split out
+ * from [tiltOf] so the actual conversion is testable without a real `MotionEvent` (see
+ * `VideoSurfaceTiltTest`) — confirmed against a real S Pen: tilting the pen away from
+ * perpendicular lowered this value below [PERPENDICULAR_ALTITUDE], as expected.
+ * @param androidTilt `MotionEvent.AXIS_TILT`'s reading, radians.
+ * @return the wire protocol's altitude, radians. */
+internal fun altitudeFromAndroidTilt(androidTilt: Float): Double = PERPENDICULAR_ALTITUDE - androidTilt.toDouble()
 
 /** Which wire message (or local effect, for [GestureMode.ZOOM]/[GestureMode.PAN]) a gesture in
  * progress will become, once enough pointers/movement make that clear — see [handleGesture]. */
