@@ -345,3 +345,20 @@ footer .links a { color: var(--text-dim); }
 footer .links a:hover { color: var(--accent); }
 footer .langs { margin-bottom: 24px; }
 footer .disclaimer { max-width: 70ch; }
+
+/* ---------- Back to top ---------- */
+
+.back-to-top {
+  position: fixed; right: 24px; bottom: 24px; z-index: 15;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--bg-elev); color: var(--text-dim); cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  opacity: 0; pointer-events: none; transform: translateY(8px);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.back-to-top.visible { opacity: 1; pointer-events: auto; transform: none; }
+.back-to-top:hover { color: var(--text); border-color: var(--border-hover); }
+.back-to-top svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; }
+@media (max-width: 760px) { .back-to-top { right: 16px; bottom: 16px; } }
