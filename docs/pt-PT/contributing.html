@@ -105,7 +105,7 @@ adb logcat -s OpenDisplay:*      # logs da app</code></pre>
   </ul>
 
   <h2>Testes e cobertura</h2>
-  <p>Lógica pura (parsers, constantes de protocolo, classes que não dependem da framework
+  <p>Lógica pura (parsers, constantes de protocolo, classes que não dependem do framework
   Android) precisa de testes unitários mantendo <strong>cobertura de linha em 95% ou mais</strong>
   (verificado por <code>jacocoCoverageVerification</code> no CI). UI, serviços e tudo o que
   depende de <code>MediaCodec</code>/sockets/<code>NsdManager</code> fica fora desse cálculo.</p>
