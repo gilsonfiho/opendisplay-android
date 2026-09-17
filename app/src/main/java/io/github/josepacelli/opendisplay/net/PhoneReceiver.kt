@@ -36,6 +36,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 import java.io.OutputStream
+import java.net.DatagramPacket
+import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -128,6 +130,7 @@ class PhoneReceiver(context: Context) {
         private const val WATCHDOG_TIMEOUT_MS = 5_000L
         private const val PING_INTERVAL_MS = 2_000L
         private const val READ_BUFFER_SIZE = 64 * 1024
+        private const val CURSOR_DATAGRAM_BUFFER_SIZE = 2 * 1024
         private const val UNSTABLE_CLEAR_DELAY_MS = 3_000L
         private const val RTT_UNSTABLE_MS = 250.0
         private const val E2E_P95_UNSTABLE_MS = 500.0
@@ -179,6 +182,23 @@ class PhoneReceiver(context: Context) {
     private var wifiServerSocket: ServerSocket? = null
     private var advertised = false
 
+    /** UDP cursor side channel (PROTOCOL.md §6.3) — WiFi/LAN only, same address as
+     * [wifiServerSocket] but one port up. `null` whenever it isn't currently bound, which
+     * is also what tells [sendHello] to omit `cursorPort` and leave cursor updates on TCP. */
+    private var cursorSocket: DatagramSocket? = null
+    @Volatile private var cursorPortBound: Int? = null
+
+    /** Sequence tracking for the cursor side channel (PROTOCOL.md §6.3): the most recently
+     * seen UDP source (a "flow"), the highest `s` accepted from it, and whether this flow's
+     * first datagram has already been acked. All three reset together on a new UDP flow or
+     * a new TCP connection — see [handleCursorUpdate] and [acceptConnection]. Guarded by
+     * [cursorLock]: TCP `cursor` frames and UDP cursor datagrams arrive on different
+     * coroutines (the read loop vs. the UDP receive loop) and both mutate this state. */
+    private val cursorLock = Any()
+    private var cursorFlow: InetSocketAddress? = null
+    private var cursorLastSeq: Long = 0
+    private var cursorAckSent = false
+
     /** Forces the WiFi listener to drop and retry as soon as WiFi goes away mid-session —
      * otherwise it stays blocked in `accept()` on a socket bound to an address that no longer
      * exists, silently unreachable, until something else happens to close it. Also re-advertises
@@ -195,6 +215,7 @@ class PhoneReceiver(context: Context) {
 
     private var loopbackAcceptJob: Job? = null
     private var wifiAcceptJob: Job? = null
+    private var cursorListenJob: Job? = null
     private var readJob: Job? = null
     private var pingJob: Job? = null
     private var watchdogJob: Job? = null
@@ -333,6 +354,7 @@ class PhoneReceiver(context: Context) {
                 onNoAddress = { _status.value = appContext.getString(R.string.status_no_wifi) },
             ) { wifiServerSocket = it }
         }
+        cursorListenJob = scope.launch { cursorListenLoop(port + 1) }
         pingJob = scope.launch { pingLoop() }
         watchdogJob = scope.launch { watchdogLoop() }
         registerConnectivityWatcher()
@@ -343,6 +365,7 @@ class PhoneReceiver(context: Context) {
         if (!running.compareAndSet(true, false)) return
         loopbackAcceptJob?.cancel()
         wifiAcceptJob?.cancel()
+        cursorListenJob?.cancel()
         readJob?.cancel()
         pingJob?.cancel()
         watchdogJob?.cancel()
@@ -351,6 +374,7 @@ class PhoneReceiver(context: Context) {
         closeConnection()
         closeServerSocket(loopbackServerSocket)
         closeServerSocket(wifiServerSocket)
+        closeCursorSocket()
         loopbackServerSocket = null
         wifiServerSocket = null
         advertised = false
@@ -366,6 +390,17 @@ class PhoneReceiver(context: Context) {
             server?.close()
         } catch (_: IOException) {
         }
+    }
+
+    /** Closes [cursorSocket] (unblocking [cursorListenLoop]'s `receive()`) and clears the
+     * bound-port state, so the next `hello` omits `cursorPort` until a fresh socket binds. */
+    private fun closeCursorSocket() {
+        try {
+            cursorSocket?.close()
+        } catch (_: Exception) {
+        }
+        cursorSocket = null
+        cursorPortBound = null
     }
 
     /** Watches the device's default network so the WiFi listener notices losing WiFi
@@ -389,12 +424,14 @@ class PhoneReceiver(context: Context) {
         val currentAddress = NetworkInfo.localIPv4InetAddress(appContext)
         if (currentAddress == null) {
             closeServerSocket(wifiServerSocket)
+            closeCursorSocket()
             lastBoundAddress = null
             return
         }
         if (lastBoundAddress != null && !lastBoundAddress!!.equals(currentAddress)) {
             Log.info("IP changed ${lastBoundAddress?.hostAddress} -> ${currentAddress.hostAddress}, restarting WiFi listener")
             closeServerSocket(wifiServerSocket)
+            closeCursorSocket()
             lastBoundAddress = null
             unadvertise()
             advertised = false
@@ -686,6 +723,55 @@ class PhoneReceiver(context: Context) {
         }
     }
 
+    /** UDP cursor side channel (PROTOCOL.md §6.3) — WiFi/LAN only, same retry-on-no-address
+     * shape as [listenLoop], but connectionless: no accept loop, just bind then receive
+     * datagrams until the socket closes (peer disconnect handling doesn't apply here — a
+     * `DatagramSocket` has no "peer", [closeCursorSocket] is what ends one bind attempt).
+     * @param port the UDP port to bind (`hello`'s TCP port + 1). */
+    private fun cursorListenLoop(port: Int) {
+        while (running.get()) {
+            val bindAddress = NetworkInfo.localIPv4InetAddress(appContext)
+            if (bindAddress == null) {
+                Thread.sleep(1000)
+                continue
+            }
+            try {
+                val socket = DatagramSocket(InetSocketAddress(bindAddress, port))
+                cursorSocket = socket
+                cursorPortBound = port
+                Log.info("cursor UDP listener on ${bindAddress.hostAddress}:$port")
+                val buf = ByteArray(CURSOR_DATAGRAM_BUFFER_SIZE)
+                while (running.get()) {
+                    val packet = DatagramPacket(buf, buf.size)
+                    socket.receive(packet)
+                    handleCursorDatagram(packet)
+                }
+            } catch (e: IOException) {
+                if (!running.get()) return
+                Log.warn("cursor UDP listener on ${bindAddress.hostAddress} failed, retrying in 1s", e)
+                Thread.sleep(1000)
+            } finally {
+                cursorSocket = null
+                cursorPortBound = null
+            }
+        }
+    }
+
+    /** Parses one UDP datagram from [cursorListenLoop] as a `cursor` message (PROTOCOL.md
+     * §6.3: raw UTF-8 JSON, no 4-byte length prefix, unlike every TCP frame) and applies it.
+     * @param packet one received datagram, valid only for the duration of this call. */
+    private fun handleCursorDatagram(packet: DatagramPacket) {
+        val obj = try {
+            JSONObject(String(packet.data, 0, packet.length, Charsets.UTF_8))
+        } catch (e: Exception) {
+            Log.warn("unparseable cursor UDP datagram (${packet.length} bytes)", e)
+            return
+        }
+        if (obj.optString("type") != WireMessage.CURSOR) return
+        val flow = packet.socketAddress as? InetSocketAddress ?: return
+        handleCursorUpdate(obj, flow)
+    }
+
     /** [advertise] should only ever run once per [start]/[stop] cycle, regardless of
      * how many times [listenLoop] retries.
      * @param port the bound port to advertise. */
@@ -704,6 +790,12 @@ class PhoneReceiver(context: Context) {
         if (previousLabel != null && previousLabel != newLink.label) {
             Log.warn("peer changed mid-session: $previousLabel -> ${newLink.label}")
             _peerSignal.value = PeerSignal.PeerReplaced(previousLabel, newLink.label)
+        }
+        // New TCP session: the cursor `s` sequence restarts too (PROTOCOL.md §6.3).
+        synchronized(cursorLock) {
+            cursorFlow = null
+            cursorLastSeq = 0
+            cursorAckSent = false
         }
         peerProtocolVersion = WireProtocol.ASSUMED_WHEN_ABSENT
         link = newLink
@@ -861,9 +953,11 @@ class PhoneReceiver(context: Context) {
             message.put("maxEncodeWide", maxWide)
             message.put("maxEncodeHigh", maxHigh)
         }
+        cursorPortBound?.let { message.put("cursorPort", it) }
         sendControl(message)
         val ceilingLog = decodeCeiling?.let { (w, h) -> ", decode ceiling ${w}x$h" } ?: ""
-        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x$ceilingLog)")
+        val cursorLog = cursorPortBound?.let { ", cursor UDP :$it" } ?: ""
+        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x$ceilingLog$cursorLog)")
     }
 
     /** Finds the decoder [video.VideoDecoder][io.github.josepacelli.opendisplay.video.VideoDecoder]
@@ -928,10 +1022,7 @@ class PhoneReceiver(context: Context) {
 
             WireMessage.PONG -> handlePong(obj)
 
-            WireMessage.CURSOR -> {
-                val visible = obj.optInt("v", 0) == 1
-                _cursorPosition.value = CursorPosition(obj.optDouble("x", 0.0), obj.optDouble("y", 0.0), visible)
-            }
+            WireMessage.CURSOR -> handleCursorUpdate(obj)
 
             WireMessage.CURSOR_IMAGE -> handleCursorImage(obj)
 
@@ -956,6 +1047,38 @@ class PhoneReceiver(context: Context) {
         offsetSamples.addLast(OffsetSample(rtt, offset))
         if (offsetSamples.size > 15) offsetSamples.removeFirst()
         clockOffsetMs = offsetSamples.minByOrNull { it.rtt }?.offset
+    }
+
+    /** Applies one `cursor` update from either path (PROTOCOL.md §6.3 sequence semantics).
+     * A TCP `cursor` frame has no flow identity ([udpFlow] is `null`) and, if it carries no
+     * `s` (an older Mac), applies unconditionally. A UDP datagram always carries `s`; a
+     * source address different from the currently tracked flow starts a new one, which
+     * resets the sequence baseline and clears the ack-sent flag so the first accepted
+     * datagram of the new flow gets acked. Either path's `s` (same counter, shared across
+     * both per PROTOCOL.md) is deduped against the same [cursorLastSeq] — a stale duplicate
+     * arriving late on the "wrong" path is still dropped correctly.
+     * @param obj the parsed `cursor` message.
+     * @param udpFlow the UDP datagram's source, or `null` for a TCP frame. */
+    private fun handleCursorUpdate(obj: JSONObject, udpFlow: InetSocketAddress? = null) {
+        synchronized(cursorLock) {
+            if (udpFlow != null && udpFlow != cursorFlow) {
+                cursorFlow = udpFlow
+                cursorLastSeq = 0
+                cursorAckSent = false
+            }
+            if (obj.has("s")) {
+                val seq = obj.optLong("s", -1)
+                if (seq <= cursorLastSeq) return
+                cursorLastSeq = seq
+            }
+            if (udpFlow != null && !cursorAckSent) {
+                cursorAckSent = true
+                Log.info("cursor UDP flow confirmed from ${udpFlow.hostString}:${udpFlow.port} — acked")
+                sendControl(JSONObject().put("type", WireMessage.CURSOR_ACK))
+            }
+        }
+        val visible = obj.optInt("v", 0) == 1
+        _cursorPosition.value = CursorPosition(obj.optDouble("x", 0.0), obj.optDouble("y", 0.0), visible)
     }
 
     /** Decodes a `cursorImg` control message into a [CursorImage] for the overlay.

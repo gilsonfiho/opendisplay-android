@@ -30,6 +30,7 @@ object WireMessage {
     const val KEYFRAME_REQUEST = "kf"
     const val CURSOR = "cursor"
     const val CURSOR_IMAGE = "cursorImg"
+    const val CURSOR_ACK = "cursorAck"
     const val STATS = "stats"
     const val WELCOME = "welcome"
     const val UPDATE_REQUIRED = "updateRequired"
