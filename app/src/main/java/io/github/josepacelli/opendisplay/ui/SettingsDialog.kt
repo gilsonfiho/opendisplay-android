@@ -384,8 +384,8 @@ private fun AboutTab() {
     }
 }
 
-/** "Changelog" tab: every release from v0.0.37 to the current version, newest first, as a
- * version badge + date header followed by bullet highlights. Content lives in
+/** "Changelog" tab: the latest release, then everything older rolled into one range entry, each
+ * as a version badge + date header followed by bullet highlights. Content lives in
  * [CHANGELOG_ENTRIES]/`changelog_v*` string-arrays, translated per locale like the rest of
  * the app. */
 @Composable
@@ -418,12 +418,14 @@ private fun ChangelogEntryCard(entry: ChangelogEntry) {
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = formatChangelogDate(entry.dateIso),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (entry.dateIso.isNotBlank()) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = formatChangelogDate(entry.dateIso),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(10.dp))
             for (highlight in highlights) {
