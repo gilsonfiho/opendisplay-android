@@ -2,28 +2,29 @@ package io.github.josepacelli.opendisplay.ui
 
 import io.github.josepacelli.opendisplay.R
 
-/** One released version's entry in the Settings "Changelog" tab.
- * @param version e.g. `"0.0.47"`, without the `v` prefix.
+/** One entry in the Settings "Changelog" tab — either a single release or a rolled-up range of
+ * older ones (see [CHANGELOG_OLDER_RANGE_RES]).
+ * @param version e.g. `"0.0.48"` for a single release, or `"0.0.37 – 0.0.46"` for a range —
+ * without the `v` prefix, rendered as `"v$version"`.
  * @param dateIso release date as `"yyyy-MM-dd"` — formatted for display with the device's
  * locale (see `formatChangelogDate` in `SettingsDialog.kt`), so no per-language date strings.
- * @param highlightsRes string-array resource with this version's condensed, translated bullet
- * points (`changelog_v*` in `strings.xml`, one array per version per locale). */
+ * Blank for a range entry, which shows no date.
+ * @param highlightsRes string-array resource with this entry's condensed, translated bullet
+ * points (`changelog_v*`/[CHANGELOG_OLDER_RANGE_RES] in `strings.xml`). */
 data class ChangelogEntry(val version: String, val dateIso: String, val highlightsRes: Int)
 
-/** Every release from v0.0.37 (the oldest still relevant) to the current version, newest
- * first. Condensed from the actual GitHub release notes (`gh release view vX.X.X`) — update
- * when cutting a new release, adding a matching `changelog_v*` string-array to every
- * `strings.xml` locale file. */
+/** Resource name backing the rolled-up older-versions entry — kept stable across releases since
+ * its range grows each time. */
+private const val CHANGELOG_OLDER_RANGE_RES = R.array.changelog_older_versions
+
+/** Only the latest release gets its own dated entry with a full bullet list. Everything before
+ * it collapses into one entry spanning `"v0.0.37 – v0.0.<latest - 1>"`, all bullets
+ * concatenated newest-first into [CHANGELOG_OLDER_RANGE_RES] — keeps the tab from growing one
+ * translated string-array per release forever. Update on every new release: bump the latest
+ * entry, and fold what used to be latest into the top of `changelog_older_versions` (all 7
+ * `strings.xml` locales) with its range upper bound advanced. Condensed from the actual GitHub
+ * release notes (`gh release view vX.X.X`). */
 val CHANGELOG_ENTRIES = listOf(
-    ChangelogEntry("0.0.47", "2026-09-26", R.array.changelog_v0_0_47),
-    ChangelogEntry("0.0.46", "2026-09-24", R.array.changelog_v0_0_46),
-    ChangelogEntry("0.0.45", "2026-09-24", R.array.changelog_v0_0_45),
-    ChangelogEntry("0.0.44", "2026-09-23", R.array.changelog_v0_0_44),
-    ChangelogEntry("0.0.43", "2026-09-23", R.array.changelog_v0_0_43),
-    ChangelogEntry("0.0.42", "2026-09-23", R.array.changelog_v0_0_42),
-    ChangelogEntry("0.0.41", "2026-09-18", R.array.changelog_v0_0_41),
-    ChangelogEntry("0.0.40", "2026-09-17", R.array.changelog_v0_0_40),
-    ChangelogEntry("0.0.39", "2026-09-16", R.array.changelog_v0_0_39),
-    ChangelogEntry("0.0.38", "2026-09-12", R.array.changelog_v0_0_38),
-    ChangelogEntry("0.0.37", "2026-09-08", R.array.changelog_v0_0_37),
+    ChangelogEntry("0.0.48", "2026-09-27", R.array.changelog_v0_0_48),
+    ChangelogEntry("0.0.37 – 0.0.46", "", CHANGELOG_OLDER_RANGE_RES),
 )
