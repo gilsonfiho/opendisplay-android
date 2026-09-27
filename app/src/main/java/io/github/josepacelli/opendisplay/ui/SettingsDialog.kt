@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -90,6 +90,9 @@ const val SETTINGS_TAB_CHANGELOG = 3
  *
  * Rendered as an edge-to-edge [Dialog] rather than [androidx.compose.material3.AlertDialog]
  * so it can fill the screen while still getting back-press-to-dismiss for free.
+ * [Modifier.safeDrawingPadding] on the root [Column] keeps the top app bar clear of the status
+ * bar — a `Dialog`'s window is forced edge-to-edge too once `targetSdk` crosses 35 (Android 15+),
+ * same root cause [ReceiverScreen] already works around for the video surface (issue #144).
  *
  * @param receiver the session whose settings are shown/edited.
  * @param initialTab which tab is selected when the screen opens — one of the `SETTINGS_TAB_*` constants.
@@ -115,7 +118,7 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         val screenColor = MaterialTheme.colorScheme.surfaceContainerLow
         Surface(modifier = Modifier.fillMaxSize(), color = screenColor) {
-            Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
+            Column(modifier = Modifier.fillMaxSize().safeDrawingPadding()) {
                 TopAppBar(
                     title = { Text(stringResource(R.string.settings_title)) },
                     navigationIcon = {
