@@ -44,7 +44,7 @@ jobs:
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
 
-      - name: Coverage (95% minimum on pure logic — see CLAUDE.md)
+      - name: Coverage verification
         run: ./gradlew jacocoCoverageVerification
 
       - name: Build debug APK
