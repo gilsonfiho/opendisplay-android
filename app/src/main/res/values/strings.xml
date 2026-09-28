@@ -36,6 +36,13 @@
     <string name="settings_pip_show">Auto-enter Picture-in-Picture when leaving the app while connected</string>
     <string name="settings_section_video">Video</string>
     <string name="settings_zoom_pinch">Pinch to zoom, three fingers to pan around</string>
+    <string name="connected_menu_handle">Menu</string>
+    <string name="connected_menu_zoom">Zoom</string>
+    <string name="connected_menu_fullscreen">Fullscreen</string>
+    <string name="settings_section_connected_menu">Floating menu</string>
+    <string name="settings_connected_menu_show">Show while connected</string>
+    <string name="settings_connected_menu_idle_label">Appear after being idle for</string>
+    <string name="settings_connected_menu_idle_seconds">%1$ds</string>
     <string name="settings_section_details">Details</string>
     <string name="settings_section_name">Name</string>
     <string name="settings_name_label">Device name</string>

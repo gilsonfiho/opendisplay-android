@@ -36,6 +36,13 @@
     <string name="settings_pip_show">Entrar automáticamente en imagen en imagen al salir de la app estando conectado</string>
     <string name="settings_section_video">Vídeo</string>
     <string name="settings_zoom_pinch">Pellizco para ampliar, tres dedos para mover el área ampliada</string>
+    <string name="connected_menu_handle">Menú</string>
+    <string name="connected_menu_zoom">Zoom</string>
+    <string name="connected_menu_fullscreen">Pantalla completa</string>
+    <string name="settings_section_connected_menu">Menú flotante</string>
+    <string name="settings_connected_menu_show">Mostrar mientras esté conectado</string>
+    <string name="settings_connected_menu_idle_label">Aparecer tras estar inactivo durante</string>
+    <string name="settings_connected_menu_idle_seconds">%1$ds</string>
     <string name="settings_section_details">Detalles</string>
     <string name="settings_section_name">Nombre</string>
     <string name="settings_name_label">Nombre del dispositivo</string>

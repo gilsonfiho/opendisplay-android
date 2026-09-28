@@ -117,4 +117,13 @@ class DataTypesTest {
         )
         assertEquals(PerfHudPosition.TOP_START, PerfHudPosition.valueOf("TOP_START"))
     }
+
+    @Test
+    fun `ConnectedMenuEdge has the four screen edges`() {
+        assertEquals(
+            listOf(ConnectedMenuEdge.START, ConnectedMenuEdge.END, ConnectedMenuEdge.TOP, ConnectedMenuEdge.BOTTOM),
+            ConnectedMenuEdge.entries,
+        )
+        assertEquals(ConnectedMenuEdge.TOP, ConnectedMenuEdge.valueOf("TOP"))
+    }
 }

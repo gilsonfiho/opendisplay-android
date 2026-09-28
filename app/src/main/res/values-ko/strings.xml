@@ -36,6 +36,13 @@
     <string name="settings_pip_show">연결 중 앱을 나가면 자동으로 화면 속 화면으로 전환</string>
     <string name="settings_section_video">영상</string>
     <string name="settings_zoom_pinch">핀치로 확대, 세 손가락으로 확대 영역 이동</string>
+    <string name="connected_menu_handle">메뉴</string>
+    <string name="connected_menu_zoom">확대</string>
+    <string name="connected_menu_fullscreen">전체 화면</string>
+    <string name="settings_section_connected_menu">플로팅 메뉴</string>
+    <string name="settings_connected_menu_show">연결 중 표시</string>
+    <string name="settings_connected_menu_idle_label">다음 시간 동안 조작 없으면 표시</string>
+    <string name="settings_connected_menu_idle_seconds">%1$d초</string>
     <string name="settings_section_details">세부 정보</string>
     <string name="settings_section_name">이름</string>
     <string name="settings_name_label">기기 이름</string>

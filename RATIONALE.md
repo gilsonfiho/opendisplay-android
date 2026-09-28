@@ -75,6 +75,18 @@ Organized by file, in source order.
 - **`ReceiverScreen`**, `ConnectionUnstableBanner`'s `Alignment.BottomCenter`: the top of the
   screen already hosts `PeerSignalBanner` and `PerfHud` — bottom keeps this transient pill from
   fighting either for space when a resync happens to land alongside one of them.
+- **`ReceiverScreen`**, the `LaunchedEffect(lastVideoActivityAt, connectedMenuIdleSeconds)` that
+  reveals `ConnectedMenu`: keying on `lastVideoActivityAt` means every new touch restarts the
+  `delay` from scratch, so a long drag never gets interrupted by the menu popping back up
+  mid-gesture — it only reappears after `connectedMenuIdleSeconds` with no touches at all.
+  Skipped for the sentinel `0L` (just connected, nothing to wait out yet — see the
+  `LaunchedEffect(connected)` above it, which seeds that sentinel and shows the menu immediately
+  on connect instead of waiting out the delay for no reason).
+- **`ReceiverScreen`**, the video `Box`'s `pointerInput(connected)` (Initial pass, `#151`): an
+  observer only, never consumes — `VideoSurface`'s own touch-forwarding/pinch-zoom gestures
+  underneath are untouched. It's attached to the video `Box`, a sibling of `ConnectedMenu` rather
+  than an ancestor of it, so taps on the menu's own grip/buttons never pass through here and so
+  never count as "activity" that would hide the menu right after using it.
 
 ## video/VideoDecoder.kt
 

@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,12 +43,15 @@ import io.github.josepacelli.opendisplay.R
 import io.github.josepacelli.opendisplay.net.PeerSignal
 import io.github.josepacelli.opendisplay.net.PerfHudPosition
 import io.github.josepacelli.opendisplay.net.PhoneReceiver
+import kotlinx.coroutines.delay
 
 /**
  * Top-level screen: fullscreen black background, an aspect-correct video +
  * cursor box centered in it, and status/warning text overlaid only while
- * there's something the user needs to know (no chrome once video is
- * flowing — this app's only job is to disappear behind the Mac's desktop).
+ * there's something the user needs to know — this app's only job is to
+ * disappear behind the Mac's desktop, so the one piece of chrome once
+ * connected is [ConnectedMenu], a self-hiding handle docked to a screen edge
+ * (#151).
  *
  * [Modifier.safeDrawingPadding] keeps the video (and its touch-forwarding
  * surface) out from under the status bar / gesture nav area. Android 15+
@@ -67,13 +73,28 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
     val showPerfHud by receiver.showPerfHud.collectAsState()
     val perfHudPosition by receiver.perfHudPosition.collectAsState()
     val immersiveFullscreen by receiver.immersiveFullscreen.collectAsState()
+    val connectedMenuEdge by receiver.connectedMenuEdge.collectAsState()
+    val connectedMenuEnabled by receiver.connectedMenuEnabled.collectAsState()
+    val connectedMenuIdleSeconds by receiver.connectedMenuIdleSeconds.collectAsState()
     val zoomEnabled by receiver.zoomEnabled.collectAsState()
     var videoDims by remember { mutableStateOf<VideoDims?>(null) }
     var showSettings by remember { mutableStateOf(false) }
     var settingsInitialTab by remember { mutableIntStateOf(SETTINGS_TAB_GENERAL) }
+    var lastVideoActivityAt by remember { mutableLongStateOf(0L) }
+    var connectedMenuVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(connected) {
-        if (connected) showSettings = false
+        if (connected) {
+            showSettings = false
+            lastVideoActivityAt = 0L
+            connectedMenuVisible = true
+        }
+    }
+
+    LaunchedEffect(lastVideoActivityAt, connectedMenuIdleSeconds) {
+        if (lastVideoActivityAt == 0L) return@LaunchedEffect
+        delay(connectedMenuIdleSeconds * 1000L)
+        connectedMenuVisible = true
     }
 
     val aspect = videoDims?.let { it.width.toFloat() / it.height.toFloat() }
@@ -91,7 +112,23 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
             .then(if (immersive) Modifier else Modifier.safeDrawingPadding()),
         contentAlignment = Alignment.Center,
     ) {
-        Box(modifier = Modifier.aspectRatio(aspect)) {
+        Box(
+            modifier = Modifier
+                .aspectRatio(aspect)
+                .then(
+                    if (connected && connectedMenuEnabled) {
+                        Modifier.pointerInput(connected) {
+                            while (true) {
+                                awaitPointerEventScope { awaitPointerEvent(PointerEventPass.Initial) }
+                                lastVideoActivityAt = System.currentTimeMillis()
+                                connectedMenuVisible = false
+                            }
+                        }
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
             VideoSurface(
                 receiver = receiver,
                 videoDims = videoDims,
@@ -127,6 +164,23 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
 
         if (connectionUnstable) {
             ConnectionUnstableBanner(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp))
+        }
+
+        if (connected && connectedMenuEnabled && connectedMenuVisible) {
+            ConnectedMenu(
+                edge = connectedMenuEdge,
+                onEdgeChange = receiver::setConnectedMenuEdge,
+                zoomEnabled = zoomEnabled,
+                onToggleZoom = receiver::setZoomEnabled,
+                fullscreenEnabled = immersiveFullscreen,
+                onToggleFullscreen = receiver::setImmersiveFullscreen,
+                onOpenSettings = {
+                    settingsInitialTab = SETTINGS_TAB_GENERAL
+                    showSettings = true
+                },
+                onDisconnect = receiver::disconnect,
+                modifier = Modifier.fillMaxSize(),
+            )
         }
     }
 
