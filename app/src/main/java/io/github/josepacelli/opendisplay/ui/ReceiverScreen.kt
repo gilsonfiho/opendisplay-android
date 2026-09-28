@@ -77,24 +77,32 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
     val connectedMenuEnabled by receiver.connectedMenuEnabled.collectAsState()
     val connectedMenuIdleSeconds by receiver.connectedMenuIdleSeconds.collectAsState()
     val zoomEnabled by receiver.zoomEnabled.collectAsState()
+    val cursorPosition by receiver.cursorPosition.collectAsState()
     var videoDims by remember { mutableStateOf<VideoDims?>(null) }
     var showSettings by remember { mutableStateOf(false) }
     var settingsInitialTab by remember { mutableIntStateOf(SETTINGS_TAB_GENERAL) }
-    var lastVideoActivityAt by remember { mutableLongStateOf(0L) }
+    var lastActivityAt by remember { mutableLongStateOf(0L) }
     var connectedMenuVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(connected) {
         if (connected) {
             showSettings = false
-            lastVideoActivityAt = 0L
+            lastActivityAt = 0L
             connectedMenuVisible = true
         }
     }
 
-    LaunchedEffect(lastVideoActivityAt, connectedMenuIdleSeconds) {
-        if (lastVideoActivityAt == 0L) return@LaunchedEffect
+    LaunchedEffect(lastActivityAt, connectedMenuIdleSeconds) {
+        if (lastActivityAt == 0L) return@LaunchedEffect
         delay(connectedMenuIdleSeconds * 1000L)
         connectedMenuVisible = true
+    }
+
+    LaunchedEffect(cursorPosition) {
+        if (connected && connectedMenuEnabled && cursorPosition != null) {
+            lastActivityAt = System.currentTimeMillis()
+            connectedMenuVisible = false
+        }
     }
 
     val aspect = videoDims?.let { it.width.toFloat() / it.height.toFloat() }
@@ -120,7 +128,7 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
                         Modifier.pointerInput(connected) {
                             while (true) {
                                 awaitPointerEventScope { awaitPointerEvent(PointerEventPass.Initial) }
-                                lastVideoActivityAt = System.currentTimeMillis()
+                                lastActivityAt = System.currentTimeMillis()
                                 connectedMenuVisible = false
                             }
                         }

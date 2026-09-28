@@ -60,9 +60,9 @@ private val ACTION_SIZE = 52.dp
  * a first version with small text buttons turned out too fiddly to hit reliably.
  *
  * [ReceiverScreen] mounts/unmounts this composable entirely rather than this function handling
- * its own visibility — it's the one that owns touch activity on the video (to hide the menu
- * while the user is actively interacting) and the master on/off + idle-delay settings, both
- * user-editable in [SettingsDialog]'s General tab.
+ * its own visibility — it's the one that owns activity detection (local touch on the video, or
+ * the Mac's own mouse cursor moving, either one hides the menu) and the master on/off +
+ * idle-delay settings, both user-editable in [SettingsDialog]'s General tab.
  *
  * Collapsed, it's a grip dot docked against [edge] (persisted across sessions via
  * [io.github.josepacelli.opendisplay.net.PhoneReceiver.setConnectedMenuEdge] — defaults to the
