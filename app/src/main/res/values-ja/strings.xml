@@ -36,6 +36,13 @@
     <string name="settings_pip_show">接続中にアプリを離れたら自動でピクチャー・イン・ピクチャーに切り替える</string>
     <string name="settings_section_video">ビデオ</string>
     <string name="settings_zoom_pinch">ピンチでズーム、3本指で拡大部分を移動</string>
+    <string name="connected_menu_handle">メニュー</string>
+    <string name="connected_menu_zoom">ズーム</string>
+    <string name="connected_menu_fullscreen">フルスクリーン</string>
+    <string name="settings_section_connected_menu">フローティングメニュー</string>
+    <string name="settings_connected_menu_show">接続中に表示</string>
+    <string name="settings_connected_menu_idle_label">操作なしで表示するまでの時間</string>
+    <string name="settings_connected_menu_idle_seconds">%1$d秒</string>
     <string name="settings_section_details">詳細</string>
     <string name="settings_section_name">名前</string>
     <string name="settings_name_label">デバイス名</string>

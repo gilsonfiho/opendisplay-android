@@ -75,6 +75,23 @@ Organized by file, in source order.
 - **`ReceiverScreen`**, `ConnectionUnstableBanner`'s `Alignment.BottomCenter`: the top of the
   screen already hosts `PeerSignalBanner` and `PerfHud` — bottom keeps this transient pill from
   fighting either for space when a resync happens to land alongside one of them.
+- **`ReceiverScreen`**, the `LaunchedEffect(lastActivityAt, connectedMenuIdleSeconds)` that
+  reveals `ConnectedMenu`: keying on `lastActivityAt` means every new touch or Mac cursor move
+  restarts the `delay` from scratch, so a long drag (or the Mac's mouse just being in motion)
+  never gets interrupted by the menu popping back up mid-gesture — it only reappears after
+  `connectedMenuIdleSeconds` with no activity of either kind at all. Skipped for the sentinel `0L`
+  (just connected, nothing to wait out yet — see the `LaunchedEffect(connected)` above it, which
+  seeds that sentinel and shows the menu immediately on connect instead of waiting out the delay
+  for no reason).
+- **`ReceiverScreen`**, the video `Box`'s `pointerInput(connected)` (Initial pass, `#151`): an
+  observer only, never consumes — `VideoSurface`'s own touch-forwarding/pinch-zoom gestures
+  underneath are untouched. It's attached to the video `Box`, a sibling of `ConnectedMenu` rather
+  than an ancestor of it, so taps on the menu's own grip/buttons never pass through here and so
+  never count as "activity" that would hide the menu right after using it.
+- **`ReceiverScreen`**, the `LaunchedEffect(cursorPosition)` that also counts as "activity": the
+  Mac's mouse cursor moving is driven by `PhoneReceiver.cursorPosition`, a separate signal from
+  local touch — a user mousing around on the Mac with the tablet screen otherwise untouched
+  should hide the menu too, not just leave it sitting on top of the desktop being controlled.
 
 ## video/VideoDecoder.kt
 

@@ -36,6 +36,13 @@
     <string name="settings_pip_show">连接期间离开应用时自动进入画中画</string>
     <string name="settings_section_video">视频</string>
     <string name="settings_zoom_pinch">双指捏合缩放，三指平移已放大的画面</string>
+    <string name="connected_menu_handle">菜单</string>
+    <string name="connected_menu_zoom">缩放</string>
+    <string name="connected_menu_fullscreen">全屏</string>
+    <string name="settings_section_connected_menu">悬浮菜单</string>
+    <string name="settings_connected_menu_show">连接时显示</string>
+    <string name="settings_connected_menu_idle_label">静止多久后出现</string>
+    <string name="settings_connected_menu_idle_seconds">%1$d秒</string>
     <string name="settings_section_details">详情</string>
     <string name="settings_section_name">名称</string>
     <string name="settings_name_label">设备名称</string>

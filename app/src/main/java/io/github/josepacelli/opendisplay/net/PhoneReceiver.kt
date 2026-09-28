@@ -100,6 +100,10 @@ data class PerfStats(
 /** Screen corner the perf HUD renders in — user-editable in Settings (#63). */
 enum class PerfHudPosition { TOP_START, TOP_END, BOTTOM_START, BOTTOM_END }
 
+/** Screen edge [io.github.josepacelli.opendisplay.ui.ConnectedMenu] docks against — remembered
+ * across sessions once dragged (#151). */
+enum class ConnectedMenuEdge { START, END, TOP, BOTTOM }
+
 /**
  * The Android side of the OpenDisplay socket: listens on TCP :9000, advertises
  * itself over mDNS so the existing Mac app's WiFi picker finds it, speaks the
@@ -126,6 +130,10 @@ class PhoneReceiver(context: Context) {
         private const val KEY_IMMERSIVE_FULLSCREEN = "immersiveFullscreen"
         private const val KEY_PIP_ENABLED = "pipEnabled"
         private const val KEY_ZOOM_ENABLED = "zoomEnabled"
+        private const val KEY_CONNECTED_MENU_EDGE = "connectedMenuEdge"
+        private const val KEY_CONNECTED_MENU_ENABLED = "connectedMenuEnabled"
+        private const val KEY_CONNECTED_MENU_IDLE_SECONDS = "connectedMenuIdleSeconds"
+        const val DEFAULT_CONNECTED_MENU_IDLE_SECONDS = 5
         private const val DEFAULT_SERVICE_NAME = "OpenDisplay Android"
         private const val WATCHDOG_TIMEOUT_MS = 5_000L
         private const val PING_INTERVAL_MS = 2_000L
@@ -308,6 +316,23 @@ class PhoneReceiver(context: Context) {
      * in Settings. Defaults on; disabling it also resets any active zoom back to 100%. */
     private val _zoomEnabled = MutableStateFlow(loadZoomEnabled())
     val zoomEnabled: StateFlow<Boolean> = _zoomEnabled.asStateFlow()
+
+    /** Screen edge [io.github.josepacelli.opendisplay.ui.ConnectedMenu] docks against — remembered
+     * across sessions once dragged. Defaults to the top edge. */
+    private val _connectedMenuEdge = MutableStateFlow(loadConnectedMenuEdge())
+    val connectedMenuEdge: StateFlow<ConnectedMenuEdge> = _connectedMenuEdge.asStateFlow()
+
+    /** Whether [io.github.josepacelli.opendisplay.ui.ConnectedMenu] should show at all while
+     * connected — user-editable in Settings. Defaults on. */
+    private val _connectedMenuEnabled = MutableStateFlow(loadConnectedMenuEnabled())
+    val connectedMenuEnabled: StateFlow<Boolean> = _connectedMenuEnabled.asStateFlow()
+
+    /** Seconds of no touch activity on the video before
+     * [io.github.josepacelli.opendisplay.ui.ConnectedMenu] reappears — it hides the moment the
+     * user starts touching/dragging again. User-editable in Settings; defaults to
+     * [DEFAULT_CONNECTED_MENU_IDLE_SECONDS]. */
+    private val _connectedMenuIdleSeconds = MutableStateFlow(loadConnectedMenuIdleSeconds())
+    val connectedMenuIdleSeconds: StateFlow<Int> = _connectedMenuIdleSeconds.asStateFlow()
 
     /** Clock sync (NTP-style): offset = macClock - ourClock, from the ping/pong
      * sample with the lowest RTT. Mirrors PhoneReceiver.swift exactly. */
@@ -601,6 +626,42 @@ class PhoneReceiver(context: Context) {
             .apply()
     }
 
+    /** Move [io.github.josepacelli.opendisplay.ui.ConnectedMenu] to a different screen edge and
+     * persist the choice.
+     * @param edge the edge it should dock against from now on. */
+    fun setConnectedMenuEdge(edge: ConnectedMenuEdge) {
+        if (edge == _connectedMenuEdge.value) return
+        _connectedMenuEdge.value = edge
+        appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_CONNECTED_MENU_EDGE, edge.name)
+            .apply()
+    }
+
+    /** Turn [io.github.josepacelli.opendisplay.ui.ConnectedMenu] on/off entirely and persist the
+     * choice.
+     * @param enabled whether it should ever show while connected. */
+    fun setConnectedMenuEnabled(enabled: Boolean) {
+        if (enabled == _connectedMenuEnabled.value) return
+        _connectedMenuEnabled.value = enabled
+        appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_CONNECTED_MENU_ENABLED, enabled)
+            .apply()
+    }
+
+    /** Change how long the video must sit untouched before
+     * [io.github.josepacelli.opendisplay.ui.ConnectedMenu] reappears, and persist the choice.
+     * @param seconds the new idle delay in seconds. */
+    fun setConnectedMenuIdleSeconds(seconds: Int) {
+        if (seconds == _connectedMenuIdleSeconds.value) return
+        _connectedMenuIdleSeconds.value = seconds
+        appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_CONNECTED_MENU_IDLE_SECONDS, seconds)
+            .apply()
+    }
+
     /** Best-effort local IPv4 address for manually typing into the Mac app's
      * host/port override when mDNS discovery doesn't work (some routers and
      * corporate networks block multicast).
@@ -888,6 +949,7 @@ class PhoneReceiver(context: Context) {
         _connected.value = false
         unstableClearJob?.cancel()
         _connectionUnstable.value = false
+        _status.value = appContext.getString(R.string.status_listening, lastBoundPort)
         try {
             current.close()
         } catch (_: IOException) {
@@ -1294,6 +1356,26 @@ class PhoneReceiver(context: Context) {
     private fun loadZoomEnabled(): Boolean {
         val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return prefs.getBoolean(KEY_ZOOM_ENABLED, true)
+    }
+
+    /** @return the persisted [ConnectedMenuEdge], defaulting to [ConnectedMenuEdge.TOP]. */
+    private fun loadConnectedMenuEdge(): ConnectedMenuEdge {
+        val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val stored = prefs.getString(KEY_CONNECTED_MENU_EDGE, null) ?: return ConnectedMenuEdge.TOP
+        return runCatching { ConnectedMenuEdge.valueOf(stored) }.getOrDefault(ConnectedMenuEdge.TOP)
+    }
+
+    /** @return the persisted connected-menu master toggle, defaulting to `true`. */
+    private fun loadConnectedMenuEnabled(): Boolean {
+        val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_CONNECTED_MENU_ENABLED, true)
+    }
+
+    /** @return the persisted idle delay in seconds, defaulting to
+     * [DEFAULT_CONNECTED_MENU_IDLE_SECONDS]. */
+    private fun loadConnectedMenuIdleSeconds(): Int {
+        val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getInt(KEY_CONNECTED_MENU_IDLE_SECONDS, DEFAULT_CONNECTED_MENU_IDLE_SECONDS)
     }
 
     /** @return the current wall-clock time in milliseconds, as a [Double] (wire messages use floats). */

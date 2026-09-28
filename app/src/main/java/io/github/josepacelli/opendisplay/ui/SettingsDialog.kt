@@ -69,6 +69,9 @@ import java.util.Locale
 
 private val WIDE_LAYOUT_MIN_WIDTH = 600.dp
 
+/** Choices offered by [ConnectedMenuIdlePicker], in seconds. */
+private val CONNECTED_MENU_IDLE_OPTIONS = listOf(2, 5, 10, 15)
+
 /** Aspect ratio of drawable/banner.jpg (1600x639) — keeps the "Sobre" banner uncropped. */
 private const val BANNER_ASPECT_RATIO = 1600f / 639f
 
@@ -85,8 +88,10 @@ const val SETTINGS_TAB_CHANGELOG = 3
  * app info ("About" — version/license/links, merged back in from the standalone `AboutDialog`
  * split out in issue #48; tabs solve the "dialog got too long" problem that split was
  * addressing, so the separate dialog isn't needed anymore, issue #112), and a release history
- * ("Changelog", issue #142). Shown only while disconnected; once video is flowing this app has
- * no chrome at all.
+ * ("Changelog", issue #142). Opened from [IdleContent] while disconnected, or from
+ * [ConnectedMenu]'s Settings button once video is flowing (#151) — Disconnect, zoom and
+ * immersive fullscreen are also reachable from that same floating menu, so the fullscreen
+ * toggle exists in both places: here for setting it up front, there for flipping it mid-session.
  *
  * Rendered as an edge-to-edge [Dialog] rather than [androidx.compose.material3.AlertDialog]
  * so it can fill the screen while still getting back-press-to-dismiss for free.
@@ -109,6 +114,8 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
     val immersiveFullscreen by receiver.immersiveFullscreen.collectAsState()
     val pipEnabled by receiver.pipEnabled.collectAsState()
     val zoomEnabled by receiver.zoomEnabled.collectAsState()
+    val connectedMenuEnabled by receiver.connectedMenuEnabled.collectAsState()
+    val connectedMenuIdleSeconds by receiver.connectedMenuIdleSeconds.collectAsState()
     var draftName by remember { mutableStateOf(currentName) }
     var selectedTab by remember { mutableIntStateOf(initialTab) }
     val addressHint = remember { receiver.localAddressHint() }
@@ -188,6 +195,10 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                             onTogglePip = receiver::setPipEnabled,
                             zoomEnabled = zoomEnabled,
                             onToggleZoom = receiver::setZoomEnabled,
+                            connectedMenuEnabled = connectedMenuEnabled,
+                            onToggleConnectedMenu = receiver::setConnectedMenuEnabled,
+                            connectedMenuIdleSeconds = connectedMenuIdleSeconds,
+                            onConnectedMenuIdleSecondsChange = receiver::setConnectedMenuIdleSeconds,
                         )
                         SETTINGS_TAB_ABOUT -> AboutTab()
                         else -> ChangelogTab()
@@ -214,7 +225,11 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
  * @param pipEnabled current toggle state.
  * @param onTogglePip called with the new state when the switch is flipped.
  * @param zoomEnabled current toggle state.
- * @param onToggleZoom called with the new state when the switch is flipped. */
+ * @param onToggleZoom called with the new state when the switch is flipped.
+ * @param connectedMenuEnabled current toggle state.
+ * @param onToggleConnectedMenu called with the new state when the switch is flipped.
+ * @param connectedMenuIdleSeconds current idle delay, in seconds.
+ * @param onConnectedMenuIdleSecondsChange called with the new delay when a different option is picked. */
 @Composable
 private fun GeneralTab(
     draftName: String,
@@ -232,6 +247,10 @@ private fun GeneralTab(
     onTogglePip: (Boolean) -> Unit,
     zoomEnabled: Boolean,
     onToggleZoom: (Boolean) -> Unit,
+    connectedMenuEnabled: Boolean,
+    onToggleConnectedMenu: (Boolean) -> Unit,
+    connectedMenuIdleSeconds: Int,
+    onConnectedMenuIdleSecondsChange: (Int) -> Unit,
 ) {
     SettingsCategory(stringResource(R.string.settings_section_name)) {
         Row(
@@ -266,8 +285,26 @@ private fun GeneralTab(
         ToggleListItem(stringResource(R.string.settings_pip_show), pipEnabled, onTogglePip)
     }
 
-    SettingsCategory(stringResource(R.string.settings_section_video), showDivider = false) {
+    SettingsCategory(stringResource(R.string.settings_section_video)) {
         ToggleListItem(stringResource(R.string.settings_zoom_pinch), zoomEnabled, onToggleZoom)
+    }
+
+    SettingsCategory(stringResource(R.string.settings_section_connected_menu), showDivider = false) {
+        ToggleListItem(stringResource(R.string.settings_connected_menu_show), connectedMenuEnabled, onToggleConnectedMenu)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.settings_connected_menu_idle_label),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        ConnectedMenuIdlePicker(
+            connectedMenuIdleSeconds,
+            onConnectedMenuIdleSecondsChange,
+            wide,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -481,6 +518,35 @@ private fun PerfHudPositionPicker(
             ) {
                 for ((position, label) in row) {
                     PositionChip(label, selected == position) { onSelect(position) }
+                }
+            }
+        }
+    }
+}
+
+/** Fixed set of idle-delay options for [ConnectedMenu] — how long the video must sit untouched
+ * before it reappears (issue #151), reusing [PositionChip]'s row-of-[FilterChip]s shape.
+ * @param selected the delay currently in effect, in seconds.
+ * @param onSelect called with the newly picked delay.
+ * @param wide lay all options out in a single row instead of two.
+ * @param modifier applied to the picker's outer column. */
+@Composable
+private fun ConnectedMenuIdlePicker(
+    selected: Int,
+    onSelect: (Int) -> Unit,
+    wide: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val options = CONNECTED_MENU_IDLE_OPTIONS.map { it to stringResource(R.string.settings_connected_menu_idle_seconds, it) }
+    val rows = if (wide) listOf(options) else options.chunked(2)
+    Column(modifier = modifier.fillMaxWidth()) {
+        rows.forEachIndexed { index, row ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                modifier = (if (index == 0) Modifier else Modifier.padding(top = 6.dp)).fillMaxWidth(),
+            ) {
+                for ((seconds, label) in row) {
+                    PositionChip(label, selected == seconds) { onSelect(seconds) }
                 }
             }
         }
