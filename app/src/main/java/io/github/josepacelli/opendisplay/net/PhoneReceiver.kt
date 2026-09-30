@@ -142,14 +142,17 @@ class PhoneReceiver(context: Context) {
         private const val UNSTABLE_CLEAR_DELAY_MS = 3_000L
         private const val RTT_UNSTABLE_MS = 250.0
         private const val E2E_P95_UNSTABLE_MS = 500.0
-        private val ALLOWED_STORE_HOSTS = setOf("github.com", "play.google.com")
+        private const val GITHUB_STORE_PATH = "/josepacelli/opendisplay-android/"
+        private const val PLAY_STORE_PATH = "/store/apps/details"
+        private const val PLAY_STORE_ID_QUERY = "id=io.github.josepacelli.opendisplay"
 
         /** The `store` field on `updateRequired` comes from an unauthenticated peer (the Mac
          * side of this socket has no auth — see SECURITY.md/SCR-001) — validated here, at the
          * wire boundary, so no future UI code has to remember to sanitize it before turning it
          * into a clickable link/intent.
          * @param raw the peer-supplied `store` value, or `null`/blank.
-         * @return [raw] unchanged if it's an `https` URL on [ALLOWED_STORE_HOSTS], else `null`. */
+         * @return [raw] unchanged if it's an `https` URL to this app's own GitHub repo or Play
+         * Store listing, else `null`. */
         internal fun sanitizedStoreUrl(raw: String?): String? {
             if (raw.isNullOrBlank()) return null
             val uri = try {
@@ -158,8 +161,13 @@ class PhoneReceiver(context: Context) {
                 return null
             }
             if (uri.scheme != "https") return null
-            if (uri.host !in ALLOWED_STORE_HOSTS) return null
-            return raw
+            val ownPage = when (uri.host) {
+                "github.com" -> uri.normalize().path?.startsWith(GITHUB_STORE_PATH) == true
+                "play.google.com" -> uri.path == PLAY_STORE_PATH &&
+                    uri.rawQuery?.split('&')?.contains(PLAY_STORE_ID_QUERY) == true
+                else -> false
+            }
+            return if (ownPage) raw else null
         }
 
         /** Returns a version of [input] safe for logging: newlines replaced with \\n and
