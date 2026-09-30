@@ -26,6 +26,27 @@ class PhoneReceiverStoreUrlTest {
     }
 
     @Test
+    fun `rejects github URLs outside this repo`() {
+        assertNull(PhoneReceiver.sanitizedStoreUrl("https://github.com/attacker/repo/releases/x.apk"))
+        assertNull(PhoneReceiver.sanitizedStoreUrl("https://github.com/josepacelli/opendisplay-android-fake/x"))
+        assertNull(
+            PhoneReceiver.sanitizedStoreUrl("https://github.com/josepacelli/opendisplay-android/../../attacker/repo"),
+        )
+    }
+
+    @Test
+    fun `accepts this app's Play Store listing only`() {
+        val own = "https://play.google.com/store/apps/details?id=io.github.josepacelli.opendisplay"
+        assertEquals(own, PhoneReceiver.sanitizedStoreUrl(own))
+        assertNull(
+            PhoneReceiver.sanitizedStoreUrl(
+                "https://play.google.com/store/apps/details?id=io.github.josepacelli.opendisplay.fake",
+            ),
+        )
+        assertNull(PhoneReceiver.sanitizedStoreUrl("https://play.google.com/store/apps/details?id=com.other"))
+    }
+
+    @Test
     fun `rejects null and blank input`() {
         assertNull(PhoneReceiver.sanitizedStoreUrl(null))
         assertNull(PhoneReceiver.sanitizedStoreUrl(""))
