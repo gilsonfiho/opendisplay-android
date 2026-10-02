@@ -145,6 +145,7 @@ class PhoneReceiver(context: Context) {
         private const val GITHUB_STORE_PATH = "/josepacelli/opendisplay-android/"
         private const val PLAY_STORE_PATH = "/store/apps/details"
         private const val PLAY_STORE_ID_QUERY = "id=io.github.josepacelli.opendisplay"
+        private const val MAX_UPDATE_MESSAGE_LENGTH = 300
 
         /** The `store` field on `updateRequired` comes from an unauthenticated peer (the Mac
          * side of this socket has no auth — see SECURITY.md/SCR-001) — validated here, at the
@@ -168,6 +169,19 @@ class PhoneReceiver(context: Context) {
                 else -> false
             }
             return if (ownPage) raw else null
+        }
+
+        /** The `message` field on `updateRequired` comes from an unauthenticated peer (see
+         * SECURITY.md/SCR-001) — truncated here, at the wire boundary, so a hostile peer can't
+         * push an arbitrarily large or misleading message into the UI.
+         * @param raw the peer-supplied `message` value.
+         * @return [raw] unchanged if it's within [MAX_UPDATE_MESSAGE_LENGTH], else truncated. */
+        internal fun sanitizedUpdateMessage(raw: String): String {
+            return if (raw.length > MAX_UPDATE_MESSAGE_LENGTH) {
+                raw.substring(0, MAX_UPDATE_MESSAGE_LENGTH)
+            } else {
+                raw
+            }
         }
 
         /** Returns a version of [input] safe for logging: newlines replaced with \\n and
@@ -1102,9 +1116,11 @@ class PhoneReceiver(context: Context) {
             }
 
             WireMessage.UPDATE_REQUIRED -> {
-                val message = obj.optString(
-                    "message",
-                    "Atualize o OpenDisplay para continuar usando este segundo display.",
+                val message = sanitizedUpdateMessage(
+                    obj.optString(
+                        "message",
+                        "Atualize o OpenDisplay para continuar usando este segundo display.",
+                    ),
                 )
                 val store = sanitizedStoreUrl(if (obj.has("store")) obj.optString("store") else null)
                 _peerSignal.value = PeerSignal.UpdateAndroid(message, store)
