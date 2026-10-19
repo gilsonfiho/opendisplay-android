@@ -70,10 +70,11 @@
     <string name="about_mac_app">App de Mac</string>
     <string name="about_close">Cerrar</string>
 
-    <string-array name="changelog_v0_0_51">
-        <item>Un segundo ordenador ya no puede tomar el control de una sesión activa: las conexiones nuevas de otro peer se rechazan mientras haya una conectada.</item>
+    <string-array name="changelog_v0_0_52">
+        <item>Versión para las pruebas de Google Play. Sin cambios en el comportamiento de la app.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>Un segundo ordenador ya no puede tomar el control de una sesión activa: las conexiones nuevas de otro peer se rechazan mientras haya una conectada.</item>
         <item>Nuevo menú flotante mientras hay conexión, estilo Teams. Mover el ratón en el Mac también lo oculta.</item>
         <item>El enlace de actualización enviado por el Mac ahora solo se acepta si apunta a la ficha de la propia app en la tienda.</item>
         <item>Los mensajes de \"actualización necesaria\" demasiado largos enviados por el Mac ahora se truncan.</item>
