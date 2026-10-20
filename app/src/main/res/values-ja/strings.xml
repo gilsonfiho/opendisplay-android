@@ -70,10 +70,11 @@
     <string name="about_mac_app">Macアプリ</string>
     <string name="about_close">閉じる</string>
 
-    <string-array name="changelog_v0_0_53">
-        <item>カーソルは、接続中のMacの動きだけに従うようになりました。ネットワーク上の他の機器から送られたカーソル更新は無視されます。</item>
+    <string-array name="changelog_v0_0_54">
+        <item>更新履歴は、実装の細かい話ではなく、何が変わったのかをやさしい言葉で書くようにしました。</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>カーソルは、接続中のMacの動きだけに従うようになりました。ネットワーク上の他の機器から送られたカーソル更新は無視されます。</item>
         <item>Google Play 向けのテストビルドです。アプリの動作は変わりません。</item>
         <item>すでに動いているセッションを、別のコンピュータが乗っ取れなくなりました。Macが接続中のときは、別のMacからの接続は断ります。</item>
         <item>接続中に出るフローティングメニューを追加しました（Teams風）。Macでマウスを動かすと隠れます。</item>

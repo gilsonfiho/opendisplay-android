@@ -70,10 +70,11 @@
     <string name="about_mac_app">Mac 应用</string>
     <string name="about_close">关闭</string>
 
-    <string-array name="changelog_v0_0_53">
-        <item>光标现在只跟随你所连接的 Mac。网络中其他设备发来的光标更新会被忽略。</item>
+    <string-array name="changelog_v0_0_54">
+        <item>更新日志现在用通俗的话说明改了什么，而不是怎么实现的。</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>光标现在只跟随你所连接的 Mac。网络中其他设备发来的光标更新会被忽略。</item>
         <item>用于 Google Play 测试的版本，应用的使用方式没有变化。</item>
         <item>已在运行的会话不会再被另一台电脑抢走。只要有一台 Mac 已连接，其他 Mac 的连接请求都会被拒绝。</item>
         <item>连接时新增悬浮菜单（Teams 风格）。在 Mac 上移动鼠标时它会自动隐藏。</item>

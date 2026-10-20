@@ -70,10 +70,11 @@
     <string name="about_mac_app">Mac app</string>
     <string name="about_close">Close</string>
 
-    <string-array name="changelog_v0_0_53">
-        <item>The cursor now only follows the Mac you\'re connected to. Cursor updates sent by any other device on your network are ignored.</item>
+    <string-array name="changelog_v0_0_54">
+        <item>The changelog now says what changed in plain language, instead of how it was done.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>The cursor now only follows the Mac you\'re connected to. Cursor updates sent by any other device on your network are ignored.</item>
         <item>Test build for Google Play. Nothing changes in how the app works.</item>
         <item>Another computer can\'t hijack a session that\'s already running anymore. If a Mac is connected, connection attempts from a different one are turned down.</item>
         <item>New floating menu while you\'re connected, Teams-style. It also hides when you move the mouse on the Mac.</item>

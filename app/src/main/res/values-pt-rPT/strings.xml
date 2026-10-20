@@ -70,10 +70,11 @@
     <string name="about_mac_app">App do Mac</string>
     <string name="about_close">Fechar</string>
 
-    <string-array name="changelog_v0_0_53">
-        <item>O cursor passa a seguir apenas o Mac ao qual está ligado. As atualizações de cursor enviadas por qualquer outro dispositivo da rede são ignoradas.</item>
+    <string-array name="changelog_v0_0_54">
+        <item>O histórico de novidades passa a explicar o que mudou em linguagem simples, e não como foi feito.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>O cursor passa a seguir apenas o Mac ao qual está ligado. As atualizações de cursor enviadas por qualquer outro dispositivo da rede são ignoradas.</item>
         <item>Versão de teste para o Google Play. Nada muda no funcionamento da app.</item>
         <item>Outro computador já não consegue tomar uma sessão que está a decorrer. Se um Mac estiver ligado, as tentativas de ligação de outro são recusadas.</item>
         <item>Novo menu flutuante enquanto está ligado, ao estilo Teams. Desaparece quando mexe o rato no Mac.</item>
