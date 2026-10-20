@@ -3,66 +3,67 @@ name: run
 description: Build, install and run the OpenDisplay Android client on an emulator or device, and tail its logs.
 ---
 
-# Rodar o OpenDisplay Android
+# Running OpenDisplay Android
 
-Este projeto é um app Android puro (Kotlin + Gradle + Compose). Não tem servidor, não tem modo
-browser-driven — é "instala no device e conecta no Mac de verdade".
+This project is a pure Android app (Kotlin + Gradle + Compose). There is no server and no
+browser-driven mode — it's "install on the device and connect to a real Mac".
 
-## Pré-requisitos
+## Prerequisites
 
-1. Android SDK instalado, com `ANDROID_HOME` setado ou `local.properties` na raiz apontando
-   `sdk.dir=/caminho/para/Android/sdk`. Sem isso o Gradle falha na etapa `:app:compileDebugKotlin`
-   por falta de `android.jar`.
-2. Um device físico ou emulador rodando (`adb devices` deve listar pelo menos um).
-3. Opcional, mas recomendado para teste real: o app Mac do
-   [opendisplay](https://github.com/peetzweg/opendisplay) rodando na mesma rede WiFi (ver o README do repo).
+1. Android SDK installed, with `ANDROID_HOME` set or a `local.properties` at the root pointing
+   `sdk.dir=/path/to/Android/sdk`. Without it Gradle fails at the `:app:compileDebugKotlin` step
+   for lack of `android.jar`.
+2. A physical device or a running emulator (`adb devices` must list at least one).
+3. Optional, but recommended for real testing: the
+   [opendisplay](https://github.com/peetzweg/opendisplay) Mac app running on the same WiFi
+   network (see the repo's README).
 
-## Build + instalar
+## Build + install
 
 ```sh
 cd <repo root>
-./gradlew assembleDebug        # só compila
-./gradlew installDebug         # compila + instala no device/emulador conectado
-./gradlew uninstallDebug       # remove do device
+./gradlew assembleDebug        # compile only
+./gradlew installDebug         # compile + install on the connected device/emulator
+./gradlew uninstallDebug       # remove from the device
 ```
 
-Se `./gradlew` não existir ainda (wrapper não gerado), rodar primeiro:
+If `./gradlew` doesn't exist yet (wrapper not generated), run this first:
 ```sh
 gradle wrapper --gradle-version 9.4.1 --distribution-type bin
 ```
 
-## Abrir e ver rodando
+## Open and see it running
 
 ```sh
-adb shell am start -n com.peetzweg.opensidecar.android/.MainActivity
+adb shell am start -n io.github.josepacelli.opendisplay/.MainActivity
 ```
 
 ## Logs
 
-Toda a camada de rede/protocolo loga com a tag `OpenDisplay` (ver `Log.kt` — mesma convenção do
-`Log.swift` do projeto original, um wrapper fino sobre o logger nativo). Para filtrar:
+The whole network/protocol layer logs with the `OpenDisplay` tag (see `Log.kt` — same convention
+as the original project's `Log.swift`, a thin wrapper over the native logger). To filter:
 
 ```sh
 adb logcat -s OpenDisplay:*
 ```
 
-Erros de decodificação de vídeo (`MediaCodec`) aparecem com a tag `OpenDisplay` também — não usar
-`adb logcat *:E` como primeira tentativa, esconde os `Log.info` que geralmente explicam o estado
-da conexão antes do erro.
+Video decoding errors (`MediaCodec`) also show up under the `OpenDisplay` tag — don't use
+`adb logcat *:E` as a first attempt, it hides the `Log.info` lines that usually explain the
+connection state before the error.
 
-## Testar o pipeline sem o Mac
+## Testing the pipeline without the Mac
 
-Não existe "modo mock" no app — ele só faz sentido conectado a um sender real. Para testar o
-handshake e a UI sem precisar montar o Mac todo, é possível escrever um script Python/Node
-descartável que abre um socket TCP pro device (via `adb reverse` ou IP direto), manda um `hello`
-fake e alguns frames Annex-B de um vídeo de teste. Preferir isso a modificar o app com atalhos de
-debug permanentes.
+There is no "mock mode" in the app — it only makes sense connected to a real sender. To test the
+handshake and the UI without setting up the whole Mac, you can write a throwaway Python/Node
+script that opens a TCP socket to the device (via `adb reverse` or a direct IP), sends a fake
+`hello` and a few Annex-B frames from a test video. Prefer that over modifying the app with
+permanent debug shortcuts.
 
-## Erros comuns
+## Common errors
 
-| Sintoma | Causa provável |
+| Symptom | Likely cause |
 |---|---|
-| `SDK location not found` | falta `local.properties` / `ANDROID_HOME` |
-| App abre mas fica em "Listening on :9000" pra sempre | Mac não está na mesma rede, ou não descobriu o serviço mDNS (checar `NsdManager` registrou sem erro no logcat) |
-| Tela preta, "Connected" mas sem vídeo | keyframe SPS/PPS não chegou ainda, ou `MediaCodec` falhou ao configurar — checar logcat por `MediaCodec` |
-| Touch não faz nada no Mac | Accessibility permission não concedida no lado Mac — isso é do app Mac, não do Android |
+| `SDK location not found` | missing `local.properties` / `ANDROID_HOME` |
+| App opens but stays on "Listening on :9000" forever | the Mac isn't on the same network, or didn't discover the mDNS service (check in logcat that `NsdManager` registered without error) |
+| Black screen, "Connected" but no video | the SPS/PPS keyframe hasn't arrived yet, or `MediaCodec` failed to configure — check logcat for `MediaCodec` |
+| Touch does nothing on the Mac | Accessibility permission not granted on the Mac side — that's the Mac app's matter, not the Android's |

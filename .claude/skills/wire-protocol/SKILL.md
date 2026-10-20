@@ -3,57 +3,57 @@ name: wire-protocol
 description: Reference for the OpenDisplay wire protocol (framing, handshake, message types) that this Android client must speak to interoperate with the existing Mac app, ported from Shared/Protocol.swift, iOS/PhoneReceiver.swift and Mac/MacSender.swift.
 ---
 
-# Protocolo OpenDisplay (referência para o cliente Android)
+# OpenDisplay protocol (reference for the Android client)
 
-Fonte: repositório upstream `peetzweg/opendisplay` (Swift), arquivos `Shared/Protocol.swift`,
-`iOS/PhoneReceiver.swift`, `Mac/MacSender.swift`, `Mac/InputInjector.swift`. **O Mac não muda** —
-esta skill existe pra qualquer trabalho na camada de rede/handshake do Android conferir contra o
-comportamento real do peer, em vez de reinventar por memória.
+Source: the upstream repo `peetzweg/opendisplay` (Swift), files `Shared/Protocol.swift`,
+`iOS/PhoneReceiver.swift`, `Mac/MacSender.swift`, `Mac/InputInjector.swift`. **The Mac does not
+change** — this skill exists so any work on the Android network/handshake layer can check against
+the peer's real behavior instead of reinventing it from memory.
 
-## Regra: mudança nunca quebra o protocolo (vale também pra segurança)
+## Rule: a change never breaks the protocol (security included)
 
-Fonte da verdade é o `PROTOCOL.md` do upstream (`peetzweg/opendisplay`), não só esta skill. O Mac
-não muda; qualquer divergência vira incompatibilidade silenciosa. Antes de alterar rede,
-handshake, framing ou ciclo de sessão:
+The source of truth is upstream's `PROTOCOL.md` (`peetzweg/opendisplay`), not just this skill.
+The Mac doesn't change; any divergence becomes a silent incompatibility. Before changing
+networking, handshake, framing or the session lifecycle:
 
-1. Ler a seção correspondente do `PROTOCOL.md` e checar os MUST/MUST NOT.
-2. Hardening (rejeitar conexão, truncar/validar campo, limitar tamanho, descartar mensagem) não
-   pode derrubar sessão legítima nem mudar o que vai no fio. Em dúvida, degradar em vez de
-   rejeitar.
-3. Normativos que mais batem com ajuste de segurança: tipo/campo desconhecido é ignorado (§6);
-   payload de controle não parseável é ignorado, nunca fatal; conexão nova substitui a ativa (§1);
-   silêncio > 5 s é morte e ping a cada 2 s (§8.2); `hello` sempre primeiro; demux JSON/vídeo
-   (§4) intacto.
-4. Se a divergência for deliberada, documentar em `RATIONALE.md`, testar contra o Mac real e
-   avisar o dono antes do merge. Exemplo: #165 diverge do §1 (issue #168).
+1. Read the matching `PROTOCOL.md` section and check its MUST/MUST NOT rules.
+2. Hardening (rejecting a connection, truncating/validating a field, capping a size, dropping a
+   message) must not drop a legitimate session or change what goes on the wire. When in doubt,
+   degrade instead of rejecting.
+3. Normative rules that most often collide with security changes: an unknown type/field is
+   ignored (§6); an unparseable control payload is ignored, never fatal; a new connection
+   replaces the active one (§1); silence > 5 s is death and ping every 2 s (§8.2); `hello`
+   always comes first; the JSON/video demux (§4) stays intact.
+4. If the divergence is deliberate, document it in `RATIONALE.md`, test against the real Mac and
+   tell the owner before merging. Example: #165 diverges from §1 (issue #168).
 
-## Papéis
+## Roles
 
-- O **Android (este projeto) escuta** um `ServerSocket` na porta **9000**.
-- O **Mac conecta** — dial ativo, tanto por WiFi (resolvendo o serviço mDNS) quanto por USB
-  (usbmuxd, que não existe no Android — ver a seção de USB no README).
-- Depois de conectado, o **mesmo socket TCP carrega vídeo E controle**, nas duas direções.
+- The **Android (this project) listens** on a `ServerSocket` at port **9000**.
+- The **Mac connects** — an active dial, both over WiFi (resolving the mDNS service) and over USB
+  (usbmuxd, which doesn't exist on Android — see the USB section in the README).
+- Once connected, the **same TCP socket carries video AND control**, in both directions.
 
-## Descoberta WiFi
+## WiFi discovery
 
-Anunciar via `NsdManager`:
+Announce via `NsdManager`:
 - `serviceType = "_opensidecar._tcp"`
-- `serviceName` = nome editável pelo usuário (default algo como "OpenDisplay"), análogo ao
-  `serviceName` do iOS.
-- TXT record com `id` (install id estável, UUID persistido) e `pv` (versão do protocolo, string).
+- `serviceName` = user-editable name (default something like "OpenDisplay"), analogous to iOS's
+  `serviceName`.
+- TXT record with `id` (stable install id, persisted UUID) and `pv` (protocol version, string).
 
-## Framing (as duas direções, sempre)
+## Framing (both directions, always)
 
 ```
-[4 bytes tamanho, big-endian, UInt32][payload de N bytes]
+[4 bytes length, big-endian, UInt32][N bytes of payload]
 ```
 
-Sem exceção — controle e vídeo usam o mesmo framing. Ler sempre: 4 bytes de tamanho, depois
-exatamente esse tanto de payload, e decidir o que é o payload por conteúdo (ver heurística abaixo).
+No exception — control and video use the same framing. Always read: 4 bytes of length, then
+exactly that much payload, and decide what the payload is by its content (see the heuristic below).
 
-## Heurística: payload é JSON de controle ou vídeo Annex-B?
+## Heuristic: is the payload control JSON or Annex-B video?
 
-Aplicar nessa ordem exata (do `PhoneReceiver.swift`, função `handleAnnexB`):
+Apply in this exact order (from `PhoneReceiver.swift`, function `handleAnnexB`):
 
 ```kotlin
 val isControlJson = payload.size < 32_768 &&
@@ -61,83 +61,84 @@ val isControlJson = payload.size < 32_768 &&
     payload.none { it == 0.toByte() }
 ```
 
-Motivo do `none { it == 0 }`: frames de vídeo também começam com um prefixo de telemetria JSON
-(`{"cap":...,"snd":...}`) antes do primeiro NAL — mas sempre contêm bytes `0x00` (start codes
-`00 00 00 01`), o que os desambigua de um JSON puro (que nunca tem NUL, mesmo com PNG em base64).
+Why `none { it == 0 }`: video frames also start with a JSON telemetry prefix
+(`{"cap":...,"snd":...}`) before the first NAL — but they always contain `0x00` bytes (start codes
+`00 00 00 01`), which tells them apart from pure JSON (which never has NUL, even with base64 PNG).
 
-## Vídeo (Mac → Android)
+## Video (Mac → Android)
 
-- H.264 Annex-B, NALUs delimitados por start code de 4 bytes `00 00 00 01` (o sender só emite esse
-  formato, nunca o de 3 bytes).
-- Cada payload de vídeo pode ter um **prefixo de telemetria** antes do primeiro start code:
-  `{"cap":<capturaMs>,"snd":<envioMs>}` — usar pra calcular latência ponta-a-ponta (precisa do
-  offset de relógio via ping/pong, ver abaixo).
-- NALU tipo 7 = SPS, tipo 8 = PPS, tipo 6 = SEI (ignorar), qualquer outro = slice de vídeo (VCL).
-- Keyframes vêm com SPS+PPS embutidos antes do slice.
-- Ao juntar SPS+PPS novos (ou na primeira vez), montar o formato/`MediaFormat` H.264 e (re)criar o
-  decoder — uma mudança de SPS/PPS in-band significa que o Mac mudou de resolução (ex.: rotação do
-  Android, que reenvia `hello` com dimensões trocadas e força o Mac a reconstruir o display
-  virtual).
-- Todos os NALUs VCL de um mesmo payload (um "frame de wire") formam UM único frame decodificado —
-  não decodificar slice por slice.
+- H.264 Annex-B, NALUs delimited by a 4-byte start code `00 00 00 01` (the sender only emits this
+  format, never the 3-byte one).
+- Each video payload may have a **telemetry prefix** before the first start code:
+  `{"cap":<captureMs>,"snd":<sendMs>}` — use it to compute end-to-end latency (needs the clock
+  offset via ping/pong, see below).
+- NALU type 7 = SPS, type 8 = PPS, type 6 = SEI (ignore), anything else = video slice (VCL).
+- Keyframes come with SPS+PPS embedded before the slice.
+- When new SPS+PPS are assembled (or the first time), build the H.264 format/`MediaFormat` and
+  (re)create the decoder — an in-band SPS/PPS change means the Mac changed resolution (e.g. the
+  Android rotated, which resends `hello` with swapped dimensions and forces the Mac to rebuild the
+  virtual display).
+- All VCL NALUs of one payload (one "wire frame") form ONE decoded frame — don't decode slice by
+  slice.
 
-## Controle — mensagens Android → Mac
+## Control — Android → Mac messages
 
-Todas como JSON, um objeto por payload, campo `type` sempre presente:
+All as JSON, one object per payload, `type` field always present:
 
-| type | campos | quando |
+| type | fields | when |
 |---|---|---|
-| `hello` | `pixelsWide`, `pixelsHigh`, `scale`, `device` (string livre, ex. `"Android"`), `id` (install id, UUID persistido), `pv` (versão do protocolo) | ao conectar, e de novo sempre que a orientação mudar (dimensões trocam) |
-| `ping` | `t` (timestamp local em ms, `System.currentTimeMillis()`) | a cada 2s enquanto conectado |
-| `touch` | `phase` (`"began"` \| `"moved"` \| `"ended"` \| `"cancelled"`), `x`, `y` (normalizados 0–1, origem top-left, espaço do vídeo), `t` (opcional: timestamp ajustado pelo offset de relógio, pra medir latência de input) | eventos de toque |
-| `scroll` | `dx`, `dy` (pixels de vídeo, sinal de "natural scrolling") | gesto de 2 dedos |
-| `kf` | — | quando o decoder perde sincronia (ex. entrou no meio de um GOP) e precisa de keyframe novo |
-| `sleeping` | — | tela bloqueou — Mac derruba o display virtual e arma reconexão pro wake |
-| `closing` | — | app sendo fechado de propósito — Mac encerra a sessão sem esperar wake |
+| `hello` | `pixelsWide`, `pixelsHigh`, `scale`, `device` (free string, e.g. `"Android"`), `id` (install id, persisted UUID), `pv` (protocol version) | on connect, and again whenever the orientation changes (dimensions swap) |
+| `ping` | `t` (local timestamp in ms, `System.currentTimeMillis()`) | every 2s while connected |
+| `touch` | `phase` (`"began"` \| `"moved"` \| `"ended"` \| `"cancelled"`), `x`, `y` (normalized 0–1, top-left origin, video space), `t` (optional: timestamp adjusted by the clock offset, to measure input latency) | touch events |
+| `scroll` | `dx`, `dy` (video pixels, "natural scrolling" sign) | 2-finger gesture |
+| `kf` | — | when the decoder loses sync (e.g. joined mid-GOP) and needs a new keyframe |
+| `sleeping` | — | screen locked — the Mac tears down the virtual display and arms a reconnect for wake |
+| `closing` | — | app being closed on purpose — the Mac ends the session without waiting for wake |
 
-## Controle — mensagens Mac → Android
+## Control — Mac → Android messages
 
-| type | campos | o que fazer |
+| type | fields | what to do |
 |---|---|---|
-| `welcome` | `pv`, `min` | identifica a versão do Mac; se `pv < WireProtocol.minSupportedPeer`, avisar o usuário que o Mac está desatualizado |
-| `updateRequired` | `target`, `store` (URL), `message` | Mac recusa a sessão até o Android atualizar — mostrar `message` e um link pra `store` |
-| `pong` | `t` (echo do `ping`), `mt` (clock do Mac) | usar pra estimar offset de relógio (ver abaixo) |
-| `cursor` | `x`, `y` (normalizados, ou ausentes quando `v=0`), `v` (1=visível, 0=escondido) | desenhar/esconder um cursor local sobreposto ao vídeo — não fica "queimado" no stream, é mais rápido assim |
-| `cursorImg` | `png` (base64), `nw`, `nh` (tamanho normalizado contra o display), `ax`, `ay` (hotspot normalizado) | atualizar o sprite do cursor quando o formato muda (seta ↔ texto ↔ resize) |
-| `stats` | (diagnóstico, enviado pelo Mac a cada ~5s, não requer ação) | opcional: logar |
+| `welcome` | `pv`, `min` | identifies the Mac's version; if `pv < WireProtocol.minSupportedPeer`, warn the user that the Mac is out of date |
+| `updateRequired` | `target`, `store` (URL), `message` | the Mac refuses the session until the Android updates — show `message` and a link to `store` |
+| `pong` | `t` (echo of `ping`), `mt` (Mac clock) | use to estimate the clock offset (see below) |
+| `cursor` | `x`, `y` (normalized, or absent when `v=0`), `v` (1=visible, 0=hidden) | draw/hide a local cursor overlaid on the video — it isn't "burned into" the stream, which is faster |
+| `cursorImg` | `png` (base64), `nw`, `nh` (size normalized against the display), `ax`, `ay` (normalized hotspot) | update the cursor sprite when its shape changes (arrow ↔ text ↔ resize) |
+| `stats` | (diagnostics, sent by the Mac every ~5s, requires no action) | optional: log it |
 
-## Handshake de versão
+## Version handshake
 
 ```kotlin
 object WireProtocol {
-    const val VERSION = 2
+    const val VERSION = 3
     const val MIN_SUPPORTED_PEER = 1
-    const val ASSUMED_WHEN_ABSENT = 1   // peer sem campo pv = versão 1
+    const val ASSUMED_WHEN_ABSENT = 1   // a peer without a pv field = version 1
 }
 ```
 
-Mandar `pv` em todo `hello`. Um Mac que não manda `pv` em `welcome` (instalação muito antiga) deve
-ser tratado como protocolo 1 — nunca bloquear a conexão nesse caso, só o gate explícito de
-`updateRequired`/`pv < minSupportedPeer` decide isso.
+Send `pv` in every `hello`. A Mac that doesn't send `pv` in `welcome` (a very old install) must
+be treated as protocol 1 — never block the connection in that case; only the explicit
+`updateRequired`/`pv < minSupportedPeer` gate decides that.
 
-## Sincronia de relógio (NTP-style, pro HUD de latência)
+## Clock sync (NTP-style, for the latency HUD)
 
-Do `PhoneReceiver.swift`: manter as últimas ~15 amostras de `(rtt, offset)` de cada `pong`
-recebido, `rtt = t2 - t1` (t1 = timestamp que mandamos no `ping`, t2 = agora), `offset = mt - (t1+t2)/2`.
-O offset usado é o da amostra de **menor RTT** (menos assimétrica). Latência ponta-a-ponta de um
-frame = `(agora + offset) - capturaMs` (do prefixo de telemetria do frame de vídeo).
+From `PhoneReceiver.swift`: keep the last ~15 `(rtt, offset)` samples from each `pong` received,
+`rtt = t2 - t1` (t1 = timestamp we sent in the `ping`, t2 = now), `offset = mt - (t1+t2)/2`.
+The offset used is that of the **lowest-RTT** sample (the least asymmetric). A frame's end-to-end
+latency = `(now + offset) - captureMs` (from the video frame's telemetry prefix).
 
-Isso é só pro HUD de performance — não bloqueia o MVP funcional (vídeo + touch funcionam sem
-isso), mas é barato de implementar e dá paridade com o app iOS.
+This is only for the performance HUD — it doesn't block the functional MVP (video + touch work
+without it), but it's cheap to implement and gives parity with the iOS app.
 
-## Injeção no lado Mac (pra entender o que o touch/scroll fazem do outro lado)
+## Injection on the Mac side (to understand what touch/scroll do over there)
 
-`Mac/InputInjector.swift`: `began` → mouse down, `moved` → drag (ou move se não tiver down),
-`ended`/`cancelled` → mouse up. `scroll` vira `CGEvent` de scroll wheel em pixels. Não precisa
-replicar nada disso no Android — só precisa mandar as mensagens certas.
+`Mac/InputInjector.swift`: `began` → mouse down, `moved` → drag (or move if no down), `ended`/
+`cancelled` → mouse up. `scroll` becomes a scroll-wheel `CGEvent` in pixels. None of this needs
+replicating on the Android — it only has to send the right messages.
 
-**Mirror é view-only (upstream, não bug do client):** o `MacSender` só cria o `InputInjector` no
-caminho de Extend, sempre preso ao display virtual (`inputInjector = InputInjector(displayID:
-vd.displayID)`); no modo Mirror ele nunca é criado, então `touch`/`scroll` continuam sendo
-mandados pelo Android mas caem em `inputInjector?...` nil e são ignorados em silêncio. Qualquer
-pedido de "touch no Mirror" é feature request pro `peetzweg/opendisplay`, não algo corrigível aqui.
+**Mirror is view-only (upstream, not a client bug):** `MacSender` only creates the
+`InputInjector` on the Extend path, always tied to the virtual display (`inputInjector =
+InputInjector(displayID: vd.displayID)`); in Mirror mode it's never created, so `touch`/`scroll`
+are still sent by the Android but hit a nil `inputInjector?...` and are silently ignored. Any
+request for "touch in Mirror" is a feature request for `peetzweg/opendisplay`, not something
+fixable here.

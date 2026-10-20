@@ -1,44 +1,44 @@
 ---
 name: simplicidade
-description: Regra permanente de estilo de código deste projeto — sempre gerar a solução mais simples possível antes de escrever qualquer código novo ou editar código existente. Use sempre, em toda tarefa de desenvolvimento neste repositório, não só quando pedido explicitamente.
+description: Permanent code-style rule for this project — always produce the simplest possible solution before writing any new code or editing existing code. Use always, on every development task in this repository, not only when explicitly asked.
 ---
 
-# Simplicidade acima de tudo
+# Simplicity above all
 
-Regra do projeto, sempre ativa — não é uma revisão opcional, é como o código deve nascer.
+A project rule, always on — not an optional review, it's how the code should be born.
 
-## Antes de escrever qualquer código
+## Before writing any code
 
-Pare e pergunte: **existe uma solução mais simples que resolve a mesma necessidade?** Só siga
-para a alternativa mais complexa se a resposta for claramente não.
+Stop and ask: **is there a simpler solution that meets the same need?** Only go for the more
+complex alternative if the answer is clearly no.
 
-## Prioridades, nessa ordem
+## Priorities, in this order
 
-1. **Legibilidade** — código que se lê como prosa técnica direta.
-2. **Manutenção** — fácil de mudar depois, sem precisar entender camadas extras primeiro.
-3. **Clareza** — nomes que dizem o que a coisa é/faz, sem precisar de comentário pra decodificar.
+1. **Readability** — code that reads like direct technical prose.
+2. **Maintainability** — easy to change later, without having to understand extra layers first.
+3. **Clarity** — names that say what the thing is/does, with no comment needed to decode them.
 
-## Evitar por padrão
+## Avoid by default
 
-- Abstrações genéricas pra um único caso de uso (interface/classe base pra um único
-  implementador, generics onde um tipo concreto resolve).
-- Padrões de projeto (Factory, Strategy, Observer manual, etc.) quando uma função ou uma
-  classe simples já resolve.
-- Otimizações prematuras — só otimizar quando há um problema de performance medido e real.
-- Complexidade "por precaução" — não construir para requisitos hipotéticos futuros.
+- Generic abstractions for a single use case (an interface/base class for a single
+  implementer, generics where a concrete type does the job).
+- Design patterns (Factory, Strategy, hand-rolled Observer, etc.) when a function or a simple
+  class already does the job.
+- Premature optimization — only optimize when there is a measured, real performance problem.
+- "Just in case" complexity — don't build for hypothetical future requirements.
 
-## Como aplicar
+## How to apply
 
-- Nomes claros e diretos (variável, função, classe) — se o nome já explica, não comenta.
-- Métodos curtos, uma responsabilidade por função.
-- Seguir o padrão que já existe no projeto (ver o README e o código vizinho) em vez de
-  introduzir um estilo novo pra a mesma coisa.
-- Só usar solução mais complexa quando a mais simples realmente não resolve — e, nesse caso,
-  deixar claro (num comentário curto) *por que* a simples não bastou.
+- Clear, direct names (variable, function, class) — if the name already explains it, don't comment.
+- Short methods, one responsibility per function.
+- Follow the pattern that already exists in the project (see the README and the neighboring code)
+  instead of introducing a new style for the same thing.
+- Only use a more complex solution when the simpler one really doesn't work — and, in that case,
+  make clear (in a short comment) *why* the simple one wasn't enough.
 
-## Exemplo de aplicação neste projeto
+## Example of application in this project
 
-`net/PhoneReceiver.kt` já segue isso: o cálculo de offset de relógio (`OffsetSample`) e a
-métrica de performance (`PerfStats`) usam listas simples + funções privadas pequenas, não uma
-classe de "collector" genérica ou um sistema de métricas plugável — não há necessidade disso
-aqui, é um único receptor falando com um único peer.
+`net/PhoneReceiver.kt` already follows this: the clock offset calculation (`OffsetSample`) and
+the performance metric (`PerfStats`) use plain lists + small private functions, not a generic
+"collector" class or a pluggable metrics system — there's no need for that here, it's a single
+receiver talking to a single peer.
