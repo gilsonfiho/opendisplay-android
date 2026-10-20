@@ -71,41 +71,41 @@
     <string name="about_close">Close</string>
 
     <string-array name="changelog_v0_0_53">
-        <item>Cursor position packets from any host other than the connected Mac are now ignored.</item>
+        <item>The cursor now only follows the Mac you\'re connected to. Cursor updates sent by any other device on your network are ignored.</item>
     </string-array>
     <string-array name="changelog_older_versions">
-        <item>Build for Google Play testing. No changes to how the app behaves.</item>
-        <item>A second computer can no longer take over an active session: new connections from a different peer are rejected while one is connected.</item>
-        <item>New floating menu while connected, Teams-style. Moving the mouse on the Mac also hides it.</item>
-        <item>The update link sent by the Mac is now only accepted if it points to this app\'s own store listing.</item>
-        <item>Overly long \"update required\" messages sent by the Mac are now truncated.</item>
-        <item>Release builds no longer write device or peer IP addresses to logcat.</item>
-        <item>Fixed the Changelog tab shipping without an entry for its own version.</item>
-        <item>Fixed: the WiFi listener could resolve a VPN\'s tunnel address instead of the real LAN IP when a VPN ran alongside WiFi — now fails closed instead, with a clear \"VPN active\" message.</item>
-        <item>New Changelog tab in Settings — every release from v0.0.37 onward, translated into all 7 app languages.</item>
-        <item>Fixed the Settings top app bar drawing under the status bar on Android 15+.</item>
-        <item>Fixed inconsistent label font size in Settings > General.</item>
-        <item>Performance overlay now defaults to the bottom-right corner.</item>
-        <item>Dark theme refinements: near-black slate background instead of pure black, plus a proper error color token.</item>
-        <item>Fixed a WCAG AA contrast failure on the landing page\'s \"Download APK\" button in light mode.</item>
-        <item>Settings screen and splash screen now actually use the new slate palette.</item>
-        <item>Rebrand: new app icon, logo and banner across the app and the landing page.</item>
-        <item>Fixed the launcher icon getting clipped by circular launcher masks (e.g. Samsung One UI).</item>
-        <item>CI hardened: workflow triggers scoped by path, GitHub Actions pinned to a commit SHA.</item>
-        <item>App launcher icon redesigned with the official Apple and Android marks.</item>
-        <item>Settings screen rebuilt as a full-screen, traditional Android layout with tabs.</item>
-        <item>Fixed delayed typing and cursor updates on a mostly static extended display.</item>
-        <item>Settings and About dialogs get a translucent, frosted-glass-style container.</item>
-        <item>Fixed the header overlapping the theme/language switcher on medium-width screens.</item>
-        <item>Landing page rewritten in React + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui.</item>
-        <item>Fixed translation errors in the Code of Conduct/Contributing pages.</item>
-        <item>Protocol parity with the latest Mac sender: decode-ceiling negotiation, UDP cursor side channel, real stylus pressure and tilt.</item>
-        <item>Korean translation added.</item>
-        <item>Korean landing page.</item>
+        <item>Test build for Google Play. Nothing changes in how the app works.</item>
+        <item>Another computer can\'t hijack a session that\'s already running anymore. If a Mac is connected, connection attempts from a different one are turned down.</item>
+        <item>New floating menu while you\'re connected, Teams-style. It also hides when you move the mouse on the Mac.</item>
+        <item>The update link from the Mac is only trusted if it points to this app\'s own store page.</item>
+        <item>Very long \"update required\" messages from the Mac get cut short instead of filling the screen.</item>
+        <item>Release builds no longer write your device\'s or the Mac\'s IP address to the logs.</item>
+        <item>Fixed the Changelog tab missing the entry for its own version.</item>
+        <item>Fixed a mix-up when a VPN runs alongside WiFi: the app could pick the VPN\'s address instead of your real network address. Now it stops and tells you \"VPN active\".</item>
+        <item>New Changelog tab in Settings, with every release since v0.0.37, in all 7 app languages.</item>
+        <item>Fixed the top bar in Settings sliding under the status bar on Android 15+.</item>
+        <item>Fixed labels in Settings > General showing in different font sizes.</item>
+        <item>The performance overlay now starts in the bottom-right corner.</item>
+        <item>Softer dark theme: a dark slate background instead of pure black, plus a proper color for errors.</item>
+        <item>Fixed the \"Download APK\" button on the website being hard to read in light mode.</item>
+        <item>Settings and the splash screen now really use the new slate colors.</item>
+        <item>New look: new app icon, logo and banner, in the app and on the website.</item>
+        <item>Fixed the app icon being cut off on phones with round icons, like Samsung One UI.</item>
+        <item>Safer automated builds: workflows only run when relevant files change, and GitHub Actions are pinned to a fixed version.</item>
+        <item>App icon redesigned with the official Apple and Android logos.</item>
+        <item>Settings rebuilt as a full-screen page with tabs, the way Android apps usually do it.</item>
+        <item>Fixed typing and the cursor showing up late when the extended screen barely changes.</item>
+        <item>Settings and About windows now have a frosted-glass look.</item>
+        <item>Fixed the website header overlapping the theme and language switcher on mid-size screens.</item>
+        <item>Website rewritten with React, Vite, TypeScript, Tailwind CSS v4 and shadcn/ui.</item>
+        <item>Fixed translation mistakes on the Code of Conduct and Contributing pages.</item>
+        <item>Caught up with the latest Mac app: agrees on the best video size with the Mac, a separate fast channel for the cursor, and real stylus pressure and tilt.</item>
+        <item>Korean added to the app.</item>
+        <item>Website now available in Korean.</item>
         <item>Simplified Chinese and Japanese added to the app.</item>
-        <item>Landing page becomes multilingual, with its own page per language.</item>
-        <item>Fixed mDNS not re-announcing after a WiFi IP change.</item>
-        <item>Fixed a MediaCodec reconfigure throttle edge case that could leave the decoder misconfigured.</item>
-        <item>Security hardening: bounded cursor hotspot values, sanitized control-message logging.</item>
+        <item>Website now multilingual, with its own page for each language.</item>
+        <item>Fixed the Mac not finding the device again after the WiFi IP changed.</item>
+        <item>Fixed a rare case where the video decoder could end up misconfigured after being reconfigured quickly.</item>
+        <item>Security hardening: limits on cursor hotspot values and safer logging of messages from the Mac.</item>
     </string-array>
 </resources>

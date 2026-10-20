@@ -71,41 +71,41 @@
     <string name="about_close">Cerrar</string>
 
     <string-array name="changelog_v0_0_53">
-        <item>Los paquetes de posición del cursor que no vengan del Mac conectado ahora se ignoran.</item>
+        <item>El cursor ahora solo sigue al Mac al que estás conectado. Las actualizaciones de cursor enviadas por cualquier otro dispositivo de la red se ignoran.</item>
     </string-array>
     <string-array name="changelog_older_versions">
-        <item>Versión para las pruebas de Google Play. Sin cambios en el comportamiento de la app.</item>
-        <item>Un segundo ordenador ya no puede tomar el control de una sesión activa: las conexiones nuevas de otro peer se rechazan mientras haya una conectada.</item>
-        <item>Nuevo menú flotante mientras hay conexión, estilo Teams. Mover el ratón en el Mac también lo oculta.</item>
-        <item>El enlace de actualización enviado por el Mac ahora solo se acepta si apunta a la ficha de la propia app en la tienda.</item>
-        <item>Los mensajes de \"actualización necesaria\" demasiado largos enviados por el Mac ahora se truncan.</item>
-        <item>Las compilaciones de release ya no escriben en logcat las IP del dispositivo ni del par.</item>
-        <item>Corregida la pestaña Novedades, que salía sin una entrada para su propia versión.</item>
-        <item>Corregido: el listener de WiFi podía resolver la dirección del túnel de una VPN en lugar de la IP real de la red local cuando la VPN estaba activa junto con el WiFi — ahora se cierra por defecto, con un mensaje claro de \"VPN activa\".</item>
-        <item>Nueva pestaña Novedades en Ajustes — todas las versiones desde v0.0.37, traducidas a los 7 idiomas de la app.</item>
-        <item>Corregido que la barra superior de Ajustes se dibujara debajo de la barra de estado en Android 15+.</item>
-        <item>Corregido el tamaño de fuente inconsistente de las etiquetas en Ajustes > General.</item>
-        <item>La superposición de rendimiento ahora usa por defecto la esquina inferior derecha.</item>
-        <item>Mejoras en el tema oscuro: fondo casi negro (slate) en lugar de negro puro, más un color propio para errores.</item>
-        <item>Corregido un fallo de contraste WCAG AA en el botón \"Descargar APK\" de la landing page en modo claro.</item>
-        <item>La pantalla de Ajustes y la pantalla de inicio ahora sí usan la nueva paleta slate.</item>
-        <item>Rebrand: nuevo icono, logo y banner en la app y en la landing page.</item>
-        <item>Corregido el icono de la app recortado por máscaras circulares (p. ej. Samsung One UI).</item>
-        <item>CI reforzado: los triggers de los workflows ahora están delimitados por ruta, GitHub Actions fijadas por SHA de commit.</item>
-        <item>Icono de la app rediseñado con las marcas oficiales de Apple y Android.</item>
-        <item>Pantalla de Ajustes reconstruida como layout tradicional de Android, a pantalla completa y con pestañas.</item>
-        <item>Corregido el retraso al escribir y en las actualizaciones del cursor en una pantalla extendida mayormente estática.</item>
-        <item>Los diálogos de Ajustes y Acerca de ganan un contenedor translúcido, estilo vidrio esmerilado.</item>
-        <item>Corregido el encabezado que se superponía al selector de tema/idioma en pantallas de ancho medio.</item>
-        <item>Landing page reescrita en React + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui.</item>
-        <item>Corregidos errores de traducción en las páginas de Código de Conducta/Contribución.</item>
-        <item>Paridad de protocolo con la app de Mac más reciente: negociación del techo de decodificación, canal de cursor por UDP, presión e inclinación reales del lápiz.</item>
-        <item>Añadida traducción al coreano.</item>
-        <item>Landing page en coreano.</item>
+        <item>Versión de prueba para Google Play. Nada cambia en cómo funciona la app.</item>
+        <item>Otro ordenador ya no puede quitarle el control a una sesión que ya está en marcha. Si hay un Mac conectado, los intentos de conexión de otro se rechazan.</item>
+        <item>Nuevo menú flotante mientras estás conectado, estilo Teams. También se oculta al mover el ratón en el Mac.</item>
+        <item>El enlace de actualización que manda el Mac solo se acepta si apunta a la ficha de la propia app en la tienda.</item>
+        <item>Los mensajes de \"actualización necesaria\" muy largos que llegan del Mac ahora se recortan en vez de llenar la pantalla.</item>
+        <item>Las versiones release ya no escriben en los registros la IP del dispositivo ni la del Mac.</item>
+        <item>Corregido: la pestaña de novedades no tenía la entrada de su propia versión.</item>
+        <item>Corregido un fallo cuando una VPN funciona junto al WiFi: la app podía elegir la dirección de la VPN en vez de la dirección real de la red. Ahora se detiene y avisa \"VPN activa\".</item>
+        <item>Nueva pestaña de novedades en Ajustes, con todas las versiones desde la v0.0.37, en los 7 idiomas de la app.</item>
+        <item>Corregida la barra superior de Ajustes, que se metía bajo la barra de estado en Android 15+.</item>
+        <item>Corregidas las etiquetas de Ajustes > General, que salían con tamaños de letra distintos.</item>
+        <item>El panel de rendimiento ahora empieza en la esquina inferior derecha.</item>
+        <item>Tema oscuro más suave: fondo gris azulado oscuro en vez de negro puro, y un color propio para los errores.</item>
+        <item>Corregido el botón \"Descargar APK\" de la web, que se leía mal en el tema claro.</item>
+        <item>Ajustes y la pantalla de inicio ahora sí usan los colores nuevos.</item>
+        <item>Imagen nueva: nuevo icono, logotipo y banner, en la app y en la web.</item>
+        <item>Corregido el icono de la app recortado en móviles con iconos redondos, como Samsung One UI.</item>
+        <item>Compilaciones automáticas más seguras: los workflows solo se ejecutan cuando cambian los archivos adecuados, y las GitHub Actions quedan fijadas a una versión exacta.</item>
+        <item>Icono de la app rediseñado con los logotipos oficiales de Apple y Android.</item>
+        <item>Ajustes rehechos a pantalla completa y con pestañas, como suelen ser las apps de Android.</item>
+        <item>Corregido el retraso al escribir y en el cursor cuando la pantalla extendida casi no cambia.</item>
+        <item>Las ventanas de Ajustes y Acerca de ahora tienen un aspecto de cristal esmerilado.</item>
+        <item>Corregida la cabecera de la web, que tapaba el selector de tema e idioma en pantallas medianas.</item>
+        <item>Web reescrita con React, Vite, TypeScript, Tailwind CSS v4 y shadcn/ui.</item>
+        <item>Corregidos errores de traducción en las páginas de Código de Conducta y Contribución.</item>
+        <item>Al día con la última versión de la app del Mac: acuerda con el Mac el mejor tamaño de vídeo, un canal rápido aparte para el cursor, y presión e inclinación reales del lápiz.</item>
+        <item>Coreano añadido a la app.</item>
+        <item>Web disponible en coreano.</item>
         <item>Chino simplificado y japonés añadidos a la app.</item>
-        <item>La landing page se vuelve multilingüe, con página propia por idioma.</item>
-        <item>Corregido que mDNS no volvía a anunciarse tras un cambio de IP en WiFi.</item>
-        <item>Corregido un caso extremo en el throttle de reconfiguración de MediaCodec que podía dejar mal configurado el decodificador.</item>
-        <item>Refuerzo de seguridad: valores del hotspot del cursor acotados, registro de mensajes de control saneado.</item>
+        <item>La web ahora es multilingüe, con una página propia para cada idioma.</item>
+        <item>Corregido que el Mac no volviera a encontrar el dispositivo después de cambiar la IP del WiFi.</item>
+        <item>Corregido un caso raro en que el decodificador de vídeo podía quedar mal configurado tras reconfigurarse muy rápido.</item>
+        <item>Refuerzo de seguridad: límites en los valores del punto activo del cursor y registro más seguro de los mensajes que llegan del Mac.</item>
     </string-array>
 </resources>

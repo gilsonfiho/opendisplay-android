@@ -71,41 +71,41 @@
     <string name="about_close">Fechar</string>
 
     <string-array name="changelog_v0_0_53">
-        <item>Os pacotes de posição do cursor vindos de qualquer anfitrião que não seja o Mac ligado passam a ser ignorados.</item>
+        <item>O cursor passa a seguir apenas o Mac ao qual está ligado. As atualizações de cursor enviadas por qualquer outro dispositivo da rede são ignoradas.</item>
     </string-array>
     <string-array name="changelog_older_versions">
-        <item>Versão para os testes do Google Play. Nada muda no comportamento da app.</item>
-        <item>Um segundo computador já não consegue assumir uma sessão ativa: as ligações novas de outro peer são rejeitadas enquanto houver uma ligada.</item>
-        <item>Novo menu flutuante enquanto ligado, ao estilo Teams. Mexer o rato no Mac também esconde o menu.</item>
-        <item>A ligação de atualização enviada pelo Mac passa a valer apenas se apontar para a página da própria app na loja.</item>
-        <item>Mensagens de \"atualização necessária\" demasiado longas, enviadas pelo Mac, passam a ser truncadas.</item>
-        <item>As versões de release deixam de escrever IPs do dispositivo ou do par no logcat.</item>
-        <item>Corrigido o separador Novidades a sair sem uma entrada para a própria versão.</item>
-        <item>Corrigido: o listener de WiFi podia resolver o endereço do túnel de uma VPN em vez do IP real da rede local quando a VPN estava ativa em simultâneo com o WiFi — agora fica bloqueado por predefinição, com uma mensagem clara de \"VPN ativa\".</item>
-        <item>Novo separador Novidades em Definições — todas as versões desde a v0.0.37, traduzidas nos 7 idiomas da app.</item>
-        <item>Corrigida a barra superior de Definições a desenhar por baixo da barra de estado no Android 15+.</item>
-        <item>Corrigido tamanho de letra inconsistente nas etiquetas em Definições > Geral.</item>
-        <item>A sobreposição de desempenho passa a usar por predefinição o canto inferior direito.</item>
-        <item>Melhorias no tema escuro: fundo quase preto (slate) em vez de preto puro, mais uma cor própria para erro.</item>
-        <item>Corrigida falha de contraste WCAG AA no botão \"Transferir APK\" da página de destino no modo claro.</item>
-        <item>O ecrã de Definições e o ecrã inicial passam a usar mesmo a nova paleta slate.</item>
-        <item>Rebrand: novo ícone, logótipo e banner na aplicação e na página de destino.</item>
-        <item>Corrigido o ícone de lançamento a ser cortado por máscaras circulares (ex.: Samsung One UI).</item>
-        <item>CI reforçado: gatilhos dos workflows delimitados por caminho, GitHub Actions fixadas por SHA do commit.</item>
-        <item>Ícone de lançamento redesenhado com as marcas oficiais da Apple e do Android.</item>
-        <item>Ecrã de Definições reconstruído em layout tradicional Android, em ecrã inteiro com separadores.</item>
-        <item>Corrigido atraso na escrita e nas atualizações do cursor num ecrã estendido maioritariamente estático.</item>
-        <item>Diálogos de Definições e Acerca de ganham um contentor translúcido, estilo vidro fosco.</item>
-        <item>Corrigido o cabeçalho a sobrepor-se ao seletor de tema/idioma em ecrãs de largura média.</item>
-        <item>Página de destino reescrita em React + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui.</item>
-        <item>Corrigidos erros de tradução nas páginas de Código de Conduta/Contribuição.</item>
-        <item>Paridade de protocolo com a aplicação Mac mais recente: negociação do limite de descodificação, canal de cursor por UDP, pressão e inclinação reais da caneta.</item>
-        <item>Adicionada tradução em coreano.</item>
-        <item>Página de destino em coreano.</item>
-        <item>Chinês simplificado e japonês adicionados à aplicação.</item>
-        <item>Página de destino torna-se multilingue, com página própria por idioma.</item>
-        <item>Corrigido o mDNS a não se reanunciar após mudança de IP no WiFi.</item>
-        <item>Corrigido um caso extremo no limitador de reconfiguração do MediaCodec que podia deixar o descodificador mal configurado.</item>
-        <item>Reforço de segurança: valores do hotspot do cursor limitados, registo de mensagens de controlo sanitizado.</item>
+        <item>Versão de teste para o Google Play. Nada muda no funcionamento da app.</item>
+        <item>Outro computador já não consegue tomar uma sessão que está a decorrer. Se um Mac estiver ligado, as tentativas de ligação de outro são recusadas.</item>
+        <item>Novo menu flutuante enquanto está ligado, ao estilo Teams. Desaparece quando mexe o rato no Mac.</item>
+        <item>A ligação de atualização enviada pelo Mac só é aceite se apontar para a página da própria app na loja.</item>
+        <item>As mensagens de \"atualização necessária\" muito longas vindas do Mac passam a ser cortadas, em vez de ocupar o ecrã todo.</item>
+        <item>As versões de release deixam de gravar nos registos o IP do dispositivo e o do Mac.</item>
+        <item>Corrigido: o separador de novidades não tinha a entrada da própria versão.</item>
+        <item>Corrigido um problema quando uma VPN está ativa junto com o WiFi: a app podia escolher o endereço da VPN em vez do endereço real da rede. Agora pára e avisa \"VPN ativa\".</item>
+        <item>Novo separador de novidades nas Definições, com todas as versões desde a v0.0.37, nos 7 idiomas da app.</item>
+        <item>Corrigida a barra superior das Definições a passar por baixo da barra de estado no Android 15+.</item>
+        <item>Corrigidas as etiquetas de Definições > Geral com tamanhos de letra diferentes.</item>
+        <item>O painel de desempenho passa a começar no canto inferior direito.</item>
+        <item>Tema escuro mais suave: fundo cinzento-azulado escuro em vez de preto puro, e uma cor própria para erros.</item>
+        <item>Corrigido o botão \"Transferir APK\" do site, que era difícil de ler no tema claro.</item>
+        <item>As Definições e o ecrã de abertura passam a usar mesmo as novas cores.</item>
+        <item>Visual novo: novo ícone, logótipo e banner, na app e no site.</item>
+        <item>Corrigido o ícone da app cortado em telemóveis com ícones redondos, como o Samsung One UI.</item>
+        <item>Compilações automáticas mais seguras: os workflows só correm quando os ficheiros certos mudam, e as GitHub Actions ficam fixadas numa versão exata.</item>
+        <item>Ícone da app redesenhado com os logótipos oficiais da Apple e do Android.</item>
+        <item>Definições refeitas em ecrã inteiro e com separadores, à maneira tradicional das apps Android.</item>
+        <item>Corrigido o atraso ao escrever e no cursor quando o ecrã estendido quase não muda.</item>
+        <item>As janelas de Definições e Acerca de ganharam um aspeto de vidro fosco.</item>
+        <item>Corrigido o cabeçalho do site a sobrepor-se ao seletor de tema e idioma em ecrãs médios.</item>
+        <item>Site reescrito com React, Vite, TypeScript, Tailwind CSS v4 e shadcn/ui.</item>
+        <item>Corrigidos erros de tradução nas páginas de Código de Conduta e Contribuição.</item>
+        <item>Alinhado com a versão mais recente da app do Mac: combina com o Mac o melhor tamanho de vídeo, um canal rápido separado para o cursor, e pressão e inclinação reais da caneta.</item>
+        <item>Coreano adicionado à app.</item>
+        <item>Site disponível em coreano.</item>
+        <item>Chinês simplificado e japonês adicionados à app.</item>
+        <item>Site agora multilingue, com uma página própria para cada idioma.</item>
+        <item>Corrigido o Mac não voltar a encontrar o dispositivo depois de o IP do WiFi mudar.</item>
+        <item>Corrigido um caso raro em que o descodificador de vídeo podia ficar mal configurado depois de ser reconfigurado depressa.</item>
+        <item>Reforço de segurança: limites nos valores do ponto ativo do cursor e registo mais seguro das mensagens vindas do Mac.</item>
     </string-array>
 </resources>

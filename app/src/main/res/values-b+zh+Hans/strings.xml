@@ -71,41 +71,41 @@
     <string name="about_close">关闭</string>
 
     <string-array name="changelog_v0_0_53">
-        <item>现在会忽略来自已连接 Mac 以外主机的光标位置数据包。</item>
+        <item>光标现在只跟随你所连接的 Mac。网络中其他设备发来的光标更新会被忽略。</item>
     </string-array>
     <string-array name="changelog_older_versions">
-        <item>用于 Google Play 测试的构建，应用行为没有变化。</item>
-        <item>另一台电脑无法再接管正在进行的会话：已有连接时，来自其他对端的新连接会被拒绝。</item>
-        <item>新增连接时显示的悬浮菜单（Teams 风格）。在 Mac 上移动鼠标也会将其隐藏。</item>
-        <item>Mac 发来的更新链接现在只有指向本应用自己的商店页面时才会被接受。</item>
-        <item>Mac 发来的过长\"需要更新\"消息现在会被截断。</item>
-        <item>发布版本不再将设备或对端的 IP 地址写入 logcat。</item>
-        <item>修复更新日志标签页发布时缺少自身版本条目的问题。</item>
-        <item>修复：WiFi 和 VPN 同时开启时，WiFi 监听器可能解析到 VPN 隧道地址而不是真实局域网 IP — 现在会直接关闭监听并显示明确的\"VPN 已开启\"提示。</item>
-        <item>设置中新增"更新日志"标签页 — 展示自 v0.0.37 以来的每个版本，已翻译成全部 7 种应用语言。</item>
-        <item>修复 Android 15+ 上设置页顶部栏绘制到状态栏下方的问题。</item>
-        <item>修复设置 > 常规中标签字号不一致的问题。</item>
-        <item>性能叠加层默认位置改为右下角。</item>
-        <item>深色主题优化：使用接近黑色的石板背景替代纯黑，并新增专用错误色。</item>
-        <item>修复浅色模式下落地页\"下载 APK\"按钮的 WCAG AA 对比度不达标问题。</item>
-        <item>设置界面和启动画面现在真正使用新的石板配色。</item>
-        <item>品牌重塑：应用和落地页的图标、logo、横幅全面更新。</item>
-        <item>修复图标在圆形启动器遮罩（如三星 One UI）下被裁切的问题。</item>
-        <item>加固 CI：工作流触发条件按路径限定，GitHub Actions 固定到提交 SHA。</item>
-        <item>应用启动图标重新设计，采用 Apple 和 Android 官方标志。</item>
-        <item>设置界面重构为带标签页的全屏传统 Android 布局。</item>
-        <item>修复在几乎静止的扩展屏幕上输入和光标更新延迟的问题。</item>
-        <item>设置和关于对话框新增半透明毛玻璃风格容器。</item>
-        <item>修复中等宽度屏幕下头部与主题/语言切换器重叠的问题。</item>
-        <item>落地页使用 React + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui 重写。</item>
-        <item>修复行为准则/贡献指南页面的翻译错误。</item>
-        <item>与最新 Mac 发送端协议对齐：解码上限协商、UDP 光标通道、真实笔压和倾斜角度支持。</item>
-        <item>新增韩语翻译。</item>
-        <item>韩语落地页。</item>
+        <item>用于 Google Play 测试的版本，应用的使用方式没有变化。</item>
+        <item>已在运行的会话不会再被另一台电脑抢走。只要有一台 Mac 已连接，其他 Mac 的连接请求都会被拒绝。</item>
+        <item>连接时新增悬浮菜单（Teams 风格）。在 Mac 上移动鼠标时它会自动隐藏。</item>
+        <item>Mac 发来的更新链接，只有指向本应用自己的商店页面时才会被接受。</item>
+        <item>Mac 发来的过长的“需要更新”提示现在会被截断，不再占满整个屏幕。</item>
+        <item>正式版不再把设备和 Mac 的 IP 地址写入日志。</item>
+        <item>修复了更新日志标签页里缺少自己所属版本条目的问题。</item>
+        <item>修复了 VPN 与 WiFi 同时使用时的问题：应用可能选中 VPN 的地址，而不是真实的网络地址。现在会停止并提示“VPN 已启用”。</item>
+        <item>设置中新增更新日志标签页，收录 v0.0.37 以来的所有版本，并提供应用的全部 7 种语言。</item>
+        <item>修复了 Android 15 及以上系统中，设置顶部栏钻到状态栏下面的问题。</item>
+        <item>修复了设置 > 常规里各标签字号不一致的问题。</item>
+        <item>性能浮层现在默认出现在右下角。</item>
+        <item>深色主题更柔和：背景改用深石板色而不是纯黑，并新增了专用的错误颜色。</item>
+        <item>修复了网站上“下载 APK”按钮在浅色模式下难以辨认的问题。</item>
+        <item>设置页和启动页现在真正用上了新的石板配色。</item>
+        <item>全新外观：新的应用图标、徽标和横幅，应用和网站同步更新。</item>
+        <item>修复了在使用圆形图标的手机（如三星 One UI）上应用图标被裁掉一角的问题。</item>
+        <item>自动构建更安全：只有相关文件变化时才会运行工作流，GitHub Actions 也固定到了确切版本。</item>
+        <item>应用图标重新设计，使用 Apple 和 Android 的官方标志。</item>
+        <item>设置页重做为全屏加标签页，符合 Android 应用的常见做法。</item>
+        <item>修复了扩展屏幕几乎不变时，打字和光标显示延迟的问题。</item>
+        <item>设置和关于窗口换成了磨砂玻璃效果。</item>
+        <item>修复了中等宽度屏幕上，网站页头与主题、语言切换器重叠的问题。</item>
+        <item>网站用 React、Vite、TypeScript、Tailwind CSS v4 和 shadcn/ui 重写。</item>
+        <item>修复了行为准则和贡献指南页面中的翻译错误。</item>
+        <item>跟上了最新的 Mac 应用：与 Mac 协商最合适的视频尺寸，为光标提供独立的快速通道，并支持真实的手写笔压力和倾斜。</item>
+        <item>应用新增韩语。</item>
+        <item>网站新增韩语版。</item>
         <item>应用新增简体中文和日语。</item>
-        <item>落地页实现多语言，每种语言都有独立页面。</item>
-        <item>修复 WiFi IP 变更后 mDNS 不再重新广播的问题。</item>
-        <item>修复 MediaCodec 重新配置节流的边界情况，避免解码器配置错乱。</item>
-        <item>安全加固：限制光标热点坐标范围，清理控制消息日志。</item>
+        <item>网站支持多语言，每种语言都有独立页面。</item>
+        <item>修复了 WiFi 的 IP 变化后，Mac 找不到设备的问题。</item>
+        <item>修复了视频解码器被快速重新配置后，偶尔配置出错的问题。</item>
+        <item>安全加固：限制光标热点数值的范围，并让来自 Mac 的消息日志记录更安全。</item>
     </string-array>
 </resources>
