@@ -201,6 +201,18 @@ class PhoneReceiver(context: Context) {
             return !hasActiveSession || currentAddress == newAddress
         }
 
+        /** Whether a UDP cursor datagram from [source] should be trusted (see SECURITY.md/
+         * SCR-001: the cursor channel has no auth either). The TCP control socket already
+         * pins the session to one peer via [shouldAccept] — this extends the same pinning to
+         * the connectionless UDP side, so a third host on the LAN can't spoof cursor input
+         * for an active session.
+         * @param tcpPeerAddress the active TCP peer's address, or `null` if there is none
+         * (idle, or a USB session — UDP cursor is WiFi/LAN only either way).
+         * @param source the datagram's source address. */
+        internal fun isTrustedCursorSource(tcpPeerAddress: InetAddress?, source: InetAddress): Boolean {
+            return tcpPeerAddress != null && tcpPeerAddress == source
+        }
+
         /** Returns a version of [input] safe for logging: newlines replaced with \\n and
          * control characters stripped or escaped. Limits length to prevent log spam. */
         private fun safeStringToLog(input: String): String {
@@ -895,6 +907,10 @@ class PhoneReceiver(context: Context) {
         }
         if (obj.optString("type") != WireMessage.CURSOR) return
         val flow = packet.socketAddress as? InetSocketAddress ?: return
+        if (!isTrustedCursorSource(link?.remoteAddress, packet.address)) {
+            Log.warn("dropping cursor UDP datagram from untrusted source ${packet.address}")
+            return
+        }
         handleCursorUpdate(obj, flow)
     }
 
