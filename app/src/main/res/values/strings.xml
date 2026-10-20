@@ -70,10 +70,11 @@
     <string name="about_mac_app">Mac app</string>
     <string name="about_close">Close</string>
 
-    <string-array name="changelog_v0_0_52">
-        <item>Build for Google Play testing. No changes to how the app behaves.</item>
+    <string-array name="changelog_v0_0_53">
+        <item>Cursor position packets from any host other than the connected Mac are now ignored.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>Build for Google Play testing. No changes to how the app behaves.</item>
         <item>A second computer can no longer take over an active session: new connections from a different peer are rejected while one is connected.</item>
         <item>New floating menu while connected, Teams-style. Moving the mouse on the Mac also hides it.</item>
         <item>The update link sent by the Mac is now only accepted if it points to this app\'s own store listing.</item>

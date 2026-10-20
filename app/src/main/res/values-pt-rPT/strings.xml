@@ -70,10 +70,11 @@
     <string name="about_mac_app">App do Mac</string>
     <string name="about_close">Fechar</string>
 
-    <string-array name="changelog_v0_0_52">
-        <item>Versão para os testes do Google Play. Nada muda no comportamento da app.</item>
+    <string-array name="changelog_v0_0_53">
+        <item>Os pacotes de posição do cursor vindos de qualquer anfitrião que não seja o Mac ligado passam a ser ignorados.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>Versão para os testes do Google Play. Nada muda no comportamento da app.</item>
         <item>Um segundo computador já não consegue assumir uma sessão ativa: as ligações novas de outro peer são rejeitadas enquanto houver uma ligada.</item>
         <item>Novo menu flutuante enquanto ligado, ao estilo Teams. Mexer o rato no Mac também esconde o menu.</item>
         <item>A ligação de atualização enviada pelo Mac passa a valer apenas se apontar para a página da própria app na loja.</item>

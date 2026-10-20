@@ -70,10 +70,11 @@
     <string name="about_mac_app">Macアプリ</string>
     <string name="about_close">閉じる</string>
 
-    <string-array name="changelog_v0_0_52">
-        <item>Google Play のテスト用ビルドです。アプリの動作に変更はありません。</item>
+    <string-array name="changelog_v0_0_53">
+        <item>接続中のMac以外のホストから届いたカーソル位置のパケットは無視されるようになりました。</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>Google Play のテスト用ビルドです。アプリの動作に変更はありません。</item>
         <item>別のコンピュータがアクティブなセッションを乗っ取れなくなりました。接続中は、別のピアからの新しい接続を拒否します。</item>
         <item>接続中に表示されるフローティングメニューを追加（Teams風）。Macでマウスを動かしても非表示になります。</item>
         <item>Macから送られる更新リンクは、このアプリ自身のストアページを指す場合のみ有効になりました。</item>

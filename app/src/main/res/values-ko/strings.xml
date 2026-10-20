@@ -70,10 +70,11 @@
     <string name="about_mac_app">Mac 앱</string>
     <string name="about_close">닫기</string>
 
-    <string-array name="changelog_v0_0_52">
-        <item>Google Play 테스트용 빌드입니다. 앱 동작에는 변경이 없습니다.</item>
+    <string-array name="changelog_v0_0_53">
+        <item>연결된 Mac이 아닌 다른 호스트에서 온 커서 위치 패킷은 이제 무시됩니다.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>Google Play 테스트용 빌드입니다. 앱 동작에는 변경이 없습니다.</item>
         <item>두 번째 컴퓨터가 활성 세션을 가로챌 수 없습니다. 연결된 동안에는 다른 피어의 새 연결을 거부합니다.</item>
         <item>연결 중 표시되는 플로팅 메뉴 추가 (Teams 스타일). Mac에서 마우스를 움직여도 메뉴가 숨겨집니다.</item>
         <item>Mac에서 보낸 업데이트 링크는 이제 이 앱의 스토어 페이지를 가리킬 때만 허용됩니다.</item>
