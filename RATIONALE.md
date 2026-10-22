@@ -168,6 +168,10 @@ Organized by file, in source order.
   newcomer until a session change or `stop()`. Android also drops it after 10 s so a socket
   that connects and goes quiet can't hold a thread and buffer indefinitely. The Mac answers
   `hello` within milliseconds, so a real sender never hits it.
+- **`MAX_PENDING_NEWCOMERS`** (4, #156): rather than rate-limiting `accept()`, which would
+  refuse a Mac redialing ~1 s after a failure and break §1, only the number of connections
+  proving themselves at once is capped. A real Mac needs two (its twin dial); extras are closed
+  without touching the live session.
 - **`proveNewcomer`**, a TCP newcomer during a USB accessory session: a USB link has no
   address, so any TCP connection has to prove itself and then replaces the cable session, as
   §1 asks.
@@ -203,6 +207,14 @@ Organized by file, in source order.
   future rename of an enum constant, leaving an old install's prefs pointing at a name that no
   longer exists) shouldn't crash the app over a cosmetic setting. Falls back to the same
   `TOP_START` default a fresh install gets.
+
+## net/Framing.kt
+
+- **`FrameDecoder.ensureCapacity`**, the cap at one maximum-size frame plus header (#156): plain
+  doubling took a peer that declares a 16 MiB frame and trickles it in to a 32 MiB buffer.
+  `MAX_FRAME_SIZE` itself stays at 16 MiB: the official receiver has no limit at all, and a lower
+  cap would drop the whole session on a big legitimate keyframe. Lower it only after measuring
+  the largest keyframe the real Mac sends.
 
 ## net/Link.kt
 

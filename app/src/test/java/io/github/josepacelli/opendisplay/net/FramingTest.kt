@@ -78,4 +78,31 @@ class FramingTest {
         assertEquals(1, frames.size)
         assertArrayEquals(bigPayload, frames[0])
     }
+
+    @Test
+    fun `feed still decodes a maximum-size frame trickled in small reads`() {
+        val decoder = Framing.FrameDecoder()
+        val payload = ByteArray(Framing.MAX_FRAME_SIZE) { (it % 253).toByte() }
+        val wire = Framing.encode(payload)
+        val chunk = 1 shl 20
+        val frames = mutableListOf<ByteArray>()
+        var offset = 0
+        while (offset < wire.size) {
+            val n = minOf(chunk, wire.size - offset)
+            frames += decoder.feed(wire.copyOfRange(offset, offset + n))
+            offset += n
+        }
+        assertEquals(1, frames.size)
+        assertArrayEquals(payload, frames[0])
+    }
+
+    @Test
+    fun `feed keeps working when one read is bigger than a maximum-size frame`() {
+        val decoder = Framing.FrameDecoder()
+        val payload = ByteArray(Framing.MAX_FRAME_SIZE) { 7 }
+        val wire = Framing.encode(payload) + Framing.encode(byteArrayOf(1, 2, 3))
+        val frames = decoder.feed(wire)
+        assertEquals(2, frames.size)
+        assertArrayEquals(byteArrayOf(1, 2, 3), frames[1])
+    }
 }
