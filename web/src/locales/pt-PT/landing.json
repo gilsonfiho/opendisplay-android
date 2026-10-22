@@ -21,16 +21,16 @@
   },
   "hero": {
     "badge": "Alpha inicial · testado em hardware real",
-    "title": "Use o seu tablet ou telemóvel Android como um <em>segundo monitor a sério</em> para o seu Mac.",
-    "lead": "Um cliente Android não oficial e open source para o <a>OpenDisplay</a> — o projeto original só disponibiliza um cliente para iOS/iPadOS. Este fala o mesmo protocolo de rede, sem necessitar de qualquer alteração na aplicação de Mac. Uma alternativa gratuita ao Duet Display, Sidecar e Spacedesk para quem já tem um tablet Android e quer um ecrã estendido, não apenas espelhamento.",
+    "title": "Um desktop.<br/>Dois ecrãs.",
+    "lead": "O seu tablet ou telemóvel Android passa a ser um segundo monitor a sério para o seu Mac. Gratuito, open source, e a app <a>OpenDisplay</a> do Mac fica exatamente como está.",
     "specs": ["Android 8.0+ (API 26)", "macOS via a aplicação original OpenDisplay", "GPL-3.0"],
-    "ctaStart": "Começar",
-    "ctaGithub": "Ver no GitHub",
-    "kofiText": "Gratuito, feito por uma pessoa só.",
-    "kofiSupport": "Apoie no Ko-fi ↓"
+    "stripAlt": "O ambiente de trabalho de um Mac a continuar num tablet Android ao lado, com uma janela a atravessar a divisão entre os dois",
+    "stripMac": "O seu Mac",
+    "stripTablet": "O seu tablet Android",
+    "stepMac": "No Mac",
+    "stepAndroid": "No Android"
   },
   "howItWorks": {
-    "eyebrow": "Como funciona",
     "title": "O Mac fica intocado. O dispositivo Android é quem escuta.",
     "sub": "O dispositivo Android escuta e o Mac liga-se — é isso que permite funcionar via WiFi sem qualquer configuração manual, através de descoberta por mDNS, sem uma única alteração na aplicação original OpenDisplay para Mac.",
     "mac": {
@@ -50,7 +50,6 @@
     }
   },
   "screenshots": {
-    "eyebrow": "Capturas de ecrã",
     "title": "Hardware real, ligação WiFi real.",
     "sub": "Nada de montagens — cada captura abaixo é uma sessão real entre um tablet Android e um Mac.",
     "items": [
@@ -77,7 +76,6 @@
     ]
   },
   "install": {
-    "eyebrow": "Instalação",
     "title": "Duas aplicações que funcionam em conjunto.",
     "sub": "Instale as duas para começar — o lado do Mac é o projeto original OpenDisplay, sem modificações.",
     "mac": {
@@ -96,7 +94,6 @@
     }
   },
   "features": {
-    "eyebrow": "Funcionalidades",
     "title": "O que já funciona hoje.",
     "sub": "Validado contra a aplicação real de Mac, não uma folha de especificações.",
     "items": [
@@ -114,7 +111,6 @@
     ]
   },
   "compare": {
-    "eyebrow": "Comparação",
     "title": "Contra as alternativas mais conhecidas.",
     "sub": "Para usar um tablet Android como monitor externo.",
     "headers": ["", "OpenDisplay Android", "Duet Display", "Spacedesk"],
@@ -127,7 +123,6 @@
     ]
   },
   "faq": {
-    "eyebrow": "Perguntas frequentes",
     "title": "Perguntas comuns.",
     "items": [
       {
@@ -161,7 +156,6 @@
     ]
   },
   "contribute": {
-    "eyebrow": "Contribute",
     "title": "Issues e pull requests são bem-vindos.",
     "desc": "Relatos de bugs e PRs vão para o <repo>repositório do GitHub</repo>, que também tem os detalhes de arquitetura, protocolo e build. Relatos de bugs bem feitos são o que realmente melhora um projeto paralelo de uma pessoa só — obrigado a todos abaixo.",
     "credits": [
@@ -174,8 +168,8 @@
     ]
   },
   "support": {
-    "eyebrow": "Apoie o projeto",
     "logo": "Ko-fi",
+    "cta": "Apoie no Ko-fi",
     "title": "Se o OpenDisplay Android lhe poupou a compra de um monitor, considere pagar-me um café.",
     "p1": "Este é um projeto paralelo de uma pessoa só, feito e mantido por mim, <profile>Jose Pacelli</profile>, nas noites e fins de semana — não é uma empresa.",
     "p2": "Apoiar-me no Ko-fi mantém este projeto ativo e gratuito para todos, incluindo quem não pode contribuir. O meu objetivo é fazer disto a melhor forma gratuita de transformar um tablet Android a mais num segundo monitor a sério.",

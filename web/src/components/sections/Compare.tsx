@@ -1,6 +1,6 @@
 import { Check, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
@@ -11,7 +11,7 @@ function Cell({ value, positive }: { value: string; positive: boolean }) {
     <TableCell className={positive ? 'text-foreground' : 'text-muted-foreground'}>
       <span className="inline-flex items-center gap-1.5">
         {positive ? (
-          <Check className="size-4 text-primary" aria-hidden="true" />
+          <Check className="size-4 text-accent" aria-hidden="true" />
         ) : (
           <X className="size-4 text-muted-foreground/60" aria-hidden="true" />
         )}
@@ -27,8 +27,8 @@ export function Compare() {
   const rows = t('compare.rows', { returnObjects: true }) as Row[]
 
   return (
-    <RevealSection id="compare">
-      <SectionHeading eyebrow={t('compare.eyebrow')} title={t('compare.title')} sub={t('compare.sub')} />
+    <PageSection id="compare">
+      <SectionHeading title={t('compare.title')} sub={t('compare.sub')} />
       <div className="overflow-x-auto rounded-lg border border-border">
         <Table>
           <TableHeader>
@@ -50,6 +50,6 @@ export function Compare() {
           </TableBody>
         </Table>
       </div>
-    </RevealSection>
+    </PageSection>
   )
 }

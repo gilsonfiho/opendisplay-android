@@ -15,8 +15,8 @@ function App() {
   return (
     <div className="min-h-svh w-full">
       <Header />
-      <div className="mx-auto max-w-[920px] px-6">
-        <Hero />
+      <Hero />
+      <div className="mx-auto max-w-[1200px] px-6">
         <HowItWorks />
         <Screenshots />
         <Install />

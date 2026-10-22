@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
@@ -14,9 +14,9 @@ export function Faq() {
   const items = t('faq.items', { returnObjects: true }) as { q: string; a: string }[]
 
   return (
-    <RevealSection id="faq">
-      <SectionHeading eyebrow={t('faq.eyebrow')} title={t('faq.title')} />
-      <Accordion className="mx-auto max-w-2xl">
+    <PageSection id="faq">
+      <SectionHeading title={t('faq.title')} />
+      <Accordion className="max-w-3xl">
         {items.map((item, i) => (
           <AccordionItem key={item.q} value={`item-${i}`}>
             <AccordionTrigger className="text-left">{item.q}</AccordionTrigger>
@@ -30,6 +30,6 @@ export function Faq() {
           </AccordionItem>
         ))}
       </Accordion>
-    </RevealSection>
+    </PageSection>
   )
 }

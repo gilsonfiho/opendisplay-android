@@ -47,10 +47,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/40 bg-background/60 backdrop-blur-xl backdrop-saturate-150">
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-3.5">
+      <div className="mx-auto flex max-w-[1200px] items-center gap-4 px-6 py-3.5">
         <div className="flex items-center gap-2 whitespace-nowrap font-medium text-foreground">
           <img src="/logo-mark.png" alt="" className="size-6 rounded-md" aria-hidden="true" />
-          {t('brand.name')} <span className="text-muted-foreground">{t('brand.sub')}</span>
+          {t('brand.name')} <span className="hidden text-muted-foreground min-[400px]:inline">{t('brand.sub')}</span>
         </div>
 
         <nav className="hidden min-w-0 flex-1 items-center gap-5 xl:flex">

@@ -1,19 +1,12 @@
-export function SectionHeading({
-  eyebrow,
-  title,
-  sub,
-}: {
-  eyebrow: string
-  title: string
-  sub?: string
-}) {
+/** A section's heading: a display title and an optional line under it, left-aligned on the page's
+ * column like the hero. */
+export function SectionHeading({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div className="mb-10 text-center">
-      <p className="text-xs font-semibold uppercase tracking-wide text-primary">{eyebrow}</p>
-      <h2 className="mt-2 text-2xl font-medium tracking-tight text-foreground sm:text-[1.75rem]">
+    <div className="mb-10 max-w-[44rem]">
+      <h2 className="font-heading text-[2rem] leading-[1.05] font-light tracking-[-0.02em] text-foreground sm:text-[2.75rem]">
         {title}
       </h2>
-      {sub && <p className="mx-auto mt-2 max-w-lg text-[0.95rem] text-muted-foreground">{sub}</p>}
+      {sub && <p className="mt-3 text-base leading-relaxed text-muted-foreground">{sub}</p>}
     </div>
   )
 }

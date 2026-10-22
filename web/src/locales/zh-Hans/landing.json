@@ -21,16 +21,16 @@
   },
   "hero": {
     "badge": "早期 Alpha 版 · 已在真机测试",
-    "title": "把你的安卓平板或手机变成 Mac <em>真正意义上</em>的第二显示器。",
-    "lead": "一个非官方的开源安卓客户端，对接 <a>OpenDisplay</a> — 原项目只提供 iOS/iPadOS 客户端。这个客户端使用相同的网络协议，无需对 Mac 应用做任何改动。对于已经拥有安卓平板、想要真正扩展显示而不只是镜像的人来说，是 Duet Display、Sidecar 和 Spacedesk 的免费替代方案。",
+    "title": "一个桌面，<br/>两块屏幕。",
+    "lead": "你的 Android 平板或手机变成 Mac 真正的第二块显示器。免费开源，Mac 上的 <a>OpenDisplay</a> 应用保持原样。",
     "specs": ["Android 8.0+ (API 26)", "macOS（通过原版 OpenDisplay 应用）", "GPL-3.0"],
-    "ctaStart": "开始使用",
-    "ctaGithub": "在 GitHub 上查看",
-    "kofiText": "免费，由一个人独立开发。",
-    "kofiSupport": "在 Ko-fi 上支持 ↓"
+    "stripAlt": "Mac 的桌面延伸到旁边的 Android 平板上，一个窗口横跨两块屏幕的交界处",
+    "stripMac": "你的 Mac",
+    "stripTablet": "你的 Android 平板",
+    "stepMac": "在 Mac 上",
+    "stepAndroid": "在 Android 上"
   },
   "howItWorks": {
-    "eyebrow": "工作原理",
     "title": "Mac 完全不变，由安卓设备负责监听。",
     "sub": "由安卓设备负责监听，Mac 负责连接 — 这正是它能在 WiFi 下零配置运行的原因，通过 mDNS 自动发现，无需对原版 OpenDisplay Mac 应用做任何改动。",
     "mac": {
@@ -50,7 +50,6 @@
     }
   },
   "screenshots": {
-    "eyebrow": "截图",
     "title": "真实设备，真实 WiFi 连接。",
     "sub": "没有摆拍 — 下面每张截图都是安卓平板和 Mac 之间的真实会话。",
     "items": [
@@ -77,7 +76,6 @@
     ]
   },
   "install": {
-    "eyebrow": "安装",
     "title": "两个应用协同工作。",
     "sub": "两个都装上才能开始 — Mac 那一端就是原版 OpenDisplay 项目，未做任何修改。",
     "mac": {
@@ -96,7 +94,6 @@
     }
   },
   "features": {
-    "eyebrow": "功能",
     "title": "目前已经能用的功能。",
     "sub": "针对真实的 Mac 应用验证过，不是纸面规格。",
     "items": [
@@ -114,7 +111,6 @@
     ]
   },
   "compare": {
-    "eyebrow": "对比",
     "title": "与最知名的替代方案对比。",
     "sub": "面向把安卓平板当作外接显示器使用的场景。",
     "headers": ["", "OpenDisplay Android", "Duet Display", "Spacedesk"],
@@ -127,7 +123,6 @@
     ]
   },
   "faq": {
-    "eyebrow": "常见问题",
     "title": "常见问题解答。",
     "items": [
       {
@@ -161,7 +156,6 @@
     ]
   },
   "contribute": {
-    "eyebrow": "Contribute",
     "title": "欢迎提交 issue 和 pull request。",
     "desc": "Bug 报告和 PR 请提交到 <repo>GitHub 仓库</repo>，里面也有架构、协议和构建细节。认真的 bug 报告才是真正让一个人的业余项目变得更好的关键 — 感谢下面每一位。",
     "credits": [
@@ -174,8 +168,8 @@
     ]
   },
   "support": {
-    "eyebrow": "支持这个项目",
     "logo": "Ko-fi",
+    "cta": "在 Ko-fi 上支持",
     "title": "如果 OpenDisplay Android 帮你省下了买显示器的钱，可以考虑请我喝杯咖啡。",
     "p1": "这是一个人的业余项目，由我 <profile>Jose Pacelli</profile> 在晚上和周末构建与维护 — 不是公司。",
     "p2": "在 Ko-fi 上支持我，能让这个项目持续维护并对所有人免费，包括那些无力赞助的人。我的目标是让它成为把闲置安卓平板变成真正第二显示器的最佳免费方案。",

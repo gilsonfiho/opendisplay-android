@@ -21,16 +21,16 @@
   },
   "hero": {
     "badge": "初期アルファ版 · 実機でテスト済み",
-    "title": "AndroidタブレットやスマホをMacの<em>本物の</em>セカンドモニターとして使えます。",
-    "lead": "<a>OpenDisplay</a>の非公式オープンソースAndroidクライアントです — オリジナルプロジェクトが提供しているのはiOS/iPadOSクライアントのみです。これは同じネットワークプロトコルで通信するため、Macアプリ側の変更は一切不要です。すでにAndroidタブレットを持っていて、ミラーリングだけでなく拡張ディスプレイが欲しい人向けの、Duet Display、Sidecar、Spacedeskの無料代替です。",
+    "title": "ひとつのデスクトップ。<br/>ふたつの画面。",
+    "lead": "Android のタブレットやスマホが、Mac の本物のセカンドモニターになります。無料・オープンソースで、Mac 側の <a>OpenDisplay</a> アプリはそのまま使えます。",
     "specs": ["Android 8.0+ (API 26)", "macOS（オリジナルのOpenDisplayアプリ経由）", "GPL-3.0"],
-    "ctaStart": "始める",
-    "ctaGithub": "GitHubで見る",
-    "kofiText": "無料、たった一人で開発しています。",
-    "kofiSupport": "Ko-fiで応援する ↓"
+    "stripAlt": "Mac のデスクトップが隣の Android タブレットまで続き、ウィンドウがその境目をまたいでいる様子",
+    "stripMac": "あなたの Mac",
+    "stripTablet": "あなたの Android タブレット",
+    "stepMac": "Mac で",
+    "stepAndroid": "Android で"
   },
   "howItWorks": {
-    "eyebrow": "仕組み",
     "title": "Macには一切手を加えません。待ち受けるのはAndroid側です。",
     "sub": "Android側が待ち受け、Mac側が接続する — この仕組みのおかげで、手動設定なしでWiFi経由で動作します。mDNSによる自動検出を使い、オリジナルのOpenDisplay Macアプリには一切変更を加えません。",
     "mac": {
@@ -50,7 +50,6 @@
     }
   },
   "screenshots": {
-    "eyebrow": "スクリーンショット",
     "title": "実機、実際のWiFi接続。",
     "sub": "作り物のモックアップではありません — 以下はすべてAndroidタブレットとMac間の実際のセッションです。",
     "items": [
@@ -77,7 +76,6 @@
     ]
   },
   "install": {
-    "eyebrow": "インストール",
     "title": "連携して動く2つのアプリ。",
     "sub": "両方インストールして始めましょう — Mac側はオリジナルのOpenDisplayプロジェクトそのまま、無改造です。",
     "mac": {
@@ -96,7 +94,6 @@
     }
   },
   "features": {
-    "eyebrow": "機能",
     "title": "現時点ですでに動作するもの。",
     "sub": "仕様書ではなく、実際のMacアプリで検証済みです。",
     "items": [
@@ -114,7 +111,6 @@
     ]
   },
   "compare": {
-    "eyebrow": "比較",
     "title": "よく知られた代替アプリとの比較。",
     "sub": "Androidタブレットを外部モニターとして使う用途向け。",
     "headers": ["", "OpenDisplay Android", "Duet Display", "Spacedesk"],
@@ -127,7 +123,6 @@
     ]
   },
   "faq": {
-    "eyebrow": "よくある質問",
     "title": "よくある質問。",
     "items": [
       {
@@ -161,7 +156,6 @@
     ]
   },
   "contribute": {
-    "eyebrow": "Contribute",
     "title": "IssueもPull Requestも歓迎です。",
     "desc": "バグ報告やPRは<repo>GitHubリポジトリ</repo>へお願いします。アーキテクチャ、プロトコル、ビルドの詳細もそこにあります。丁寧なバグ報告こそが、一人で作る個人プロジェクトを本当に良くしてくれます — 以下の皆さんに感謝します。",
     "credits": [
@@ -174,8 +168,8 @@
     ]
   },
   "support": {
-    "eyebrow": "プロジェクトを応援する",
     "logo": "Ko-fi",
+    "cta": "Ko-fiで応援する",
     "title": "OpenDisplay Androidでモニター代が浮いたなら、コーヒーをおごってもらえると嬉しいです。",
     "p1": "これは私、<profile>Jose Pacelli</profile>が平日の夜と週末に一人で作って維持している個人プロジェクトです — 会社ではありません。",
     "p2": "Ko-fiで応援していただくと、このプロジェクトを維持し、支援できない人も含めて誰にでも無料で提供し続けられます。目標は、余っているAndroidタブレットを本物のセカンドモニターに変える最良の無料手段にすることです。",
