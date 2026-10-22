@@ -337,6 +337,25 @@ The fallback remote cursor is a 5dp-radius white dot with a 1.5dp black stroke. 
 ### Icons
 Material Symbols Rounded as vector drawables (`ic_*.xml`), 24dp viewport, tinted by context: 18dp in meta lines, 20dp in buttons and banners.
 
+
+## Brand mark
+
+The app icon, About banner, site favicon/logo/banner/og-image and Play Store graphics all come
+from one authored vector mark (sources in `brand/`, issue #173): the "D" is a tablet, its
+counter a screen showing a horizon, and a light window with a cursor is being dragged into it
+from the left — the product's job, extending the Mac's desktop onto a second display.
+
+- **Colours:** frame gradient `#8FCBFF` → `#3A6CF0`, screen sky `#7CC0FF` → `#3A7BFF` →
+  `#1A3FA8`, a blurred `#3A7BFF` glow at 60%, on a radial navy ground `#1C2A4D` → `#0A101E`.
+  The window's three title-bar dots are the one place red/amber/green appear outside a
+  connection state: brand art, not UI, so the Lamp Rule doesn't apply to it.
+- **Wordmark:** "Open" in mist ink, "Display" in signal blue, Hanken Grotesk 500, set as outlines
+  so raster exports don't depend on an installed font. No tagline baked into images — the site
+  ships in 7 languages.
+- **Android:** adaptive icon with a vector radial background, a raster foreground at xxxhdpi
+  (the glow can't be expressed in VectorDrawable) and a vector monochrome layer for themed icons.
+- **Never:** Apple or Android logos in brand art.
+
 ## Do's and Don'ts
 
 ### Do:

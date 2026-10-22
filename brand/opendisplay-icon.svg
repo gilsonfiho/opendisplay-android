@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="432" height="432">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7CC0FF"/><stop offset="0.6" stop-color="#3A7BFF"/><stop offset="1" stop-color="#1A3FA8"/></linearGradient>
+<linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FCBFF"/><stop offset="1" stop-color="#3A6CF0"/></linearGradient>
+<radialGradient id="bg" cx="0.5" cy="0.45" r="0.7"><stop offset="0" stop-color="#1C2A4D"/><stop offset="1" stop-color="#0A101E"/></radialGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6"/></filter>
+<clipPath id="tabD"><path d="M44.5,34.5 H62 A19.5,19.5 0 0 1 62,73.5 H44.5 Z"/></clipPath>
+</defs>
+<rect width="108" height="108" fill="url(#bg)"/>
+<g filter="url(#glow)" opacity="0.6"><path d="M40,30 H62 A24,24 0 0 1 62,78 H40 Z" fill="#3A7BFF"/></g>
+<path d="M40,30 H62 A24,24 0 0 1 62,78 H40 Z" fill="url(#fr)"/>
+<g clip-path="url(#tabD)"><rect width="108" height="108" fill="url(#sky)"/>
+<path d="M0,56 C20,50 34,58 52,53 S80,47 108,52 V108 H0 Z" fill="#0E1E4A" fill-opacity="0.55"/>
+<path d="M0,61 C22,57 40,64 60,59 S90,55 108,59" fill="none" stroke="#BFE0FF" stroke-opacity="0.75" stroke-width="1.6"/></g>
+<rect x="24" y="44.5" width="37" height="24" rx="3" fill="#0A101E" opacity="0.45" filter="url(#shadow)" transform="translate(1,2)"/>
+<rect x="24" y="44.5" width="37" height="24" rx="3" fill="#E8ECF4"/>
+<path d="M27,44.5 H58 A3,3 0 0 1 61,47.5 V51 H24 V47.5 A3,3 0 0 1 27,44.5 Z" fill="#C3CEE6"/>
+<circle cx="28.2" cy="47.8" r="1.25" fill="#FF6B5E"/><circle cx="32" cy="47.8" r="1.25" fill="#F5A524"/><circle cx="35.8" cy="47.8" r="1.25" fill="#3DDC84"/>
+<rect x="28" y="55" width="19" height="2.6" rx="1.3" fill="#8D98B0"/><rect x="28" y="60.5" width="26" height="2.6" rx="1.3" fill="#B7C1D6"/>
+<path d="M54,58 v13 l3.4,-3.3 l2.6,5.3 l2.3,-1.1 l-2.6,-5.2 l4.8,-0.3 z" fill="#0E1526" stroke="#FFFFFF" stroke-width="1.1" stroke-linejoin="round"/>
+</svg>

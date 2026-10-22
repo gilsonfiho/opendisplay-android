@@ -67,8 +67,8 @@
         "caption": "앱 홈 화면 — :9000에서 대기하며, Mac이 WiFi로 찾아주기를 기다리고 있습니다."
       },
       {
-        "alt": "상태, mDNS로 알려지는 기기 이름, 문제 해결용 기기 주소를 보여주는 OpenDisplay Android 앱 설정 대화상자",
-        "caption": "설정: 연결 상태, mDNS로 알려지는 이름, 문제 해결용 이 기기의 주소."
+        "alt": "태블릿의 OpenDisplay Android 설정: 왼쪽에 섹션 목록, '일반'에는 mDNS로 알리는 이름, 비디오 옵션, 플로팅 메뉴",
+        "caption": "설정: mDNS로 알리는 이름, 전체 화면, PIP, 확대/축소, 플로팅 메뉴."
       },
       {
         "alt": "브라우저에 이 프로젝트 자체의 GitHub 저장소를 띄운 채 Mac 화면을 미러링하는 OpenDisplay Android 앱",
