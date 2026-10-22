@@ -1,7 +1,7 @@
 import { Download } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -24,14 +24,14 @@ function InstallCard({
   return (
     <Card>
       <CardContent>
-        <p className="text-xs font-semibold tracking-wide text-primary">{tag}</p>
-        <h3 className="mt-2 text-lg font-medium text-foreground">{title}</h3>
+        <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground tabular-nums">{tag}</p>
+        <h3 className="mt-2 font-heading text-2xl font-normal text-foreground">{title}</h3>
         <p className="mt-1.5 text-sm text-muted-foreground">{desc}</p>
         <Button render={<a href={href} />} nativeButton={false} className="mt-4">
           <Download className="size-4" aria-hidden="true" />
           {cta}
         </Button>
-        <p className="mt-3 text-xs text-muted-foreground [&_a]:text-primary [&_a]:no-underline [&_a:hover]:underline">
+        <p className="mt-3 text-xs text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
           {note}
         </p>
       </CardContent>
@@ -43,8 +43,8 @@ export function Install() {
   const { t } = useTranslation('landing')
 
   return (
-    <RevealSection id="install">
-      <SectionHeading eyebrow={t('install.eyebrow')} title={t('install.title')} sub={t('install.sub')} />
+    <PageSection id="install">
+      <SectionHeading title={t('install.title')} sub={t('install.sub')} />
       <div className="grid gap-4 sm:grid-cols-2">
         <InstallCard
           tag={t('install.mac.tag')}
@@ -79,6 +79,6 @@ export function Install() {
           }
         />
       </div>
-    </RevealSection>
+    </PageSection>
   )
 }

@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 
 const CREDIT_HANDLES = ['gaeaearth', 'edoardomich', 'jpbhdrey', 'dyss1992', 'VirgilChen97', 'gilsonfiho']
@@ -33,16 +33,16 @@ export function Contribute() {
   const credits = t('contribute.credits', { returnObjects: true }) as { handle: string; text: string }[]
 
   return (
-    <RevealSection id="contribute">
-      <SectionHeading eyebrow={t('contribute.eyebrow')} title={t('contribute.title')} />
-      <p className="mx-auto max-w-xl text-center text-sm text-muted-foreground [&_a]:text-primary [&_a]:no-underline [&_a:hover]:underline">
+    <PageSection id="contribute">
+      <SectionHeading title={t('contribute.title')} />
+      <p className="max-w-[60ch] text-base text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
         <Trans
           i18nKey="contribute.desc"
           t={t}
           components={{ repo: <a href="https://github.com/josepacelli/opendisplay-android" /> }}
         />
       </p>
-      <div className="mx-auto mt-8 grid max-w-2xl gap-5 sm:grid-cols-2">
+      <div className="mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         {credits.map((credit, i) => (
           <div key={credit.handle} className="flex gap-3 text-left">
             <img
@@ -51,13 +51,13 @@ export function Contribute() {
               loading="lazy"
               className="size-9 shrink-0 rounded-full"
             />
-            <p className="text-sm text-muted-foreground [&_a]:text-primary [&_a]:no-underline [&_a:hover]:underline [&_code]:rounded [&_code]:border [&_code]:border-border [&_code]:bg-secondary [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em]">
+            <p className="text-sm text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline [&_code]:rounded [&_code]:border [&_code]:border-border [&_code]:bg-secondary [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em]">
               <strong className="text-foreground">{credit.handle}</strong> —{' '}
               <Trans i18nKey={`contribute.credits.${i}.text`} t={t} components={CREDIT_COMPONENTS[i]} />
             </p>
           </div>
         ))}
       </div>
-    </RevealSection>
+    </PageSection>
   )
 }

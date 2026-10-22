@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -26,12 +26,12 @@ export function HowItWorks() {
   const androidSteps = t('howItWorks.android.steps', { returnObjects: true }) as string[]
 
   return (
-    <RevealSection id="how-it-works">
-      <SectionHeading eyebrow={t('howItWorks.eyebrow')} title={t('howItWorks.title')} sub={t('howItWorks.sub')} />
+    <PageSection id="how-it-works">
+      <SectionHeading title={t('howItWorks.title')} sub={t('howItWorks.sub')} />
       <div className="grid gap-4 sm:grid-cols-2">
         <DiagramColumn heading={t('howItWorks.mac.heading')} headingSub={t('howItWorks.mac.headingSub')} steps={macSteps} />
         <DiagramColumn heading={t('howItWorks.android.heading')} headingSub={t('howItWorks.android.headingSub')} steps={androidSteps} />
       </div>
-    </RevealSection>
+    </PageSection>
   )
 }

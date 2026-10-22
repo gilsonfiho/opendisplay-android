@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 
 const FILES = [
@@ -15,8 +15,8 @@ export function Screenshots() {
   const items = t('screenshots.items', { returnObjects: true }) as { alt: string; caption: string }[]
 
   return (
-    <RevealSection id="screenshots">
-      <SectionHeading eyebrow={t('screenshots.eyebrow')} title={t('screenshots.title')} sub={t('screenshots.sub')} />
+    <PageSection id="screenshots">
+      <SectionHeading title={t('screenshots.title')} sub={t('screenshots.sub')} />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => (
           <figure key={FILES[i]} className="overflow-hidden rounded-lg border border-border">
@@ -25,6 +25,6 @@ export function Screenshots() {
           </figure>
         ))}
       </div>
-    </RevealSection>
+    </PageSection>
   )
 }

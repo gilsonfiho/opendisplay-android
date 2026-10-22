@@ -13,9 +13,8 @@ import {
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { RevealSection } from '@/components/RevealSection'
+import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
-import { Card, CardContent } from '@/components/ui/card'
 
 const ICONS: ComponentType<{ className?: string }>[] = [
   Video,
@@ -36,30 +35,26 @@ export function Features() {
   const items = t('features.items', { returnObjects: true }) as { title: string; desc: string }[]
 
   return (
-    <RevealSection id="features">
-      <SectionHeading eyebrow={t('features.eyebrow')} title={t('features.title')} sub={t('features.sub')} />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <PageSection id="features">
+      <SectionHeading title={t('features.title')} sub={t('features.sub')} />
+      <ul className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => {
           const Icon = ICONS[i]
           return (
-            <Card key={item.title}>
-              <CardContent className="flex gap-3">
-                <Icon className="size-5 shrink-0 text-primary" />
-                <div>
-                  <h4 className="text-sm font-medium text-foreground">{item.title}</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    <Trans
-                      i18nKey={`features.items.${i}.desc`}
-                      t={t}
-                      components={{ code: <code />, b: <b className="font-medium text-foreground" /> }}
-                    />
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <li key={item.title} className="border-t border-border pt-5">
+              <Icon className="size-5 text-muted-foreground" aria-hidden="true" />
+              <h3 className="mt-3 font-heading text-lg font-medium text-foreground">{item.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                <Trans
+                  i18nKey={`features.items.${i}.desc`}
+                  t={t}
+                  components={{ code: <code />, b: <b className="font-medium text-foreground" /> }}
+                />
+              </p>
+            </li>
           )
         })}
-      </div>
-    </RevealSection>
+      </ul>
+    </PageSection>
   )
 }

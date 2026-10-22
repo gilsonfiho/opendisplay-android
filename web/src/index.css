@@ -2,11 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/hanken-grotesk";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
+    --font-heading: 'Hanken Grotesk Variable', var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -48,115 +49,122 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Cores tiradas direto de docs/styles.css (--bg/--text/--accent/--border, light e dark). */
+/* Same navy world as the app (DESIGN.md): paper family in light, navy family in dark, signal blue
+   only where something is live or actionable. */
 :root {
-    --background: #fafaf9;
-    --foreground: #16181c;
-    --card: #ffffff;
-    --card-foreground: #16181c;
-    --popover: #ffffff;
-    --popover-foreground: #16181c;
-    --primary: #1f8a5f;
-    --primary-foreground: #000000;
-    --secondary: #f3f2f0;
-    --secondary-foreground: #16181c;
-    --muted: #f3f2f0;
-    --muted-foreground: #5a6068;
-    --accent: #d6f0e3;
-    --accent-foreground: #16181c;
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #e5e5e3;
-    --input: #e5e5e3;
-    --ring: rgba(31, 138, 95, 0.35);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.75rem;
-    --sidebar: #ffffff;
-    --sidebar-foreground: #16181c;
-    --sidebar-primary: #1f8a5f;
-    --sidebar-primary-foreground: #000000;
-    --sidebar-accent: #f3f2f0;
-    --sidebar-accent-foreground: #16181c;
-    --sidebar-border: #e5e5e3;
-    --sidebar-ring: rgba(31, 138, 95, 0.35);
+    --background: #e3e8f2;
+    --foreground: #0e1526;
+    --card: #f2f5fa;
+    --card-foreground: #0e1526;
+    --popover: #f2f5fa;
+    --popover-foreground: #0e1526;
+    --primary: #0e1526;
+    --primary-foreground: #f2f5fa;
+    --secondary: #d8dfec;
+    --secondary-foreground: #0e1526;
+    --muted: #d8dfec;
+    --muted-foreground: #4f5970;
+    --accent: #1e5bd8;
+    --accent-foreground: #ffffff;
+    --destructive: #b3261e;
+    --border: #c9d1e0;
+    --input: #c9d1e0;
+    --ring: rgba(30, 91, 216, 0.45);
+    --chart-1: #1e5bd8;
+    --chart-2: #4f5970;
+    --chart-3: #7d879b;
+    --chart-4: #9aa4b8;
+    --chart-5: #c9d1e0;
+    --radius: 1rem;
+    --sidebar: #f2f5fa;
+    --sidebar-foreground: #0e1526;
+    --sidebar-primary: #0e1526;
+    --sidebar-primary-foreground: #f2f5fa;
+    --sidebar-accent: #d8dfec;
+    --sidebar-accent-foreground: #0e1526;
+    --sidebar-border: #c9d1e0;
+    --sidebar-ring: rgba(30, 91, 216, 0.45);
+    --grille: #c9d1e0;
+    --seam: #1e5bd8;
 }
 
 /*
- * "auto" (sem data-theme, padrão): segue prefers-color-scheme do sistema.
- * "light"/"dark" explícitos (data-theme, escolhidos no ThemeToggle e
- * persistidos em localStorage): forçam a paleta independente do sistema.
+ * "auto" (no data-theme, the default): follows the system's prefers-color-scheme.
+ * Explicit "light"/"dark" (data-theme, picked in ThemeToggle and kept in localStorage)
+ * force the palette regardless of the system.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --background: #0b0d10;
-    --foreground: #e8eaed;
-    --card: #14171b;
-    --card-foreground: #e8eaed;
-    --popover: #14171b;
-    --popover-foreground: #e8eaed;
-    --primary: #5fd0a3;
-    --primary-foreground: #06110c;
-    --secondary: #191d22;
-    --secondary-foreground: #e8eaed;
-    --muted: #191d22;
-    --muted-foreground: #9aa2ad;
-    --accent: #2e5c48;
-    --accent-foreground: #e8eaed;
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: #23272d;
-    --input: #23272d;
-    --ring: rgba(95, 208, 163, 0.4);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: #14171b;
-    --sidebar-foreground: #e8eaed;
-    --sidebar-primary: #5fd0a3;
-    --sidebar-primary-foreground: #06110c;
-    --sidebar-accent: #191d22;
-    --sidebar-accent-foreground: #e8eaed;
-    --sidebar-border: #23272d;
-    --sidebar-ring: rgba(95, 208, 163, 0.4);
+    --background: #0e1526;
+    --foreground: #e8ecf4;
+    --card: #141c30;
+    --card-foreground: #e8ecf4;
+    --popover: #141c30;
+    --popover-foreground: #e8ecf4;
+    --primary: #e8ecf4;
+    --primary-foreground: #0e1526;
+    --secondary: #1b2440;
+    --secondary-foreground: #e8ecf4;
+    --muted: #1b2440;
+    --muted-foreground: #9aa4b8;
+    --accent: #4c8dff;
+    --accent-foreground: #0e1526;
+    --destructive: #ff6b5e;
+    --border: #2a3452;
+    --input: #2a3452;
+    --ring: rgba(76, 141, 255, 0.5);
+    --chart-1: #4c8dff;
+    --chart-2: #9aa4b8;
+    --chart-3: #5a6580;
+    --chart-4: #2a3452;
+    --chart-5: #1b2440;
+    --sidebar: #141c30;
+    --sidebar-foreground: #e8ecf4;
+    --sidebar-primary: #e8ecf4;
+    --sidebar-primary-foreground: #0e1526;
+    --sidebar-accent: #1b2440;
+    --sidebar-accent-foreground: #e8ecf4;
+    --sidebar-border: #2a3452;
+    --sidebar-ring: rgba(76, 141, 255, 0.5);
+    --grille: #2a3452;
+    --seam: #4c8dff;
   }
 }
 
 :root[data-theme='dark'] {
-  --background: #0b0d10;
-  --foreground: #e8eaed;
-  --card: #14171b;
-  --card-foreground: #e8eaed;
-  --popover: #14171b;
-  --popover-foreground: #e8eaed;
-  --primary: #5fd0a3;
-  --primary-foreground: #06110c;
-  --secondary: #191d22;
-  --secondary-foreground: #e8eaed;
-  --muted: #191d22;
-  --muted-foreground: #9aa2ad;
-  --accent: #2e5c48;
-  --accent-foreground: #e8eaed;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: #23272d;
-  --input: #23272d;
-  --ring: rgba(95, 208, 163, 0.4);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: #14171b;
-  --sidebar-foreground: #e8eaed;
-  --sidebar-primary: #5fd0a3;
-  --sidebar-primary-foreground: #06110c;
-  --sidebar-accent: #191d22;
-  --sidebar-accent-foreground: #e8eaed;
-  --sidebar-border: #23272d;
-  --sidebar-ring: rgba(95, 208, 163, 0.4);
+    --background: #0e1526;
+    --foreground: #e8ecf4;
+    --card: #141c30;
+    --card-foreground: #e8ecf4;
+    --popover: #141c30;
+    --popover-foreground: #e8ecf4;
+    --primary: #e8ecf4;
+    --primary-foreground: #0e1526;
+    --secondary: #1b2440;
+    --secondary-foreground: #e8ecf4;
+    --muted: #1b2440;
+    --muted-foreground: #9aa4b8;
+    --accent: #4c8dff;
+    --accent-foreground: #0e1526;
+    --destructive: #ff6b5e;
+    --border: #2a3452;
+    --input: #2a3452;
+    --ring: rgba(76, 141, 255, 0.5);
+    --chart-1: #4c8dff;
+    --chart-2: #9aa4b8;
+    --chart-3: #5a6580;
+    --chart-4: #2a3452;
+    --chart-5: #1b2440;
+    --sidebar: #141c30;
+    --sidebar-foreground: #e8ecf4;
+    --sidebar-primary: #e8ecf4;
+    --sidebar-primary-foreground: #0e1526;
+    --sidebar-accent: #1b2440;
+    --sidebar-accent-foreground: #e8ecf4;
+    --sidebar-border: #2a3452;
+    --sidebar-ring: rgba(76, 141, 255, 0.5);
+    --grille: #2a3452;
+    --seam: #4c8dff;
 }
 
 @layer base {
@@ -170,6 +178,13 @@
     @apply font-sans;
     scroll-behavior: smooth;
     }
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+    }
+  ::selection {
+    background: var(--seam);
+    color: #ffffff;
+    }
   section[id] {
     scroll-margin-top: 76px;
     }
@@ -178,5 +193,23 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* The hero's window slides once from the Mac's side onto the seam, the move the product makes. */
+@keyframes strip-window-in {
+  from {
+    transform: translateX(-22%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.strip-window {
+  animation: strip-window-in 1100ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .strip-window {
+    animation: none;
   }
 }

@@ -1,72 +1,103 @@
-import { ArrowRight, ArrowUpRight, Coffee } from 'lucide-react'
+import { ArrowRight, Download } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+
+const MAC_DOWNLOAD = 'https://github.com/peetzweg/opendisplay/releases/latest'
+const ANDROID_DOWNLOAD = 'https://github.com/josepacelli/opendisplay-android/releases/latest'
+
+/** The Mac's desktop running on past its own edge onto the tablet, with a window sitting across
+ * the seam: the product's one job, drawn instead of described. Decorative for assistive tech. */
+function ExtendedStrip() {
+  const { t } = useTranslation('landing')
+  return (
+    <figure
+      role="img"
+      aria-label={t('hero.stripAlt')}
+      className="relative mt-8 h-[200px] w-full sm:h-[260px] lg:h-[280px]"
+    >
+      <div className="absolute inset-0 flex">
+        <div className="relative flex-[2.2] bg-[linear-gradient(180deg,#7cc0ff,#3a7bff_60%,#1a3fa8)]">
+          <div className="absolute inset-x-0 top-0 h-5 bg-[#0e1526]/55" />
+          <div className="absolute inset-x-0 top-[62%] h-0.5 bg-[#bfe0ff]/70" />
+          <span className="absolute bottom-4 left-4 text-xs font-medium tracking-[0.08em] text-white uppercase sm:left-6">
+            {t('hero.stripMac')}
+          </span>
+        </div>
+        <div className="relative flex-1 rounded-r-[28px] border-[10px] border-l-0 border-[#1b2440] bg-[linear-gradient(180deg,#7cc0ff,#3a7bff_60%,#1a3fa8)]">
+          <div className="absolute inset-x-0 top-[62%] h-0.5 bg-[#bfe0ff]/70" />
+          <span className="absolute bottom-4 left-4 text-xs font-medium tracking-[0.08em] text-white uppercase">
+            {t('hero.stripTablet')}
+          </span>
+        </div>
+      </div>
+      <div className="absolute inset-y-[-12px] left-[68.75%] w-[3px] bg-[var(--seam)] shadow-[0_0_18px_var(--seam)]" />
+      <div className="strip-window absolute top-[22%] left-[52%] w-[34%] rounded-xl bg-[#e8ecf4] p-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] sm:p-6">
+        <div className="mb-3 flex gap-1.5">
+          <span className="size-2 rounded-full bg-[#ff6b5e]" />
+          <span className="size-2 rounded-full bg-[#f5a524]" />
+          <span className="size-2 rounded-full bg-[#3ddc84]" />
+        </div>
+        <div className="h-2 w-1/2 rounded-full bg-[#c3cbda]" />
+        <div className="mt-2.5 h-2 w-3/4 rounded-full bg-[#c3cbda]" />
+        <div className="mt-2.5 h-2 w-2/3 rounded-full bg-[#c3cbda]" />
+      </div>
+    </figure>
+  )
+}
+
+/** One numbered step of the install bar.
+ * @param n step number.
+ * @param label where the step happens.
+ * @param cta the download button's text.
+ * @param href where it downloads from.
+ * @param primary whether this is the filled (main) button. */
+function InstallStep({ n, label, cta, href, primary }: { n: number; label: string; cta: string; href: string; primary?: boolean }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-sm font-semibold text-primary-foreground tabular-nums">
+        {n}
+      </span>
+      <span className="text-sm whitespace-nowrap text-foreground">{label}</span>
+      <Button
+        render={<a href={href} />}
+        nativeButton={false}
+        variant={primary ? 'default' : 'secondary'}
+        className="h-11 rounded-full px-5"
+      >
+        <Download className="size-4" aria-hidden="true" />
+        <span className="tabular-nums">{cta}</span>
+      </Button>
+    </div>
+  )
+}
 
 export function Hero() {
   const { t } = useTranslation('landing')
   const specs = t('hero.specs', { returnObjects: true }) as string[]
 
   return (
-    <section className="py-16 text-center sm:py-24">
-      <img
-        src="/banner.jpg"
-        alt="OpenDisplay"
-        className="mx-auto mb-8 w-full max-w-2xl rounded-2xl"
-      />
-
-      <Badge variant="outline" className="gap-2 border-primary/40 bg-primary/10 text-primary">
-        <span className="size-1.5 rounded-full bg-primary" />
-        {t('hero.badge')}
-      </Badge>
-
-      <h1 className="mx-auto mt-6 max-w-2xl text-3xl font-medium tracking-tight text-foreground sm:text-5xl">
-        <Trans
-          i18nKey="hero.title"
-          t={t}
-          components={{ em: <em className="text-primary not-italic" /> }}
-        />
-      </h1>
-
-      <p className="mx-auto mt-5 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
-        <Trans
-          i18nKey="hero.lead"
-          t={t}
-          components={{ a: <a href="https://opendisplay.app/" className="text-primary no-underline hover:underline" /> }}
-        />
-      </p>
-
-      <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-        {specs.map((spec) => (
-          <span key={spec} className="rounded-full border border-border px-3 py-1">
-            {spec}
-          </span>
-        ))}
+    <section className="pt-10 pb-20 sm:pt-14">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="size-2 rounded-full bg-accent shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_20%,transparent)]" />
+          {t('hero.badge')}
+        </p>
+        <h1 className="mt-5 max-w-[14ch] font-heading text-[3.25rem] leading-[0.95] font-light tracking-[-0.03em] text-foreground sm:text-[4.5rem] lg:text-[5.5rem]">
+          <Trans i18nKey="hero.title" t={t} components={{ br: <br /> }} />
+        </h1>
+        <p className="mt-5 max-w-[60ch] text-base leading-relaxed text-muted-foreground sm:text-lg [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
+          <Trans i18nKey="hero.lead" t={t} components={{ a: <a href="https://opendisplay.app/" /> }} />
+        </p>
       </div>
 
-      <div className="mt-7 flex flex-wrap justify-center gap-3">
-        <Button render={<a href="#install" />} nativeButton={false} size="lg">
-          {t('hero.ctaStart')}
-          <ArrowRight className="size-4" aria-hidden="true" />
-        </Button>
-        <Button
-          render={<a href="https://github.com/josepacelli/opendisplay-android" />}
-          nativeButton={false}
-          size="lg"
-          variant="outline"
-        >
-          {t('hero.ctaGithub')}
-          <ArrowUpRight className="size-4" aria-hidden="true" />
-        </Button>
-      </div>
+      <ExtendedStrip />
 
-      <div className="mt-8 flex justify-center">
-        <div className="flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-secondary/60 px-4 py-2 text-sm">
-          <Coffee className="size-4 text-primary" aria-hidden="true" />
-          <span className="text-muted-foreground">{t('hero.kofiText')}</span>
-          <a href="#support" className="font-semibold text-primary no-underline hover:underline">
-            {t('hero.kofiSupport')}
-          </a>
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div className="mt-6 flex flex-col gap-4 rounded-[28px] border border-border bg-card p-5 lg:flex-row lg:items-center lg:gap-5 lg:rounded-full lg:py-3 lg:pr-3 lg:pl-5">
+          <InstallStep n={1} label={t('hero.stepMac')} cta={t('install.mac.cta')} href={MAC_DOWNLOAD} />
+          <ArrowRight className="hidden size-4 text-muted-foreground lg:block" aria-hidden="true" />
+          <InstallStep n={2} label={t('hero.stepAndroid')} cta={t('install.android.cta')} href={ANDROID_DOWNLOAD} primary />
+          <p className="text-xs text-muted-foreground lg:ml-auto lg:max-w-[22rem] lg:pr-4 lg:text-right">{specs.join(' · ')}</p>
         </div>
       </div>
     </section>
