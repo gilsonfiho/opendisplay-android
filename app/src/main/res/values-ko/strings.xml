@@ -71,10 +71,19 @@
     <string name="about_mac_app">Mac 앱</string>
     <string name="about_close">닫기</string>
 
-    <string-array name="changelog_v0_0_54">
-        <item>변경 내역이 이제 어떻게 만들었는지가 아니라, 무엇이 달라졌는지를 쉬운 말로 설명합니다.</item>
+    <string-array name="changelog_v0_0_55">
+        <item>새로운 디자인: 라이트/다크 모드의 네이비 테마, 대기 화면의 상태 표시등, 그리고 Mac에서 고르는 이 기기 이름을 크게 표시합니다.</item>
+        <item>설정을 다시 묶었고, 태블릿에서는 왼쪽에 섹션, 오른쪽에 내용이 나옵니다.</item>
+        <item>플로팅 메뉴에 제대로 된 아이콘과 더 큰 버튼을 넣었고, \'연결 해제\'는 다른 버튼과 떨어뜨려 두었습니다.</item>
+        <item>새 앱 아이콘: Mac에서 창을 받는 태블릿. Android 테마 아이콘도 지원합니다.</item>
+        <item>세션 중에 Mac의 네트워크가 바뀌어도(Wi-Fi에서 유선, VPN 등) 이전 연결이 끊길 때까지 기다리지 않고 바로 이어집니다.</item>
+        <item>앞으로 나올 Mac 앱 버전에 대비했습니다. 이 앱이 새로 보내는 화면 정보로 Mac이 확장 데스크톱 크기를 정합니다.</item>
+        <item>\'다른 기기가 연결을 가져갔습니다\' 경고가 이제 몇 초 뒤 저절로 사라집니다.</item>
+        <item>USB 디버깅이 꺼져 있으면 이 기기의 다른 앱이 더 이상 OpenDisplay에 연결할 수 없습니다.</item>
+        <item>아주 큰 영상 프레임에서 메모리를 덜 쓰고, 네트워크에서 쏟아지는 연결 시도에도 더 잘 버팁니다.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>변경 내역이 이제 어떻게 만들었는지가 아니라, 무엇이 달라졌는지를 쉬운 말로 설명합니다.</item>
         <item>이제 커서는 연결된 Mac의 움직임만 따라갑니다. 네트워크의 다른 기기가 보낸 커서 업데이트는 무시됩니다.</item>
         <item>Google Play용 테스트 빌드입니다. 앱 동작은 달라지지 않습니다.</item>
         <item>이미 진행 중인 세션을 다른 컴퓨터가 가로챌 수 없게 했습니다. Mac이 연결되어 있으면 다른 Mac의 연결 시도는 거절됩니다.</item>
