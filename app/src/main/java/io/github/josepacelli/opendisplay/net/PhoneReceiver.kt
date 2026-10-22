@@ -88,6 +88,19 @@ sealed class PeerSignal {
     data class PeerReplaced(val previousAddress: String, val newAddress: String) : PeerSignal()
 }
 
+/** Remembers up to [limit] keys and says whether each one is new — used to log an unknown control
+ * message type once instead of on every message (PROTOCOL.md §6). The cap keeps a peer that
+ * invents types from growing the set without bound; past it, nothing new is reported.
+ * @param limit how many distinct keys to remember. */
+class FirstSeen(private val limit: Int) {
+    private val seen = HashSet<String>()
+
+    /** @param key the key to check.
+     * @return `true` the first time [key] is seen, while there's room left. */
+    @Synchronized
+    fun isFirst(key: String): Boolean = seen.size < limit && seen.add(key)
+}
+
 /** One second window of pipeline health — trimmed-down parity with the iOS
  * receiver's `PerfStats` (fps, true end-to-end latency, control-channel RTT).
  * `e2eP50Ms`/`e2eP95Ms` only include frames where the clock offset is already
@@ -140,6 +153,9 @@ class PhoneReceiver(context: Context) {
         private const val WATCHDOG_TIMEOUT_MS = 5_000L
         private const val PING_INTERVAL_MS = 2_000L
         private const val READ_BUFFER_SIZE = 64 * 1024
+        /** Distinct unknown control types worth logging before going quiet — far more than
+         * the handful a newer Mac adds between releases. */
+        private const val MAX_LOGGED_UNKNOWN_TYPES = 32
         /** How long a newcomer gets to send its first bytes before it's dropped — the Mac
          * answers `hello` with `welcome` within milliseconds, so this only bounds sockets that
          * connect and go silent. */
@@ -312,6 +328,9 @@ class PhoneReceiver(context: Context) {
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val cursorImage: SharedFlow<CursorImage> = _cursorImage.asSharedFlow()
+
+    /** Unknown control types already logged — see [FirstSeen]. */
+    private val unknownTypes = FirstSeen(MAX_LOGGED_UNKNOWN_TYPES)
 
     private val _peerSignal = MutableStateFlow<PeerSignal?>(null)
     val peerSignal: StateFlow<PeerSignal?> = _peerSignal.asStateFlow()
@@ -1252,7 +1271,9 @@ class PhoneReceiver(context: Context) {
 
             WireMessage.STATS -> Log.info("MAC-STATS ${safeJsonToLog(obj)}")
 
-            else -> Log.info("unknown control message type: ${safeStringToLog(type)}")
+            else -> if (unknownTypes.isFirst(type)) {
+                Log.info("ignoring unknown control message type: ${safeStringToLog(type)} (logged once)")
+            }
         }
     }
 
