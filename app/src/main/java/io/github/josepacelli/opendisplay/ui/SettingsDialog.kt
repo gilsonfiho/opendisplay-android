@@ -12,6 +12,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +36,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SecondaryTabRow
@@ -74,9 +79,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-/** Tabs and settings content stop growing past this on tablets, so rows stay readable and the
- * tabs sit right above the content they switch. */
-private val SETTINGS_MAX_WIDTH = 720.dp
+/** From this width up, Settings switches from a tab row to a section list beside the content —
+ * the same two-pane shape Android's own Settings app uses on tablets. */
+private val TWO_PANE_MIN_WIDTH = 840.dp
+
+/** Width of the section list in the two-pane layout. */
+private val SECTION_LIST_WIDTH = 280.dp
 
 /** Choices offered by [ConnectedMenuIdlePicker], in seconds. */
 private val CONNECTED_MENU_IDLE_OPTIONS = listOf(2, 5, 10, 15)
@@ -94,7 +102,8 @@ const val SETTINGS_TAB_ABOUT = 2
 const val SETTINGS_TAB_CHANGELOG = 3
 
 /**
- * Full-screen settings, traditional Android style: a top app bar and a tab row splitting
+ * Full-screen settings, traditional Android style: a top app bar and four sections — a tab row on
+ * phones, a section list beside the content on tablets (840dp+) — splitting
  * read-only reference info ("Details" — Status/Network/How to connect, previously a
  * collapsible section), actionable settings ("General", grouped under category headers), and
  * app info ("About" — version/license/links, merged back in from the standalone `AboutDialog`
@@ -159,39 +168,13 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = screenColor),
                 )
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-                SecondaryTabRow(
-                    selectedTabIndex = selectedTab,
-                    containerColor = screenColor,
-                    modifier = Modifier.widthIn(max = SETTINGS_MAX_WIDTH).padding(horizontal = 16.dp),
-                ) {
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_DETAILS,
-                        onClick = { selectedTab = SETTINGS_TAB_DETAILS },
-                        text = { Text(stringResource(R.string.settings_section_details)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_GENERAL,
-                        onClick = { selectedTab = SETTINGS_TAB_GENERAL },
-                        text = { Text(stringResource(R.string.settings_tab_general)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_ABOUT,
-                        onClick = { selectedTab = SETTINGS_TAB_ABOUT },
-                        text = { Text(stringResource(R.string.settings_section_about)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_CHANGELOG,
-                        onClick = { selectedTab = SETTINGS_TAB_CHANGELOG },
-                        text = { Text(stringResource(R.string.settings_tab_changelog)) },
-                    )
-                }
-                }
-                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-                Column(
-                    modifier = Modifier.widthIn(max = SETTINGS_MAX_WIDTH).fillMaxWidth()
-                        .verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-                ) {
+                val sections = listOf(
+                    SETTINGS_TAB_DETAILS to stringResource(R.string.settings_section_details),
+                    SETTINGS_TAB_GENERAL to stringResource(R.string.settings_tab_general),
+                    SETTINGS_TAB_ABOUT to stringResource(R.string.settings_section_about),
+                    SETTINGS_TAB_CHANGELOG to stringResource(R.string.settings_tab_changelog),
+                )
+                val content = @Composable {
                     when (selectedTab) {
                         SETTINGS_TAB_DETAILS -> DetailsTab(
                             connected = connected,
@@ -222,6 +205,37 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                         else -> ChangelogTab()
                     }
                 }
+                BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    if (maxWidth >= TWO_PANE_MIN_WIDTH) {
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.width(SECTION_LIST_WIDTH).padding(horizontal = 12.dp, vertical = 8.dp)) {
+                                for ((tab, label) in sections) {
+                                    NavigationDrawerItem(
+                                        label = { Text(label) },
+                                        selected = selectedTab == tab,
+                                        onClick = { selectedTab = tab },
+                                        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+                                    )
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f).fillMaxHeight()
+                                    .verticalScroll(rememberScrollState()).padding(end = 24.dp, bottom = 24.dp),
+                            ) { content() }
+                        }
+                    } else {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            SecondaryTabRow(selectedTabIndex = selectedTab, containerColor = screenColor) {
+                                for ((tab, label) in sections) {
+                                    Tab(selected = selectedTab == tab, onClick = { selectedTab = tab }, text = { Text(label) })
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                            ) { content() }
+                        }
+                    }
                 }
             }
         }
