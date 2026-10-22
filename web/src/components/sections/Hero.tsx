@@ -6,17 +6,19 @@ const MAC_DOWNLOAD = 'https://github.com/peetzweg/opendisplay/releases/latest'
 const ANDROID_DOWNLOAD = 'https://github.com/josepacelli/opendisplay-android/releases/latest'
 
 /** The Mac's desktop running on past its own edge onto the tablet, with a window sitting across
- * the seam: the product's one job, drawn instead of described. Decorative for assistive tech. */
+ * the seam: the product's one job, drawn instead of described. Decorative for assistive tech.
+ * Capped at 1680px and sized by aspect ratio from `lg` up, so ultrawide screens get the same
+ * picture rather than a thin band (#195); past the cap the Mac side gets its own bezel. */
 function ExtendedStrip() {
   const { t } = useTranslation('landing')
   return (
     <figure
       role="img"
       aria-label={t('hero.stripAlt')}
-      className="relative mt-8 h-[200px] w-full sm:h-[260px] lg:h-[280px]"
+      className="relative mx-auto mt-8 h-[200px] w-full max-w-[1680px] sm:h-[260px] lg:aspect-[1440/280] lg:h-auto"
     >
       <div className="absolute inset-0 flex">
-        <div className="relative flex-[2.2] bg-[linear-gradient(180deg,#7cc0ff,#3a7bff_60%,#1a3fa8)]">
+        <div className="relative flex-[2.2] border-[#1b2440] bg-[linear-gradient(180deg,#7cc0ff,#3a7bff_60%,#1a3fa8)] min-[1680px]:rounded-l-[28px] min-[1680px]:border-[10px] min-[1680px]:border-r-0">
           <div className="absolute inset-x-0 top-0 h-5 bg-[#0e1526]/55" />
           <div className="absolute inset-x-0 top-[62%] h-0.5 bg-[#bfe0ff]/70" />
           <span className="absolute bottom-4 left-4 text-xs font-medium tracking-[0.08em] text-white uppercase sm:left-6">
@@ -31,7 +33,7 @@ function ExtendedStrip() {
         </div>
       </div>
       <div className="absolute inset-y-[-12px] left-[68.75%] w-[3px] bg-[var(--seam)] shadow-[0_0_18px_var(--seam)]" />
-      <div className="strip-window absolute top-[22%] left-[52%] w-[34%] rounded-xl bg-[#e8ecf4] p-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] sm:p-6">
+      <div className="strip-window absolute top-[22%] left-[52%] w-[34%] rounded-xl bg-[#e8ecf4] p-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] sm:p-6 lg:top-[14%] lg:aspect-[5/2] lg:w-[30%] lg:rounded-lg">
         <div className="mb-3 flex gap-1.5">
           <span className="size-2 rounded-full bg-[#ff6b5e]" />
           <span className="size-2 rounded-full bg-[#f5a524]" />
