@@ -29,8 +29,10 @@ The only Android client that speaks the upstream OpenDisplay protocol byte-for-b
 - Transports: WiFi/TCP, adb forward, USB accessory (AOA, experimental).
 
 ## Brand Commitments
-- Name: OpenDisplay. App icon (`app_icon_display.png`) and About banner (`banner.jpg`) exist.
-- Green accent has been the identity so far (app #6FCF97, site #1f8a5f) — open to redesign.
+- Name: OpenDisplay. Mark: a "D" drawn as a tablet with a window being dragged into it from
+  the left — the icon has to say "second display" at a glance. Blue gradient with a soft glow
+  on navy. No Apple or Android logos anywhere in brand art (trademark). Sources in `brand/`.
+- The app UI is navy/blue (see DESIGN.md); the site still uses its older green accent.
 - Voice: direct, human, no AI tone.
 
 ## Evidence on Hand
