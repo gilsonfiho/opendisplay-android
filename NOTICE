@@ -8,3 +8,10 @@ Portions of this Android client (protocol constants, wire framing, and Annex-B N
 parsing) are ported from the upstream Swift client and remain copyright Philip Poloczek;
 see the per-file notices in app/src/main/java/io/github/josepacelli/opendisplay/protocol/,
 net/AnnexB.kt, net/PhoneReceiver.kt, and net/Framing.kt.
+
+Hanken Grotesk (app/src/main/res/font/hanken_grotesk_*.ttf, static instances of the
+variable font) is licensed under the SIL Open Font License 1.1; see
+licenses/OFL-HankenGrotesk.txt.
+
+The ic_* icons in app/src/main/res/drawable/ (except ic_launcher_*) are Google's Material
+Symbols, licensed under the Apache License 2.0.

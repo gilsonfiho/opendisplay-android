@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import io.github.josepacelli.opendisplay.net.CursorImage
 import io.github.josepacelli.opendisplay.net.CursorPosition
 import io.github.josepacelli.opendisplay.net.PhoneReceiver
@@ -59,8 +60,9 @@ fun CursorOverlay(receiver: PhoneReceiver, modifier: Modifier = Modifier) {
     if (currentSprite == null) {
         Canvas(modifier = modifier) {
             val center = Offset((pos.x * size.width).toFloat(), (pos.y * size.height).toFloat())
-            drawCircle(color = Color.White, radius = 6f, center = center)
-            drawCircle(color = Color.Black, radius = 6f, center = center, style = Stroke(width = 1.5f))
+            val radius = 5.dp.toPx()
+            drawCircle(color = Color.White, radius = radius, center = center)
+            drawCircle(color = Color.Black, radius = radius, center = center, style = Stroke(width = 1.5.dp.toPx()))
         }
     } else {
         CursorSprite(pos = pos, sprite = currentSprite, modifier = modifier)

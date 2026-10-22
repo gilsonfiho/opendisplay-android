@@ -1,11 +1,21 @@
 package io.github.josepacelli.opendisplay.ui
 
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +28,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,23 +41,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.github.josepacelli.opendisplay.R
 import io.github.josepacelli.opendisplay.net.ConnectedMenuEdge
+import io.github.josepacelli.opendisplay.ui.theme.OverlayColors
 
-private val GLASS_COLOR = Color.Black.copy(alpha = 0.6f)
-private val GLASS_BORDER = Color.White.copy(alpha = 0.15f)
-private val ACCENT = Color(0xFF6FCF97)
-private val DISCONNECT_RED = Color(0xFFE53935)
-private val GRIP_SIZE = 40.dp
+private val GRIP_SIZE = 48.dp
 private val ACTION_SIZE = 52.dp
 
 /**
@@ -115,9 +125,9 @@ fun ConnectedMenu(
             )
         }
         Surface(
-            color = GLASS_COLOR,
-            contentColor = Color.White,
-            border = BorderStroke(1.dp, GLASS_BORDER),
+            color = OverlayColors.strip,
+            contentColor = OverlayColors.ink,
+            border = BorderStroke(1.dp, OverlayColors.stripBorder),
             shape = RoundedCornerShape(28.dp),
             modifier = Modifier
                 .align(edge.toAlignment())
@@ -135,14 +145,12 @@ fun ConnectedMenu(
             val grip = @Composable {
                 GripButton(expanded = expanded, onClick = { expanded = !expanded })
             }
-            val actions = @Composable {
-                if (expanded) {
-                    MenuDivider(vertical = vertical)
-                    ZoomButton(enabled = zoomEnabled, onClick = { onToggleZoom(!zoomEnabled) })
-                    FullscreenButton(enabled = fullscreenEnabled, onClick = { onToggleFullscreen(!fullscreenEnabled) })
-                    SettingsButton(onClick = { expanded = false; onOpenSettings() })
-                    DisconnectButton(onClick = onDisconnect)
-                }
+            val actionList = @Composable {
+                ZoomButton(enabled = zoomEnabled, onClick = { onToggleZoom(!zoomEnabled) })
+                FullscreenButton(enabled = fullscreenEnabled, onClick = { onToggleFullscreen(!fullscreenEnabled) })
+                SettingsButton(onClick = { expanded = false; onOpenSettings() })
+                MenuDivider(vertical = vertical)
+                DisconnectButton(onClick = onDisconnect)
             }
             if (vertical) {
                 Column(
@@ -151,7 +159,16 @@ fun ConnectedMenu(
                     modifier = Modifier.padding(8.dp),
                 ) {
                     grip()
-                    actions()
+                    AnimatedVisibility(
+                        visible = expanded,
+                        enter = fadeIn(tween(200)) + expandVertically(tween(250, easing = FastOutSlowInEasing)),
+                        exit = fadeOut(tween(120)) + shrinkVertically(tween(160)),
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                        ) { actionList() }
+                    }
                 }
             } else {
                 Row(
@@ -160,14 +177,23 @@ fun ConnectedMenu(
                     modifier = Modifier.padding(8.dp),
                 ) {
                     grip()
-                    actions()
+                    AnimatedVisibility(
+                        visible = expanded,
+                        enter = fadeIn(tween(200)) + expandHorizontally(tween(250, easing = FastOutSlowInEasing)),
+                        exit = fadeOut(tween(120)) + shrinkHorizontally(tween(160)),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) { actionList() }
+                    }
                 }
             }
         }
     }
 }
 
-/** Round tap target that expands/collapses [ConnectedMenu] — three dots on a glass circle. */
+/** Round tap target that expands/collapses [ConnectedMenu] — a "more" icon on the strip. */
 @Composable
 private fun GripButton(expanded: Boolean, onClick: () -> Unit) {
     val label = stringResource(R.string.connected_menu_handle)
@@ -176,24 +202,18 @@ private fun GripButton(expanded: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .size(GRIP_SIZE)
             .clip(CircleShape)
-            .background(Color.White.copy(alpha = if (expanded) 0.18f else 0.1f))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClickLabel = label,
-                onClick = onClick,
-            ),
+            .background(if (expanded) OverlayColors.buttonOn else OverlayColors.button)
+            .clickable(onClickLabel = label, onClick = onClick),
     ) {
-        Row {
-            repeat(3) { i ->
-                Box(modifier = Modifier.size(4.dp).background(Color.White.copy(alpha = 0.8f), CircleShape))
-                if (i != 2) Box(modifier = Modifier.size(3.dp))
-            }
-        }
+        Icon(
+            painter = painterResource(R.drawable.ic_more_horiz),
+            contentDescription = label,
+            tint = if (expanded) OverlayColors.inkOn else OverlayColors.ink,
+        )
     }
 }
 
-/** Thin separator between the grip and the action buttons — a line across the axis
+/** Thin separator between the regular actions and Disconnect — a line across the axis
  * perpendicular to the pill's layout, same as a [androidx.compose.material3.HorizontalDivider]/
  * `VerticalDivider` would draw, but sized to the pill's compact buttons rather than full width.
  * @param vertical whether the pill stacks its buttons in a [Column] (side edges) rather than a
@@ -205,39 +225,38 @@ private fun MenuDivider(vertical: Boolean) {
             Modifier.width(ACTION_SIZE - 16.dp).height(1.dp)
         } else {
             Modifier.width(1.dp).height(ACTION_SIZE - 16.dp)
-        }.background(GLASS_BORDER),
+        }.background(OverlayColors.stripBorder),
     )
 }
 
-/** Round zoom toggle — filled with [ACCENT] while [enabled], glass otherwise. */
+/** Round zoom toggle — light fill while [enabled], navy otherwise. */
 @Composable
 private fun ZoomButton(enabled: Boolean, onClick: () -> Unit) {
     MenuActionButton(
         label = stringResource(R.string.connected_menu_zoom),
-        glyph = "🔍",
-        background = if (enabled) ACCENT else Color.White.copy(alpha = 0.12f),
+        icon = R.drawable.ic_zoom_in,
+        on = enabled,
         onClick = onClick,
     )
 }
 
-/** Round immersive-fullscreen toggle — filled with [ACCENT] while [enabled], glass otherwise. */
+/** Round immersive-fullscreen toggle — light fill while [enabled], navy otherwise. */
 @Composable
 private fun FullscreenButton(enabled: Boolean, onClick: () -> Unit) {
     MenuActionButton(
         label = stringResource(R.string.connected_menu_fullscreen),
-        glyph = "⛶",
-        background = if (enabled) ACCENT else Color.White.copy(alpha = 0.12f),
+        icon = R.drawable.ic_fullscreen,
+        on = enabled,
         onClick = onClick,
     )
 }
 
-/** Round Settings button — always glass, since opening Settings isn't a toggle. */
+/** Round Settings button — always navy, since opening Settings isn't a toggle. */
 @Composable
 private fun SettingsButton(onClick: () -> Unit) {
     MenuActionButton(
         label = stringResource(R.string.settings_title),
-        glyph = "⚙",
-        background = Color.White.copy(alpha = 0.12f),
+        icon = R.drawable.ic_settings,
         onClick = onClick,
     )
 }
@@ -247,30 +266,37 @@ private fun SettingsButton(onClick: () -> Unit) {
 private fun DisconnectButton(onClick: () -> Unit) {
     MenuActionButton(
         label = stringResource(R.string.notification_action_disconnect),
-        glyph = "✕",
-        background = DISCONNECT_RED,
-        glyphBold = true,
+        icon = R.drawable.ic_call_end,
+        danger = true,
         onClick = onClick,
     )
 }
 
-/** One action inside the expanded pill — a round glyph button ([ACTION_SIZE]) with its label
- * underneath, since a bare glyph turned out too easy to mistake for a different action (or, for
+/** One action inside the expanded pill — a round icon button ([ACTION_SIZE]) with its label
+ * underneath, since a bare icon turned out too easy to mistake for a different action (or, for
  * Disconnect, too easy to hit by accident).
- * @param label caption shown below the glyph, and the button's accessibility click label.
- * @param glyph single character/emoji drawn centered in the circle.
- * @param background the circle's fill color — [ACCENT] or [DISCONNECT_RED] when the action is
- * "on" or destructive, translucent glass otherwise.
- * @param glyphBold whether to bold the glyph (Disconnect's ✕ reads better heavier).
+ * @param label caption shown below the icon, and the button's accessibility click label.
+ * @param icon vector drawable drawn centered in the circle.
+ * @param on a toggle's current state — drawn as a light fill with a dark icon when `true`;
+ * `null` for actions that aren't toggles.
+ * @param danger whether the action is destructive (Disconnect) — drawn red.
  * @param onClick called when tapped. */
 @Composable
 private fun MenuActionButton(
     label: String,
-    glyph: String,
-    background: Color,
-    glyphBold: Boolean = false,
+    @DrawableRes icon: Int,
+    on: Boolean? = null,
+    danger: Boolean = false,
     onClick: () -> Unit,
 ) {
+    val background by animateColorAsState(
+        when {
+            danger -> OverlayColors.danger
+            on == true -> OverlayColors.buttonOn
+            else -> OverlayColors.button
+        },
+        label = "action-bg",
+    )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             contentAlignment = Alignment.Center,
@@ -278,19 +304,19 @@ private fun MenuActionButton(
                 .size(ACTION_SIZE)
                 .clip(CircleShape)
                 .background(background)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClickLabel = label,
-                    onClick = onClick,
-                ),
+                .semantics { if (on != null) toggleableState = ToggleableState(on) }
+                .clickable(onClickLabel = label, onClick = onClick),
         ) {
-            Text(glyph, color = Color.White, fontSize = 20.sp, fontWeight = if (glyphBold) FontWeight.Bold else FontWeight.Normal)
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = null,
+                tint = if (on == true) OverlayColors.inkOn else OverlayColors.ink,
+            )
         }
         Text(
             text = label,
-            color = Color.White,
-            fontSize = 11.sp,
+            color = OverlayColors.ink,
+            style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
             maxLines = 2,
             modifier = Modifier.padding(top = 4.dp).widthIn(max = 68.dp),

@@ -13,6 +13,7 @@
 
     <string name="idle_instruction_wifi">在 Mac 应用的 WiFi 列表中选择此设备</string>
     <string name="idle_instruction_keep_open">保持此应用打开 — 串流会自动开始</string>
+    <string name="idle_name_hint">Mac 上显示的就是这个名称。</string>
 
     <string name="settings_title">设置</string>
     <string name="settings_tab_general">常规</string>

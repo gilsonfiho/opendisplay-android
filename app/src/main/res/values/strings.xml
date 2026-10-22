@@ -13,6 +13,7 @@
 
     <string name="idle_instruction_wifi">Choose this device under WiFi in the Mac app</string>
     <string name="idle_instruction_keep_open">Keep this app open — streaming starts automatically</string>
+    <string name="idle_name_hint">This is the name your Mac shows.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_tab_general">General</string>
