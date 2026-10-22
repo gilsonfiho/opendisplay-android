@@ -1,11 +1,20 @@
 package io.github.josepacelli.opendisplay.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.border
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,13 +31,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SecondaryTabRow
@@ -50,13 +59,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -67,10 +79,18 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-private val WIDE_LAYOUT_MIN_WIDTH = 600.dp
+/** From this width up, Settings switches from a tab row to a section list beside the content —
+ * the same two-pane shape Android's own Settings app uses on tablets. */
+private val TWO_PANE_MIN_WIDTH = 840.dp
+
+/** Width of the section list in the two-pane layout. */
+private val SECTION_LIST_WIDTH = 280.dp
 
 /** Choices offered by [ConnectedMenuIdlePicker], in seconds. */
 private val CONNECTED_MENU_IDLE_OPTIONS = listOf(2, 5, 10, 15)
+
+/** Bar length of the longest idle-delay option; shorter ones scale down from it. */
+private val IDLE_BAR_MAX_WIDTH = 72.dp
 
 /** Aspect ratio of drawable/banner.jpg (1600x639) — keeps the "Sobre" banner uncropped. */
 private const val BANNER_ASPECT_RATIO = 1600f / 639f
@@ -82,7 +102,8 @@ const val SETTINGS_TAB_ABOUT = 2
 const val SETTINGS_TAB_CHANGELOG = 3
 
 /**
- * Full-screen settings, traditional Android style: a top app bar and a tab row splitting
+ * Full-screen settings, traditional Android style: a top app bar and four sections — a tab row on
+ * phones, a section list beside the content on tablets (840dp+) — splitting
  * read-only reference info ("Details" — Status/Network/How to connect, previously a
  * collapsible section), actionable settings ("General", grouped under category headers), and
  * app info ("About" — version/license/links, merged back in from the standalone `AboutDialog`
@@ -120,10 +141,9 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
     var selectedTab by remember { mutableIntStateOf(initialTab) }
     val addressHint = remember { receiver.localAddressHint() }
     val addressUnavailableMessage = remember { receiver.addressUnavailableMessage() }
-    val wide = LocalConfiguration.current.screenWidthDp.dp >= WIDE_LAYOUT_MIN_WIDTH
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        val screenColor = MaterialTheme.colorScheme.surfaceContainerLow
+        val screenColor = MaterialTheme.colorScheme.background
         Surface(modifier = Modifier.fillMaxSize(), color = screenColor) {
             Column(modifier = Modifier.fillMaxSize().safeDrawingPadding()) {
                 TopAppBar(
@@ -148,31 +168,13 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = screenColor),
                 )
-                SecondaryTabRow(selectedTabIndex = selectedTab, containerColor = screenColor) {
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_DETAILS,
-                        onClick = { selectedTab = SETTINGS_TAB_DETAILS },
-                        text = { Text(stringResource(R.string.settings_section_details)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_GENERAL,
-                        onClick = { selectedTab = SETTINGS_TAB_GENERAL },
-                        text = { Text(stringResource(R.string.settings_tab_general)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_ABOUT,
-                        onClick = { selectedTab = SETTINGS_TAB_ABOUT },
-                        text = { Text(stringResource(R.string.settings_section_about)) },
-                    )
-                    Tab(
-                        selected = selectedTab == SETTINGS_TAB_CHANGELOG,
-                        onClick = { selectedTab = SETTINGS_TAB_CHANGELOG },
-                        text = { Text(stringResource(R.string.settings_tab_changelog)) },
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 16.dp),
-                ) {
+                val sections = listOf(
+                    SETTINGS_TAB_DETAILS to stringResource(R.string.settings_section_details),
+                    SETTINGS_TAB_GENERAL to stringResource(R.string.settings_tab_general),
+                    SETTINGS_TAB_ABOUT to stringResource(R.string.settings_section_about),
+                    SETTINGS_TAB_CHANGELOG to stringResource(R.string.settings_tab_changelog),
+                )
+                val content = @Composable {
                     when (selectedTab) {
                         SETTINGS_TAB_DETAILS -> DetailsTab(
                             connected = connected,
@@ -188,7 +190,6 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                             onTogglePerfHud = receiver::setShowPerfHud,
                             perfHudPosition = perfHudPosition,
                             onPerfHudPositionChange = receiver::setPerfHudPosition,
-                            wide = wide,
                             immersiveFullscreen = immersiveFullscreen,
                             onToggleImmersive = receiver::setImmersiveFullscreen,
                             pipEnabled = pipEnabled,
@@ -202,6 +203,38 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                         )
                         SETTINGS_TAB_ABOUT -> AboutTab()
                         else -> ChangelogTab()
+                    }
+                }
+                BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    if (maxWidth >= TWO_PANE_MIN_WIDTH) {
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.width(SECTION_LIST_WIDTH).padding(horizontal = 12.dp, vertical = 8.dp)) {
+                                for ((tab, label) in sections) {
+                                    NavigationDrawerItem(
+                                        label = { Text(label) },
+                                        selected = selectedTab == tab,
+                                        onClick = { selectedTab = tab },
+                                        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+                                    )
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f).fillMaxHeight()
+                                    .verticalScroll(rememberScrollState()).padding(end = 24.dp, bottom = 24.dp),
+                            ) { content() }
+                        }
+                    } else {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            SecondaryTabRow(selectedTabIndex = selectedTab, containerColor = screenColor) {
+                                for ((tab, label) in sections) {
+                                    Tab(selected = selectedTab == tab, onClick = { selectedTab = tab }, text = { Text(label) })
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                            ) { content() }
+                        }
                     }
                 }
             }
@@ -219,7 +252,6 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
  * @param onTogglePerfHud called with the new state when the switch is flipped.
  * @param perfHudPosition current corner the perf overlay renders in.
  * @param onPerfHudPositionChange called with the new corner when a different one is picked.
- * @param wide whether there's room to lay the four corner options out in one row instead of two.
  * @param immersiveFullscreen current toggle state.
  * @param onToggleImmersive called with the new state when the switch is flipped.
  * @param pipEnabled current toggle state.
@@ -240,7 +272,6 @@ private fun GeneralTab(
     onTogglePerfHud: (Boolean) -> Unit,
     perfHudPosition: PerfHudPosition,
     onPerfHudPositionChange: (PerfHudPosition) -> Unit,
-    wide: Boolean,
     immersiveFullscreen: Boolean,
     onToggleImmersive: (Boolean) -> Unit,
     pipEnabled: Boolean,
@@ -252,59 +283,40 @@ private fun GeneralTab(
     connectedMenuIdleSeconds: Int,
     onConnectedMenuIdleSecondsChange: (Int) -> Unit,
 ) {
-    SettingsCategory(stringResource(R.string.settings_section_name)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.settings_name_label),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f).padding(end = 8.dp),
-            )
-            OutlinedTextField(value = draftName, onValueChange = onNameChange, singleLine = true, modifier = Modifier.weight(1f))
-        }
-    }
-
-    SettingsCategory(stringResource(R.string.settings_section_notification)) {
+    SettingsGroup {
+        OutlinedTextField(
+            value = draftName,
+            onValueChange = onNameChange,
+            singleLine = true,
+            label = { Text(stringResource(R.string.settings_name_label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+        )
         ToggleListItem(stringResource(R.string.settings_notification_show), showNotification, onToggleNotification)
     }
 
-    SettingsCategory(stringResource(R.string.settings_section_immersive)) {
+    SettingsCategory(stringResource(R.string.settings_section_video)) {
         ToggleListItem(stringResource(R.string.settings_immersive_show), immersiveFullscreen, onToggleImmersive)
+        ToggleListItem(stringResource(R.string.settings_pip_show), pipEnabled, onTogglePip)
+        ToggleListItem(stringResource(R.string.settings_zoom_pinch), zoomEnabled, onToggleZoom)
+    }
+
+    SettingsCategory(stringResource(R.string.settings_section_connected_menu)) {
+        ToggleListItem(stringResource(R.string.settings_connected_menu_show), connectedMenuEnabled, onToggleConnectedMenu)
+        Text(
+            text = stringResource(R.string.settings_connected_menu_idle_label),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+        ConnectedMenuIdlePicker(
+            connectedMenuIdleSeconds,
+            onConnectedMenuIdleSecondsChange,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        )
     }
 
     SettingsCategory(stringResource(R.string.settings_section_perf_hud)) {
         ToggleListItem(stringResource(R.string.settings_perf_hud_show), showPerfHud, onTogglePerfHud)
-        Spacer(modifier = Modifier.height(8.dp))
-        PerfHudPositionPicker(perfHudPosition, onPerfHudPositionChange, wide, modifier = Modifier.padding(horizontal = 16.dp))
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-
-    SettingsCategory(stringResource(R.string.settings_section_pip)) {
-        ToggleListItem(stringResource(R.string.settings_pip_show), pipEnabled, onTogglePip)
-    }
-
-    SettingsCategory(stringResource(R.string.settings_section_video)) {
-        ToggleListItem(stringResource(R.string.settings_zoom_pinch), zoomEnabled, onToggleZoom)
-    }
-
-    SettingsCategory(stringResource(R.string.settings_section_connected_menu), showDivider = false) {
-        ToggleListItem(stringResource(R.string.settings_connected_menu_show), connectedMenuEnabled, onToggleConnectedMenu)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.settings_connected_menu_idle_label),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        ConnectedMenuIdlePicker(
-            connectedMenuIdleSeconds,
-            onConnectedMenuIdleSecondsChange,
-            wide,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        PerfHudPositionPicker(perfHudPosition, onPerfHudPositionChange, modifier = Modifier.padding(16.dp))
     }
 }
 
@@ -322,7 +334,7 @@ private fun DetailsTab(connected: Boolean, addressHint: String?, addressUnavaila
                 stringResource(R.string.settings_status_listening),
                 stringResource(R.string.settings_status_listening_value, PhoneReceiver.DEFAULT_PORT),
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             LabeledRow(
                 stringResource(R.string.settings_status_connection),
                 stringResource(
@@ -338,13 +350,13 @@ private fun DetailsTab(connected: Boolean, addressHint: String?, addressUnavaila
             Text(text = stringResource(R.string.settings_manual_hint), style = MaterialTheme.typography.bodySmall)
             Text(
                 text = addressHint ?: addressUnavailableMessage,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 4.dp),
+                style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"),
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
     }
 
-    SettingsCategory(stringResource(R.string.settings_section_how_to_connect), showDivider = false) {
+    SettingsCategory(stringResource(R.string.settings_section_how_to_connect)) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
             Text(stringResource(R.string.settings_howto_wifi), style = MaterialTheme.typography.bodySmall)
             Text(
@@ -427,7 +439,7 @@ private fun AboutTab() {
  * the app. */
 @Composable
 private fun ChangelogTab() {
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+    Column(modifier = Modifier.padding(vertical = 16.dp)) {
         CHANGELOG_ENTRIES.forEachIndexed { index, entry ->
             ChangelogEntryCard(entry)
             if (index != CHANGELOG_ENTRIES.lastIndex) Spacer(modifier = Modifier.height(12.dp))
@@ -441,11 +453,11 @@ private fun ChangelogTab() {
 private fun ChangelogEntryCard(entry: ChangelogEntry) {
     val highlights = stringArrayResource(entry.highlightsRes)
     Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.primaryContainer) {
                     Text(
@@ -489,100 +501,143 @@ private fun formatChangelogDate(dateIso: String): String {
     return DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(parsed)
 }
 
-/** Four-corner picker for the performance overlay — one row of four [FilterChip]s when
- * there's room ([wide]), two rows of two otherwise, laid out the same way the corners
- * appear on screen (top row above bottom row).
+/** Corner picker for the performance overlay, drawn as a small map of the screen: tap the
+ * corner you want the readout in. Each corner is a 48dp radio target; the chosen one shows the
+ * readout's shape filled in, and its name is spelled out underneath.
  * @param selected the corner currently in effect.
  * @param onSelect called with the newly picked corner.
- * @param wide lay all four chips out in a single row instead of two.
  * @param modifier applied to the picker's outer column. */
 @Composable
 private fun PerfHudPositionPicker(
     selected: PerfHudPosition,
     onSelect: (PerfHudPosition) -> Unit,
-    wide: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val options = listOf(
-        PerfHudPosition.TOP_START to stringResource(R.string.settings_perf_hud_position_top_start),
-        PerfHudPosition.TOP_END to stringResource(R.string.settings_perf_hud_position_top_end),
-        PerfHudPosition.BOTTOM_START to stringResource(R.string.settings_perf_hud_position_bottom_start),
-        PerfHudPosition.BOTTOM_END to stringResource(R.string.settings_perf_hud_position_bottom_end),
+        Triple(PerfHudPosition.TOP_START, Alignment.TopStart, stringResource(R.string.settings_perf_hud_position_top_start)),
+        Triple(PerfHudPosition.TOP_END, Alignment.TopEnd, stringResource(R.string.settings_perf_hud_position_top_end)),
+        Triple(PerfHudPosition.BOTTOM_START, Alignment.BottomStart, stringResource(R.string.settings_perf_hud_position_bottom_start)),
+        Triple(PerfHudPosition.BOTTOM_END, Alignment.BottomEnd, stringResource(R.string.settings_perf_hud_position_bottom_end)),
     )
-    val rows = if (wide) listOf(options) else options.chunked(2)
-    Column(modifier = modifier.fillMaxWidth()) {
-        rows.forEachIndexed { index, row ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                modifier = (if (index == 0) Modifier else Modifier.padding(top = 6.dp)).fillMaxWidth(),
-            ) {
-                for ((position, label) in row) {
-                    PositionChip(label, selected == position) { onSelect(position) }
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .widthIn(max = 280.dp).fillMaxWidth().aspectRatio(16f / 10f)
+                .border(2.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium)
+                .selectableGroup()
+                .padding(4.dp),
+        ) {
+            for ((position, alignment, label) in options) {
+                val isSelected = selected == position
+                Box(
+                    contentAlignment = alignment,
+                    modifier = Modifier
+                        .align(alignment)
+                        .size(width = 72.dp, height = 48.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .selectable(selected = isSelected, role = Role.RadioButton, onClick = { onSelect(position) })
+                        .semantics { contentDescription = label }
+                        .padding(8.dp),
+                ) {
+                    Box(
+                        modifier = if (isSelected) {
+                            Modifier.size(width = 40.dp, height = 14.dp)
+                                .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall)
+                        } else {
+                            Modifier.size(10.dp).background(MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                        },
+                    )
                 }
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = options.first { it.first == selected }.third,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
 /** Fixed set of idle-delay options for [ConnectedMenu] — how long the video must sit untouched
- * before it reappears (issue #151), reusing [PositionChip]'s row-of-[FilterChip]s shape.
+ * before it reappears (issue #151). Each option shows its duration as a bar whose length is
+ * proportional to the seconds, so the choice reads as "how long" at a glance.
  * @param selected the delay currently in effect, in seconds.
  * @param onSelect called with the newly picked delay.
- * @param wide lay all options out in a single row instead of two.
- * @param modifier applied to the picker's outer column. */
+ * @param modifier applied to the picker's row. */
 @Composable
 private fun ConnectedMenuIdlePicker(
     selected: Int,
     onSelect: (Int) -> Unit,
-    wide: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val options = CONNECTED_MENU_IDLE_OPTIONS.map { it to stringResource(R.string.settings_connected_menu_idle_seconds, it) }
-    val rows = if (wide) listOf(options) else options.chunked(2)
-    Column(modifier = modifier.fillMaxWidth()) {
-        rows.forEachIndexed { index, row ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                modifier = (if (index == 0) Modifier else Modifier.padding(top = 6.dp)).fillMaxWidth(),
+    val longest = CONNECTED_MENU_IDLE_OPTIONS.max()
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        modifier = modifier.fillMaxWidth().selectableGroup(),
+    ) {
+        for (seconds in CONNECTED_MENU_IDLE_OPTIONS) {
+            val isSelected = selected == seconds
+            Surface(
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.selectable(selected = isSelected, role = Role.RadioButton, onClick = { onSelect(seconds) }),
             ) {
-                for ((seconds, label) in row) {
-                    PositionChip(label, selected == seconds) { onSelect(seconds) }
+                Column(modifier = Modifier.heightIn(min = 48.dp).padding(horizontal = 12.dp, vertical = 10.dp)) {
+                    Text(
+                        text = stringResource(R.string.settings_connected_menu_idle_seconds, seconds),
+                        style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(width = IDLE_BAR_MAX_WIDTH * seconds / longest, height = 4.dp)
+                            .background(
+                                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                CircleShape,
+                            ),
+                    )
                 }
             }
         }
     }
 }
 
-/** One selectable corner option inside [PerfHudPositionPicker].
- * @param label the corner's display name.
- * @param selected whether this is the currently active corner.
- * @param onClick called when tapped. */
-@Composable
-private fun PositionChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label, style = MaterialTheme.typography.labelSmall) },
-    )
-}
-
-/** A titled group of rows, the traditional Android "preference category" shape: a small
- * primary-colored header followed by its rows, with an optional trailing divider.
+/** A titled group of rows: a small header above a rounded surface holding the rows — the
+ * grouped-list shape current Android settings use.
  * @param title category heading.
- * @param showDivider whether to draw a divider below the category.
  * @param content the category's rows. */
 @Composable
-private fun SettingsCategory(title: String, showDivider: Boolean = true, content: @Composable () -> Unit) {
-    Column(modifier = Modifier.padding(top = 12.dp)) {
+private fun SettingsCategory(title: String, content: @Composable () -> Unit) {
+    Column(modifier = Modifier.padding(top = 24.dp)) {
         Text(
             text = title,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        content()
-        if (showDivider) HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
+        SettingsGroupSurface(content)
+    }
+}
+
+/** The rounded surface a set of related rows sits on — [SettingsCategory] without a header.
+ * @param content the group's rows. */
+@Composable
+private fun SettingsGroup(content: @Composable () -> Unit) {
+    Box(modifier = Modifier.padding(top = 24.dp)) { SettingsGroupSurface(content) }
+}
+
+/** The rounded surface itself, shared by [SettingsCategory] and [SettingsGroup].
+ * @param content the group's rows. */
+@Composable
+private fun SettingsGroupSurface(content: @Composable () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(vertical = 4.dp)) { content() }
     }
 }
 
@@ -594,10 +649,10 @@ private fun SettingsCategory(title: String, showDivider: Boolean = true, content
 @Composable
 private fun ToggleListItem(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     ListItem(
-        headlineContent = { Text(label, style = MaterialTheme.typography.bodyMedium) },
-        trailingContent = { Switch(checked = checked, onCheckedChange = onCheckedChange) },
+        headlineContent = { Text(label, style = MaterialTheme.typography.bodyLarge) },
+        trailingContent = { Switch(checked = checked, onCheckedChange = null) },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        modifier = Modifier.clickable { onCheckedChange(!checked) },
+        modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
     )
 }
 
@@ -611,6 +666,10 @@ private fun LabeledRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(text = label, style = MaterialTheme.typography.bodyMedium)
-        Text(text = value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

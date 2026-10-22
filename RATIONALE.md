@@ -66,12 +66,18 @@ Organized by file, in source order.
   sidesteps that instead of relying on it staying dismissible on top of live video.
 - **`ReceiverScreen`**, the scrim `Box` before `IdleContent`: covers the video box — otherwise the
   last decoded frame stays visible behind the status text after a disconnect.
-- **`IdleContent`**, the app-icon `Box`: the app icon is an adaptive icon (mipmap XML with
-  separate background/foreground layers) — `painterResource` can't load that directly, so this
-  recreates the round launcher look from its layers.
-- **`IdleContent`**, the status-dot `Row`: this content only renders while disconnected, so the
-  dot mirrors the iOS `IdleView`'s semantics (green = connected) by being orange here by
-  construction, not a value read from `status`.
+- **`lampStateFor`**: `PhoneReceiver` only exposes the status as a localized string, so the lamp
+  colour is picked by comparing it to the same `status_*` resources it was built from. Anything
+  that isn't a known problem or starting/stopped counts as listening — that string carries the
+  bound port, so it can't be matched exactly. Avoids adding a status enum to `PhoneReceiver`
+  just for a colour.
+- **`IdleContent`**, `short` (height under 480dp): a phone like the Galaxy A56 on its side is
+  ~915x412dp. It keeps the two-column layout — stacking would push the steps and Settings below
+  the fold — but drops the panel padding from 56 to 24dp and the name to `displaySmall` so
+  everything fits without scrolling.
+- **`IndicatorLamp`**, the pulse reads `ANIMATOR_DURATION_SCALE` itself: an infinite transition
+  with the system's "remove animations" setting on would otherwise still run. Read once per
+  composition; flipping the setting takes effect the next time the idle screen shows.
 - **`ReceiverScreen`**, `ConnectionUnstableBanner`'s `Alignment.BottomCenter`: the top of the
   screen already hosts `PeerSignalBanner` and `PerfHud` — bottom keeps this transient pill from
   fighting either for space when a resync happens to land alongside one of them.
@@ -92,6 +98,16 @@ Organized by file, in source order.
   Mac's mouse cursor moving is driven by `PhoneReceiver.cursorPosition`, a separate signal from
   local touch — a user mousing around on the Mac with the tablet screen otherwise untouched
   should hide the menu too, not just leave it sitting on top of the desktop being controlled.
+
+## ui/theme/Theme.kt
+
+- **Hanken Grotesk as four static TTFs** instead of the variable font: on the test device (Galaxy
+  Tab S10 FE+, Android 15) `FontVariation.Settings` on a resource font didn't change the weight —
+  every role rendered at the variable font's default. Static instances cut with
+  `fonttools varLib.instancer` render the right weight everywhere back to minSdk 26.
+- **`OverlayColors`** doesn't follow the light/dark scheme: the floating menu, perf HUD and
+  unstable-connection pill sit on top of the Mac's desktop, whose brightness has nothing to do
+  with the Android system theme. A fixed dark navy reads on any wallpaper.
 
 ## video/VideoDecoder.kt
 

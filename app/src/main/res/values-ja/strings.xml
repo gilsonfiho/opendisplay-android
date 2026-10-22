@@ -13,6 +13,7 @@
 
     <string name="idle_instruction_wifi">MacアプリのWiFi一覧からこのデバイスを選択してください</string>
     <string name="idle_instruction_keep_open">このアプリを開いたままにしてください — ストリーミングは自動的に始まります</string>
+    <string name="idle_name_hint">Mac にはこの名前で表示されます。</string>
 
     <string name="settings_title">設定</string>
     <string name="settings_tab_general">一般</string>

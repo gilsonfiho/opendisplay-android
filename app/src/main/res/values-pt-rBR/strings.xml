@@ -13,6 +13,7 @@
 
     <string name="idle_instruction_wifi">Escolha este aparelho em WiFi no app do Mac</string>
     <string name="idle_instruction_keep_open">Mantenha este app aberto — a transmissão começa automaticamente</string>
+    <string name="idle_name_hint">É esse o nome que aparece no Mac.</string>
 
     <string name="settings_title">Configurações</string>
     <string name="settings_tab_general">Geral</string>
