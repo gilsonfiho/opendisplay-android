@@ -2,7 +2,6 @@ import { Trans, useTranslation } from 'react-i18next'
 import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 
-const CREDIT_HANDLES = ['gaeaearth', 'edoardomich', 'jpbhdrey', 'dyss1992', 'VirgilChen97', 'gilsonfiho']
 
 const CREDIT_COMPONENTS: Record<number, Record<string, React.ReactElement>> = {
   0: {
@@ -44,13 +43,7 @@ export function Contribute() {
       </p>
       <div className="mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         {credits.map((credit, i) => (
-          <div key={credit.handle} className="flex gap-3 text-left">
-            <img
-              src={`https://github.com/${CREDIT_HANDLES[i]}.png`}
-              alt=""
-              loading="lazy"
-              className="size-9 shrink-0 rounded-full"
-            />
+          <div key={credit.handle} className="border-t border-border pt-4">
             <p className="text-sm text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline [&_code]:rounded [&_code]:border [&_code]:border-border [&_code]:bg-secondary [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em]">
               <strong className="text-foreground">{credit.handle}</strong> —{' '}
               <Trans i18nKey={`contribute.credits.${i}.text`} t={t} components={CREDIT_COMPONENTS[i]} />

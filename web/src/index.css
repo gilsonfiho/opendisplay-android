@@ -181,6 +181,9 @@
   h1, h2, h3 {
     font-family: var(--font-heading);
     }
+  html {
+    scrollbar-color: var(--border) var(--background);
+    }
   ::selection {
     background: var(--seam);
     color: #ffffff;

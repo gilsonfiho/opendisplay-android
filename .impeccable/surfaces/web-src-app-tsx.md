@@ -22,3 +22,7 @@ FIRST VIEWPORT: Nav on top (mark, links, GitHub, theme, language). Display headl
 FORM: Extended strip, candidate 4 of 7 (dealt). Signature interaction: the window slides across the seam once on load (reduced-motion: static). seed:91782c2da26e407f
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+## Build path for this surface
+
+Recorded default is comp-led, but image generation failed on 2026-10-22 (OpenAI API key expired, HTTP 401) before any comp was made. The owner chose, in the structured question "A chave da OpenAI expirou. Como sigo com o redesign do site?", the answer "Seguir direto no código (Recomendado)". So this surface was built code-led from the three first-viewport HTML sketches; the locked sketch `.impeccable/mocks/decision/extended-strip.html` is the critique reference, and no comp round ran. The project default in `.impeccable/config.json` stays comp-led for future surfaces.

@@ -16,12 +16,11 @@ export function Faq() {
   return (
     <PageSection id="faq">
       <SectionHeading title={t('faq.title')} />
-      <Accordion className="max-w-3xl">
+      <Accordion className="w-full">
         {items.map((item, i) => (
           <AccordionItem key={item.q} value={`item-${i}`}>
-            <AccordionTrigger className="text-left">{item.q}</AccordionTrigger>
-            <AccordionContent>
-              {RICH_COMPONENTS[i] ? (
+            <AccordionTrigger className="text-left text-base">{item.q}</AccordionTrigger>
+            <AccordionContent className="max-w-[70ch] text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">              {RICH_COMPONENTS[i] ? (
                 <Trans i18nKey={`faq.items.${i}.a`} t={t} components={RICH_COMPONENTS[i]} />
               ) : (
                 item.a

@@ -79,14 +79,12 @@
     "title": "함께 동작하는 두 개의 앱.",
     "sub": "시작하려면 둘 다 설치하세요 — Mac 쪽은 오리지널 OpenDisplay 프로젝트를 그대로, 무수정으로 사용합니다.",
     "mac": {
-      "tag": "1단계 · MAC에서",
       "title": "송신 측",
       "desc": "가상 디스플레이를 캡처해서 스트리밍합니다. 오리지널 OpenDisplay 프로그램 그대로, 무수정입니다.",
       "cta": "Mac용 다운로드",
       "note": "직접 빌드하고 싶으신가요? <compile>소스에서 빌드 ↗</compile>"
     },
     "android": {
-      "tag": "2단계 · ANDROID에서",
       "title": "수신 측",
       "desc": "화면을 표시하고 터치/스크롤을 다시 전송합니다.",
       "cta": "APK 다운로드 (v0.0.55)",
@@ -168,7 +166,6 @@
     ]
   },
   "support": {
-    "logo": "Ko-fi",
     "cta": "Ko-fi로 후원하기",
     "title": "OpenDisplay Android 덕분에 모니터를 안 사도 됐다면, 커피 한 잔 사주시는 건 어떨까요.",
     "p1": "이건 제가, <profile>Jose Pacelli</profile>가 저녁과 주말 시간에 혼자 만들고 유지보수하는 사이드 프로젝트입니다 — 회사가 아닙니다.",

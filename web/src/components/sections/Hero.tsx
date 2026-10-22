@@ -33,16 +33,13 @@ function ExtendedStrip() {
         </div>
       </div>
       <div className="absolute inset-y-[-12px] left-[68.75%] w-[3px] bg-[var(--seam)] shadow-[0_0_18px_var(--seam)]" />
-      <div className="strip-window absolute top-[22%] left-[52%] w-[34%] rounded-xl bg-[#e8ecf4] p-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] sm:p-6 lg:top-[14%] lg:aspect-[5/2] lg:w-[30%] lg:rounded-lg">
-        <div className="mb-3 flex gap-1.5">
-          <span className="size-2 rounded-full bg-[#ff6b5e]" />
-          <span className="size-2 rounded-full bg-[#f5a524]" />
-          <span className="size-2 rounded-full bg-[#3ddc84]" />
-        </div>
-        <div className="h-2 w-1/2 rounded-full bg-[#c3cbda]" />
-        <div className="mt-2.5 h-2 w-3/4 rounded-full bg-[#c3cbda]" />
-        <div className="mt-2.5 h-2 w-2/3 rounded-full bg-[#c3cbda]" />
-      </div>
+      <img
+        src="/hero-window.webp"
+        alt=""
+        width={1056}
+        height={480}
+        className="strip-window absolute top-[20%] left-[50%] w-[38%] rounded-lg shadow-[0_18px_40px_rgba(0,0,0,0.35)] lg:top-[12%] lg:w-[32%]"
+      />
     </figure>
   )
 }
@@ -79,15 +76,15 @@ export function Hero() {
 
   return (
     <section className="pt-10 pb-20 sm:pt-14">
-      <div className="mx-auto max-w-[1200px] px-6">
-        <p className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="size-2 rounded-full bg-accent shadow-[0_0_0_4px_color-mix(in_srgb,var(--accent)_20%,transparent)]" />
-          {t('hero.badge')}
-        </p>
-        <h1 className="mt-5 max-w-[14ch] font-heading text-[3.25rem] leading-[0.95] font-light tracking-[-0.03em] text-foreground sm:text-[4.5rem] lg:text-[5.5rem]">
+      <div className="relative mx-auto max-w-[1200px] px-6">
+        <div
+          aria-hidden="true"
+          className="absolute top-0 right-6 hidden h-full w-[38%] bg-[radial-gradient(var(--grille)_2px,transparent_2.5px)] bg-[length:16px_16px] lg:block"
+        />
+        <h1 className="relative max-w-[14ch] font-heading text-[3.25rem] leading-[0.95] font-light tracking-[-0.03em] text-foreground sm:text-[4.5rem] lg:text-[5.5rem]">
           <Trans i18nKey="hero.title" t={t} components={{ br: <br /> }} />
         </h1>
-        <p className="mt-5 max-w-[60ch] text-base leading-relaxed text-muted-foreground sm:text-lg [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
+        <p className="relative mt-5 max-w-[60ch] text-base leading-relaxed text-muted-foreground sm:text-lg [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
           <Trans i18nKey="hero.lead" t={t} components={{ a: <a href="https://opendisplay.app/" /> }} />
         </p>
       </div>
@@ -99,7 +96,11 @@ export function Hero() {
           <InstallStep n={1} label={t('hero.stepMac')} cta={t('install.mac.cta')} href={MAC_DOWNLOAD} />
           <ArrowRight className="hidden size-4 text-muted-foreground lg:block" aria-hidden="true" />
           <InstallStep n={2} label={t('hero.stepAndroid')} cta={t('install.android.cta')} href={ANDROID_DOWNLOAD} primary />
-          <p className="text-xs text-muted-foreground lg:ml-auto lg:max-w-[22rem] lg:pr-4 lg:text-right">{specs.join(' · ')}</p>
+          <p className="text-xs text-muted-foreground lg:ml-auto lg:max-w-[22rem] lg:pr-4 lg:text-right">
+            <span className="text-foreground">{t('hero.badge')}</span>
+            <br />
+            {specs.join(' · ')}
+          </p>
         </div>
       </div>
     </section>
