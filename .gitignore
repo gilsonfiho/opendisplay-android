@@ -67,3 +67,8 @@ local.properties
 # Notas soltas de trabalho — só local, não versionado (pedido do usuário).
 /NOTES.md
 /CLAUDE.original.md
+
+# Impeccable scratch (decision mocks, review screenshots); design.json and surfaces/ are kept
+.impeccable/mocks/
+.impeccable/questions/
+.impeccable/review/

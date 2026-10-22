@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T16:35:46.400285+00:00",
+  "title": "Design System: OpenDisplay Android",
+  "extensions": {
+    "colorMeta": {
+      "navy-ground": {
+        "role": "neutral",
+        "displayName": "Navy Ground",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "navy-panel": {
+        "role": "neutral",
+        "displayName": "Navy Panel",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "navy-raised": {
+        "role": "neutral",
+        "displayName": "Navy Raised",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "navy-hairline": {
+        "role": "neutral",
+        "displayName": "Navy Hairline",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "slate-muted": {
+        "role": "neutral",
+        "displayName": "Slate Muted",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "mist-ink": {
+        "role": "primary",
+        "displayName": "Mist Ink",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ]
+      },
+      "signal-blue": {
+        "role": "tertiary",
+        "displayName": "Signal Blue",
+        "tonalRamp": [
+          "#0A2A6B",
+          "#123E9A",
+          "#1E5BD8",
+          "#2F72F0",
+          "#4C8DFF",
+          "#7EAEFF",
+          "#B5D0FF",
+          "#E3EDFF"
+        ]
+      },
+      "fault-red": {
+        "role": "tertiary",
+        "displayName": "Fault Red",
+        "tonalRamp": [
+          "#410E0B",
+          "#5C1F1A",
+          "#8C1D18",
+          "#B3261E",
+          "#E5484D",
+          "#FF6B5E",
+          "#FFB4AB",
+          "#FFDAD5"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "#3F4A63",
+          "#4F5970",
+          "#7D879B",
+          "#C9D1E0",
+          "#D8DFEC",
+          "#E3E8F2",
+          "#EBEFF6",
+          "#F2F5FA"
+        ]
+      },
+      "overlay-strip": {
+        "role": "neutral",
+        "displayName": "Overlay Strip",
+        "tonalRamp": [
+          "#05080F",
+          "#0A101E",
+          "#0E1526",
+          "#1B2440",
+          "#2A3452",
+          "#5A6580",
+          "#9AA4B8",
+          "#E8ECF4"
+        ],
+        "canonical": "Color(0xE00E1526)"
+      },
+      "overlay-danger": {
+        "role": "tertiary",
+        "displayName": "Overlay Danger",
+        "tonalRamp": [
+          "#410E0B",
+          "#5C1F1A",
+          "#8C1D18",
+          "#B3261E",
+          "#E5484D",
+          "#FF6B5E",
+          "#FFB4AB",
+          "#FFDAD5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Device name on the wide idle panel."
+      },
+      "display-medium": {
+        "displayName": "Display Medium",
+        "purpose": "Device name in the stacked idle layout."
+      },
+      "display-small": {
+        "displayName": "Display Small",
+        "purpose": "Device name on short or narrow screens."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "App bar titles."
+      },
+      "title-medium": {
+        "displayName": "Title Medium",
+        "purpose": "Lamp status line (tabular)."
+      },
+      "title-small": {
+        "displayName": "Title Small",
+        "purpose": "Step numbers, settings category headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Step text and explainers, system face."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, meta lines, chip values."
+      },
+      "label-medium": {
+        "displayName": "Label Medium",
+        "purpose": "Perf HUD readout."
+      },
+      "label-small": {
+        "displayName": "Label Small",
+        "purpose": "Captions under overlay buttons."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "lamp-pulse",
+        "value": "2200ms LinearOutSlowIn, infinite",
+        "purpose": "Listening lamp ring expands 20dp and fades from 45% alpha."
+      },
+      {
+        "name": "menu-expand",
+        "value": "fade 200ms + expand 250ms FastOutSlowIn",
+        "purpose": "Connected menu opening."
+      },
+      {
+        "name": "menu-collapse",
+        "value": "fade 120ms + shrink 160ms",
+        "purpose": "Connected menu closing."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "two-column",
+        "value": "width >= 600dp and landscape"
+      },
+      {
+        "name": "short",
+        "value": "height < 480dp"
+      },
+      {
+        "name": "narrow",
+        "value": "width < 360dp"
+      },
+      {
+        "name": "settings-max",
+        "value": "720dp"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled pill for the one main action on a surface (Settings on the idle panel).",
+      "html": "<button class=\"ds-btn-primary\">Settings</button>",
+      "css": ".ds-btn-primary{font-family: Roboto, system-ui, sans-serif;background:#E8ECF4;color:#0E1526;border:none;border-radius:9999px;min-height:52px;padding:0 24px;font-size:14px;font-weight:500;letter-spacing:.1px;cursor:pointer;transition:background .15s}.ds-btn-primary:hover{background:#d3d9e6}.ds-btn-primary:focus-visible{outline:2px solid #4C8DFF;outline-offset:2px}.ds-btn-primary:active{background:#c3cbda}"
+    },
+    {
+      "name": "Tonal Button",
+      "kind": "button",
+      "refersTo": "button-tonal",
+      "description": "Secondary pill next to the primary (About).",
+      "html": "<button class=\"ds-btn-tonal\">About</button>",
+      "css": ".ds-btn-tonal{font-family: Roboto, system-ui, sans-serif;background:#222C47;color:#E8ECF4;border:none;border-radius:9999px;min-height:52px;padding:0 24px;font-size:14px;font-weight:500;letter-spacing:.1px;cursor:pointer;transition:background .15s}.ds-btn-tonal:hover{background:#2c3756}.ds-btn-tonal:focus-visible{outline:2px solid #4C8DFF;outline-offset:2px}"
+    },
+    {
+      "name": "Indicator Lamp",
+      "kind": "custom",
+      "refersTo": "idle-panel",
+      "description": "Signature: state-coloured lamp with halos and a pulse ring while listening, plus the device name at display size.",
+      "html": "<div class=\"ds-idle\"><div class=\"ds-lamp-row\"><span class=\"ds-lamp\"></span><span class=\"ds-status\">Listening on port :9000</span></div><div class=\"ds-name\">SM-X626B</div><p class=\"ds-hint\">This is the name that shows up on the Mac.</p></div>",
+      "css": ".ds-idle{background:#141C30;border-radius:28px;padding:56px;color:#E8ECF4}.ds-lamp-row{display:flex;align-items:center;gap:16px}.ds-lamp{position:relative;width:24px;height:24px;margin:20px;border-radius:50%;background:#4C8DFF;box-shadow:0 0 0 8px rgba(76,141,255,.18),0 0 0 18px rgba(76,141,255,.10)}.ds-lamp::after{content:'';position:absolute;inset:-2px;border:2px solid rgba(76,141,255,.45);border-radius:50%;animation:ds-pulse 2.2s cubic-bezier(0,0,.2,1) infinite}@keyframes ds-pulse{to{inset:-22px;opacity:0}}.ds-status{font-family: 'Hanken Grotesk', system-ui, sans-serif;color:#4C8DFF;font-size:16px;font-weight:600;letter-spacing:.15px;font-variant-numeric:tabular-nums}.ds-name{font-family: 'Hanken Grotesk', system-ui, sans-serif;font-weight:300;font-size:88px;line-height:92px;letter-spacing:-1.5px;margin-top:40px}.ds-hint{font-family: Roboto, system-ui, sans-serif;color:#9AA4B8;font-size:16px;line-height:24px;margin:12px 0 0}"
+    },
+    {
+      "name": "Step Card over Grille",
+      "kind": "card",
+      "refersTo": "step-card",
+      "description": "Numbered steps on a raised navy card, sitting on the perforated dot grille.",
+      "html": "<div class=\"ds-grille\"><div class=\"ds-steps\"><div class=\"ds-step\"><span class=\"ds-num\">1</span><span>Pick this device under WiFi in the Mac app</span></div><div class=\"ds-step\"><span class=\"ds-num\">2</span><span>Keep this app open. Streaming starts on its own</span></div></div></div>",
+      "css": ".ds-grille{background-color:#141C30;background-image:radial-gradient(circle,#2A3452 2px,transparent 2.5px);background-size:16px 16px;padding:56px;border-radius:28px}.ds-steps{background:#1B2440;border-radius:20px;color:#E8ECF4}.ds-step{display:flex;align-items:center;gap:20px;padding:20px;font-family: Roboto, system-ui, sans-serif;font-size:16px;line-height:24px;letter-spacing:.5px}.ds-step+.ds-step{border-top:1px solid #2A3452;margin-left:56px;padding-left:0}.ds-num{flex:none;width:36px;height:36px;border-radius:50%;background:#E8ECF4;color:#0E1526;display:grid;place-items:center;font-family: 'Hanken Grotesk', system-ui, sans-serif;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Idle-Delay Length Chips",
+      "kind": "chip",
+      "refersTo": "length-chip",
+      "description": "Radio chips where each delay is drawn as a bar proportional to its length.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">2s<i style=\"width:24px\"></i></button><button class=\"ds-chip ds-chip-on\">4s<i style=\"width:48px\"></i></button><button class=\"ds-chip\">6s<i style=\"width:72px\"></i></button></div>",
+      "css": ".ds-chips{display:flex;gap:8px}.ds-chip{font-family: Roboto, system-ui, sans-serif;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:48px;padding:10px 12px;border-radius:10px;border:1px solid #2A3452;background:transparent;color:#E8ECF4;font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;cursor:pointer}.ds-chip i{display:block;height:4px;border-radius:2px;background:#5A6580}.ds-chip:hover{background:#172036}.ds-chip:focus-visible{outline:2px solid #4C8DFF;outline-offset:2px}.ds-chip-on{background:#26314F;border-color:#E8ECF4}.ds-chip-on i{background:#E8ECF4}"
+    },
+    {
+      "name": "Settings Group",
+      "kind": "card",
+      "refersTo": "settings-group",
+      "description": "Category header plus rounded group of setting rows.",
+      "html": "<div class=\"ds-cat\">Connected menu</div><div class=\"ds-group\"><div class=\"ds-row\">Show floating menu<span class=\"ds-switch\"></span></div><div class=\"ds-row\">Fullscreen<span class=\"ds-switch\"></span></div></div>",
+      "css": ".ds-cat{font-family: 'Hanken Grotesk', system-ui, sans-serif;font-weight:600;font-size:14px;color:#9AA4B8;padding:0 16px 8px}.ds-group{background:#141C30;border-radius:20px;padding:4px 0;color:#E8ECF4}.ds-row{font-family: Roboto, system-ui, sans-serif;display:flex;justify-content:space-between;align-items:center;padding:16px;font-size:16px}.ds-row:hover{background:#172036}.ds-switch{width:52px;height:32px;border-radius:16px;background:#E8ECF4}"
+    },
+    {
+      "name": "Connected Menu Strip",
+      "kind": "nav",
+      "refersTo": "overlay-strip",
+      "description": "Fixed-dark translucent strip docked to a screen edge over the Mac's video.",
+      "html": "<div class=\"ds-strip\"><button class=\"ds-ob\">Z</button><button class=\"ds-ob ds-ob-on\">F</button><button class=\"ds-ob\">S</button><span class=\"ds-sep\"></span><button class=\"ds-ob ds-ob-danger\">X</button></div>",
+      "css": ".ds-strip{display:inline-flex;align-items:center;gap:10px;padding:8px;background:rgba(14,21,38,.88);border:1px solid #2A3452;border-radius:28px}.ds-ob{width:52px;height:52px;border-radius:50%;border:none;background:#1B2440;color:#E8ECF4;font-family: Roboto, system-ui, sans-serif;font-weight:500;cursor:pointer;transition:background .2s}.ds-ob:hover{background:#222C47}.ds-ob:focus-visible{outline:2px solid #4C8DFF;outline-offset:2px}.ds-ob-on{background:#E8ECF4;color:#0E1526}.ds-ob-danger{background:#E5484D}.ds-sep{width:1px;height:36px;background:#2A3452}"
+    },
+    {
+      "name": "Perf HUD and Unstable Pill",
+      "kind": "custom",
+      "refersTo": "unstable-pill",
+      "description": "Overlay readouts on video: tabular HUD and the unstable-connection pill.",
+      "html": "<div class=\"ds-hud\">60 fps · 18 ms · rtt 4 ms</div><div class=\"ds-pill\"><span class=\"ds-dot\"></span>Connection unstable</div>",
+      "css": ".ds-hud{font-family: Roboto, system-ui, sans-serif;display:inline-block;background:rgba(14,21,38,.88);color:#E8ECF4;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:12px}.ds-pill{font-family: Roboto, system-ui, sans-serif;display:flex;width:max-content;align-items:center;gap:12px;background:rgba(14,21,38,.88);color:#E8ECF4;border-radius:9999px;padding:12px 18px;font-size:14px}.ds-dot{width:10px;height:10px;border-radius:50%;background:#E5484D}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Indicator Lamp",
+    "overview": "**Creative North Star: \"The Indicator Lamp\"**\n\nThe idle screen is built like a piece of desk hardware: one rounded navy panel, a single indicator lamp that tells the connection story, and the device's network name set large and light, because that name is the one thing the user has to find on the Mac. Everything else is quiet: two numbered steps, the network address and version in small tabular figures, Settings and About as pill buttons. Once the Mac connects, the panel unmounts and the screen is the Mac's desktop. The only chrome left is a slim dark strip and an optional HUD.\n\nThe palette is navy and blue, taken from the blue app icon. Saturated colour is spent only on state: signal blue when listening, red for a problem, slate when off. The one material is a perforated dot grille behind the steps. Depth comes from tonal steps of navy, not shadows. Components are stock Material 3 (Button, FilledTonalButton, Switch, TopAppBar, tabs) restyled by the theme, so the app reads as native Android.\n\nThis build diverges from the original direction contract in five places, all on purpose. (1) Graphite and amber became navy and blue, because the owner asked for a dark blue that matches the app icon. (2) The display face is Hanken Grotesk, not Roboto Flex: Roboto is the platform family and can't be the app's own display voice. It ships as four static weight files because `FontVariation` on a resource font did not apply weight on the test device. (3) The planned three-stage strip (Listening / Mac found / Streaming) became three lamp colours. The app has no real \"Mac found\" state, and the idle screen unmounts on connect, so a \"Streaming\" stage would never be seen. (4) Network and version meta sit bottom-left of the idle panel, in the slot the stage strip held, instead of in a card on the grille side. (5) Overlay chrome stays fixed dark navy whatever the system theme, because it sits on the Mac's desktop.",
+    "keyCharacteristics": [
+      "One panel, one lamp, one large name. The lamp colour is the status.",
+      "Navy tonal layering, no shadows.",
+      "Hanken Grotesk light for display, semibold for small titles. Body and labels use the system face.",
+      "Tabular figures on every number: port, IP, version, step numbers, delays, HUD.",
+      "Pill buttons. Off-white filled primary on dark, navy filled primary on light.",
+      "Overlay chrome on video is always dark navy, translucent, and hides itself."
+    ],
+    "rules": [
+      {
+        "name": "The Lamp Rule",
+        "body": "Saturated colour names a connection state and nothing else: blue is listening, red is a problem, slate is off. No accent on decoration, headings or icons.",
+        "section": "colors"
+      },
+      {
+        "name": "The Desktop Rule",
+        "body": "Anything drawn over the Mac's video uses the fixed overlay navy (`OverlayColors`), never the theme scheme. Whatever sits behind it is someone else's desktop.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number on screen sets `fontFeatureSettings = \"tnum\"`: port, IP:port, version, step numbers, delays, HUD readouts. Numbers must not jitter as they change.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Faces Rule",
+        "body": "Hanken Grotesk carries display, headline and title. Body and label stay on the system face. Don't put Hanken on running text, and don't put the system face at display size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tonal Step Rule",
+        "body": "To lift something, move it one step up the navy (or paper) container ramp. Don't add a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** let the lamp carry state: `signal-blue` listening, `fault-red` problem, slate off, and colour the status line to match.",
+      "**Do** set every number with tabular figures (`tnum`).",
+      "**Do** lift surfaces by stepping up the navy/paper container ramp: panel, raised, raised-high.",
+      "**Do** use `OverlayColors` (translucent navy, hairline border, pill shapes) for anything on top of the video, in both themes.",
+      "**Do** keep Hanken Grotesk light (300) at display size for the device name, and semibold (600) for small titles.",
+      "**Do** use stock Material 3 components restyled by the theme, with pill buttons at least 52dp tall and 48dp touch targets."
+    ],
+    "donts": [
+      "**Don't** use blue or red as decoration. If a colour isn't reporting connection state, it should be navy, mist or slate.",
+      "**Don't** add shadows or elevation to separate surfaces.",
+      "**Don't** theme overlay chrome from the system scheme, or show the idle panel while connected.",
+      "**Don't** use the system face (Roboto) at display size, or Hanken Grotesk for body text.",
+      "**Don't** add a stage strip or a \"Mac found\" state. The app can't detect it, and the lamp already covers what it can."
+    ]
+  }
+}
