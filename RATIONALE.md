@@ -154,6 +154,23 @@ Organized by file, in source order.
 - **`closeServerSocket`**, the empty catch: the socket was already gone.
 - **`acceptConnection`**, the `closeConnection()` call at the top: replaces any existing
   connection, like the Mac replacing its dial.
+- **`needsProof` / `proveNewcomer`** (#168): PROTOCOL.md §1 has the receiver adopt a new
+  connection and drop the old one. #165 had rejected any other host during a live session
+  instead, which diverged. Now it does what the official receiver does
+  (`Shared/StreamReceiver.swift`): a newcomer from another address gets a provisional `hello`
+  without `cursorPort` and replaces the session only once it sends bytes back. The bytes it
+  sent are replayed through `PrefixedLink`, so framing starts at its first byte. This stops
+  the twin IPv4/IPv6 dial the Mac races from evicting the winner. It does not keep a hostile
+  LAN host out: one that speaks the protocol can still take over, same as on iOS (SCR-001 is an
+  accepted risk of the unauthenticated pv 3 protocol). The UI shows the peer-replaced banner
+  when that happens.
+- **`proveNewcomer`**, `NEWCOMER_PROOF_TIMEOUT_MS` (10 s): the official receiver parks a silent
+  newcomer until a session change or `stop()`. Android also drops it after 10 s so a socket
+  that connects and goes quiet can't hold a thread and buffer indefinitely. The Mac answers
+  `hello` within milliseconds, so a real sender never hits it.
+- **`proveNewcomer`**, a TCP newcomer during a USB accessory session: a USB link has no
+  address, so any TCP connection has to prove itself and then replaces the cable session, as
+  §1 asks.
 - **`readLoop`**, the local `FrameDecoder`: owned entirely by this connection's read coroutine —
   no sharing across reconnects, so no locking is needed around its mutable state.
 - **`readLoop`**, the `finally` guard (`if (link === current)`): a newer session replacing this
