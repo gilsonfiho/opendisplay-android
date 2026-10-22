@@ -15,6 +15,7 @@ import android.net.nsd.NsdServiceInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.provider.Settings
 import android.util.Base64
 import io.github.josepacelli.opendisplay.R
 import io.github.josepacelli.opendisplay.protocol.HelloPanel
@@ -422,7 +423,7 @@ class PhoneReceiver(context: Context) {
     fun start(port: Int = DEFAULT_PORT) {
         if (!running.compareAndSet(false, true)) return
         loopbackAcceptJob = scope.launch {
-            listenLoop(port, { InetAddress.getByName("127.0.0.1") }) { loopbackServerSocket = it }
+            listenLoop(port, { InetAddress.getByName("127.0.0.1") }, acceptGate = ::isAdbEnabled) { loopbackServerSocket = it }
         }
         wifiAcceptJob = scope.launch {
             listenLoop(
@@ -469,6 +470,13 @@ class PhoneReceiver(context: Context) {
         _connected.value = false
         _status.value = appContext.getString(R.string.status_stopped)
     }
+
+    /** Whether USB debugging is on. The loopback listener exists only for the Mac's
+     * `adb forward` override, which can't reach it without debugging, so with it off any
+     * loopback connection can only be another app on this device (#159).
+     * @return `true` when `Settings.Global.ADB_ENABLED` is on. */
+    private fun isAdbEnabled(): Boolean =
+        Settings.Global.getInt(appContext.contentResolver, Settings.Global.ADB_ENABLED, 0) == 1
 
     /** Closes [server] if non-null, swallowing an already-closed socket.
      * @param server the socket to close, or `null` to no-op. */
@@ -818,12 +826,14 @@ class PhoneReceiver(context: Context) {
      * @param port TCP port to bind.
      * @param resolveBindAddress returns the address to bind to, or `null` if none is available right now.
      * @param onNoAddress called on every retry where [resolveBindAddress] returned `null`.
+     * @param acceptGate checked on every accepted connection; `false` closes it at once.
      * @param storeSocket receives the bound [ServerSocket] so the caller can track/close it later.
      */
     private fun listenLoop(
         port: Int,
         resolveBindAddress: () -> InetAddress?,
         onNoAddress: () -> Unit = {},
+        acceptGate: () -> Boolean = { true },
         storeSocket: (ServerSocket) -> Unit,
     ) {
         while (running.get()) {
@@ -846,6 +856,11 @@ class PhoneReceiver(context: Context) {
                 Log.info("listening on ${bindAddress.hostAddress}:$port")
                 while (running.get()) {
                     val client = server.accept()
+                    if (!acceptGate()) {
+                        Log.warn("closing loopback connection from ${client.remoteSocketAddress} — USB debugging is off")
+                        client.close()
+                        continue
+                    }
                     val activeLink = link
                     if (!shouldAccept(activeLink?.remoteAddress, activeLink != null, client.inetAddress)) {
                         Log.warn("rejecting connection from ${client.remoteSocketAddress} — a session is already active")

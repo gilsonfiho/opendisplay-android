@@ -151,6 +151,12 @@ Organized by file, in source order.
 - **`start`**, the loopback listener's bind address: IPv4 explicitly, not
   `InetAddress.getLoopbackAddress()` (returns `::1` on this hardware) — the Mac's `adb forward`
   override dials `127.0.0.1` specifically.
+- **`isAdbEnabled`** as the loopback listener's `acceptGate` (#159): the loopback listener only
+  serves the Mac's `adb forward` override, and `adb forward` doesn't work without USB debugging.
+  With debugging off, a loopback connection can only come from another app on the device, which
+  could otherwise inject video and cursor data with just the `INTERNET` permission. Checked per
+  connection rather than at bind time, so turning debugging on mid-run works without restarting
+  the service. No protocol change: `adb forward` is Android's own binding (PROTOCOL.md §2).
 - **`closeServerSocket`**, the empty catch: the socket was already gone.
 - **`acceptConnection`**, the `closeConnection()` call at the top: replaces any existing
   connection, like the Mac replacing its dial.
