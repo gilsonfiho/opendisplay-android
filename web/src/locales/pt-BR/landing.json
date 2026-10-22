@@ -79,14 +79,12 @@
     "title": "Dois apps que funcionam juntos.",
     "sub": "Instale os dois pra começar — o lado do Mac é o projeto original OpenDisplay, sem modificações.",
     "mac": {
-      "tag": "PASSO 1 · NO SEU MAC",
       "title": "O emissor",
       "desc": "Captura uma tela virtual e transmite. É o programa original OpenDisplay, sem modificações.",
       "cta": "Baixar para Mac",
       "note": "Prefere compilar você mesmo? <compile>Compilar a partir do código-fonte ↗</compile>"
     },
     "android": {
-      "tag": "PASSO 2 · NO SEU ANDROID",
       "title": "O receptor",
       "desc": "Exibe a transmissão e envia toque/scroll de volta.",
       "cta": "Baixar APK (v0.0.55)",
@@ -168,7 +166,6 @@
     ]
   },
   "support": {
-    "logo": "Ko-fi",
     "cta": "Apoie no Ko-fi",
     "title": "Se o OpenDisplay Android te poupou de comprar um monitor, considera me pagar um café.",
     "p1": "Este é um projeto paralelo de uma pessoa só, feito e mantido por mim, <profile>Jose Pacelli</profile>, nas noites e fins de semana — não é uma empresa.",

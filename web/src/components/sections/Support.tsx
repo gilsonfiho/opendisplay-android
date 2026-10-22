@@ -8,11 +8,7 @@ export function Support() {
 
   return (
     <PageSection id="support">
-      <div className="flex items-center gap-2 text-foreground">
-        <Coffee className="size-5" aria-hidden="true" />
-        <strong>{t('support.logo')}</strong>
-      </div>
-      <h2 className="mt-4 max-w-[44rem] font-heading text-[2rem] leading-[1.05] font-light tracking-[-0.02em] text-foreground sm:text-[2.75rem]">
+      <h2 className="max-w-[44rem] text-balance font-heading text-[2rem] leading-[1.05] font-light tracking-[-0.02em] text-foreground sm:text-[2.75rem]">
         {t('support.title')}
       </h2>
       <div className="mt-6 max-w-[60ch] space-y-3 text-sm text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">

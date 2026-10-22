@@ -32,7 +32,7 @@ The only Android client that speaks the upstream OpenDisplay protocol byte-for-b
 - Name: OpenDisplay. Mark: a "D" drawn as a tablet with a window being dragged into it from
   the left — the icon has to say "second display" at a glance. Blue gradient with a soft glow
   on navy. No Apple or Android logos anywhere in brand art (trademark). Sources in `brand/`.
-- The app UI is navy/blue (see DESIGN.md); the site still uses its older green accent.
+- The app UI and the landing page share the navy/blue world in DESIGN.md (site since #193).
 - Voice: direct, human, no AI tone.
 
 ## Evidence on Hand

@@ -6,6 +6,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 type Row = { label: string; us: string; duet: string; spacedesk: string }
 
+/** Whether each cell is a point in that product's favour, per row of `compare.rows` (price,
+ * open source, account required, same protocol, central server) and column (us, Duet,
+ * Spacedesk). A fact about the products, not the wording, so it lives here instead of in the
+ * seven locale files. */
+const FAVOURABLE: [boolean, boolean, boolean][] = [
+  [true, false, true],
+  [true, false, false],
+  [true, false, true],
+  [true, false, false],
+  [true, false, true],
+]
+
 function Cell({ value, positive }: { value: string; positive: boolean }) {
   return (
     <TableCell className={positive ? 'text-foreground' : 'text-muted-foreground'}>
@@ -39,12 +51,12 @@ export function Compare() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((row, i) => (
               <TableRow key={row.label}>
                 <TableCell className="font-medium text-foreground">{row.label}</TableCell>
-                <Cell value={row.us} positive />
-                <Cell value={row.duet} positive={false} />
-                <Cell value={row.spacedesk} positive={false} />
+                <Cell value={row.us} positive={FAVOURABLE[i][0]} />
+                <Cell value={row.duet} positive={FAVOURABLE[i][1]} />
+                <Cell value={row.spacedesk} positive={FAVOURABLE[i][2]} />
               </TableRow>
             ))}
           </TableBody>

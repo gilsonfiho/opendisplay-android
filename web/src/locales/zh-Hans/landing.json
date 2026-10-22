@@ -79,14 +79,12 @@
     "title": "两个应用协同工作。",
     "sub": "两个都装上才能开始 — Mac 那一端就是原版 OpenDisplay 项目，未做任何修改。",
     "mac": {
-      "tag": "第 1 步 · 在你的 Mac 上",
       "title": "发送端",
       "desc": "捕获一个虚拟显示器并推流。这就是原版 OpenDisplay 程序，未做修改。",
       "cta": "下载 Mac 版",
       "note": "想自己编译？<compile>从源码构建 ↗</compile>"
     },
     "android": {
-      "tag": "第 2 步 · 在你的安卓设备上",
       "title": "接收端",
       "desc": "显示视频流，并把触摸/滚动操作发回去。",
       "cta": "下载 APK（v0.0.55）",
@@ -168,7 +166,6 @@
     ]
   },
   "support": {
-    "logo": "Ko-fi",
     "cta": "在 Ko-fi 上支持",
     "title": "如果 OpenDisplay Android 帮你省下了买显示器的钱，可以考虑请我喝杯咖啡。",
     "p1": "这是一个人的业余项目，由我 <profile>Jose Pacelli</profile> 在晚上和周末构建与维护 — 不是公司。",

@@ -4,17 +4,17 @@ import { Trans, useTranslation } from 'react-i18next'
 import { PageSection } from '@/components/PageSection'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 
-function InstallCard({
-  tag,
+/** One side of the install pair, numbered like the hero's install bar. */
+function InstallStep({
+  n,
   title,
   desc,
   cta,
   href,
   note,
 }: {
-  tag: string
+  n: number
   title: string
   desc: string
   cta: string
@@ -22,20 +22,22 @@ function InstallCard({
   note: ReactNode
 }) {
   return (
-    <Card>
-      <CardContent>
-        <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground tabular-nums">{tag}</p>
-        <h3 className="mt-2 font-heading text-2xl font-normal text-foreground">{title}</h3>
-        <p className="mt-1.5 text-sm text-muted-foreground">{desc}</p>
-        <Button render={<a href={href} />} nativeButton={false} className="mt-4">
-          <Download className="size-4" aria-hidden="true" />
-          {cta}
-        </Button>
-        <p className="mt-3 text-xs text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
-          {note}
-        </p>
-      </CardContent>
-    </Card>
+    <li className="border-t border-border pt-6">
+      <div className="flex items-center gap-3">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-sm font-semibold text-primary-foreground tabular-nums">
+          {n}
+        </span>
+        <h3 className="font-heading text-2xl font-normal text-foreground">{title}</h3>
+      </div>
+      <p className="mt-3 max-w-[48ch] text-sm leading-relaxed text-muted-foreground">{desc}</p>
+      <Button render={<a href={href} />} nativeButton={false} className="mt-5 h-11 rounded-full px-5">
+        <Download className="size-4" aria-hidden="true" />
+        <span className="tabular-nums">{cta}</span>
+      </Button>
+      <p className="mt-4 max-w-[52ch] text-xs leading-relaxed text-muted-foreground [&_a]:text-accent [&_a]:no-underline [&_a:hover]:underline">
+        {note}
+      </p>
+    </li>
   )
 }
 
@@ -45,9 +47,9 @@ export function Install() {
   return (
     <PageSection id="install">
       <SectionHeading title={t('install.title')} sub={t('install.sub')} />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <InstallCard
-          tag={t('install.mac.tag')}
+      <ol className="grid gap-x-10 gap-y-10 sm:grid-cols-2">
+        <InstallStep
+          n={1}
           title={t('install.mac.title')}
           desc={t('install.mac.desc')}
           cta={t('install.mac.cta')}
@@ -60,8 +62,8 @@ export function Install() {
             />
           }
         />
-        <InstallCard
-          tag={t('install.android.tag')}
+        <InstallStep
+          n={2}
           title={t('install.android.title')}
           desc={t('install.android.desc')}
           cta={t('install.android.cta')}
@@ -78,7 +80,7 @@ export function Install() {
             />
           }
         />
-      </div>
+      </ol>
     </PageSection>
   )
 }
