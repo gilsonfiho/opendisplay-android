@@ -37,3 +37,21 @@ object WireMessage {
     const val SLEEPING = "sleeping"
     const val CLOSING = "closing"
 }
+
+/** `hello.panel` (PROTOCOL.md §6.7): the facts the Mac sizes the extended desktop from, replacing
+ * the deprecated top-level `pixelsWide`/`pixelsHigh`/`scale`. */
+object HelloPanel {
+    /** Builds the `panel` object for this device's current window.
+     * `pointsWide`/`pointsHigh` are left out: they describe a "looks like" desktop setting that
+     * Android doesn't have, and the spec takes both or neither.
+     * @param pixelsWide physical pixels across, current orientation.
+     * @param pixelsHigh physical pixels down, current orientation.
+     * @param scale display density (pixels per dp), may be fractional.
+     * @return the object's fields, or `null` when the values aren't ones the Mac would accept
+     * (pixels below 2, or a non-finite or non-positive scale) — the panel size isn't known yet,
+     * and the deprecated fields alone are the right thing to send. */
+    fun fields(pixelsWide: Int, pixelsHigh: Int, scale: Double): Map<String, Any>? {
+        if (pixelsWide < 2 || pixelsHigh < 2 || !scale.isFinite() || scale <= 0.0) return null
+        return linkedMapOf("pixelsWide" to pixelsWide, "pixelsHigh" to pixelsHigh, "scale" to scale)
+    }
+}

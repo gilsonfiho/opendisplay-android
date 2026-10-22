@@ -17,6 +17,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Base64
 import io.github.josepacelli.opendisplay.R
+import io.github.josepacelli.opendisplay.protocol.HelloPanel
 import io.github.josepacelli.opendisplay.protocol.WireMessage
 import io.github.josepacelli.opendisplay.protocol.WireProtocol
 import io.github.josepacelli.opendisplay.util.Log
@@ -572,8 +573,9 @@ class PhoneReceiver(context: Context) {
     }
 
     /** Real panel size in pixels + density, from the Activity/Compose layer.
-     * Re-sends `hello` if we're already connected and the size actually
-     * changed (rotation) — mirrors `setOrientation` on iOS, which rebuilds
+     * Re-sends `hello` if we're already connected and any of the three changed — rotation, or a
+     * density change from the system's display size setting (PROTOCOL.md §6.7 requires a fresh
+     * `hello` whenever a `panel` value changes). Mirrors `setOrientation` on iOS, which rebuilds
      * the Mac's virtual display to match.
      *
      * @param widthPx panel width in pixels.
@@ -581,12 +583,12 @@ class PhoneReceiver(context: Context) {
      * @param density this device's display density (pixels per dp).
      */
     fun setPanelSize(widthPx: Int, heightPx: Int, density: Double) {
-        val changed = widthPx != devicePixelsWide || heightPx != devicePixelsHigh
+        val changed = widthPx != devicePixelsWide || heightPx != devicePixelsHigh || density != deviceScale
         devicePixelsWide = widthPx
         devicePixelsHigh = heightPx
         deviceScale = density
         if (changed && link != null) {
-            Log.info("panel size changed -> ${widthPx}x$heightPx — resending hello")
+            Log.info("panel changed -> ${widthPx}x$heightPx @${density}x — resending hello")
             sendHello()
         }
     }
@@ -1082,7 +1084,9 @@ class PhoneReceiver(context: Context) {
     }
 
     /** Announces this device's identity and panel size — the first message
-     * on any new connection, and again whenever the panel size changes. */
+     * on any new connection, and again whenever the panel size changes. Carries the panel twice:
+     * as `panel` (PROTOCOL.md §6.7) and as the deprecated top-level fields, which stay until
+     * upstream drops them at the next protocol bump. */
     private fun sendHello() {
         val message = JSONObject()
             .put("type", WireMessage.HELLO)
@@ -1092,6 +1096,7 @@ class PhoneReceiver(context: Context) {
             .put("device", "Android")
             .put("id", installId)
             .put("pv", WireProtocol.VERSION)
+        HelloPanel.fields(devicePixelsWide, devicePixelsHigh, deviceScale)?.let { message.put("panel", JSONObject(it)) }
         decodeCeiling?.let { (maxWide, maxHigh) ->
             message.put("maxEncodeWide", maxWide)
             message.put("maxEncodeHigh", maxHigh)
