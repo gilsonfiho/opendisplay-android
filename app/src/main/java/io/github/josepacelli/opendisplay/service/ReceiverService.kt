@@ -172,7 +172,7 @@ class ReceiverService : Service() {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title, versionName() ?: "?"))
             .setContentText(receiver.status.value)
-            .setSmallIcon(android.R.drawable.presence_video_online)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(contentIntent)
             .setOngoing(true)
         if (receiver.connected.value) {
