@@ -67,8 +67,8 @@
         "caption": "应用主屏幕 — 正在监听 :9000 端口，等待 Mac 通过 WiFi 发现它。"
       },
       {
-        "alt": "OpenDisplay Android 应用设置对话框，显示状态、mDNS 广播的设备名称，以及用于排查问题的本机地址",
-        "caption": "设置：连接状态、通过 mDNS 广播的名称，以及用于排查问题的本机地址。"
+        "alt": "平板上的 OpenDisplay Android 设置：左侧为分区列表，“常规”中有通过 mDNS 广播的名称、视频选项和悬浮菜单",
+        "caption": "设置：通过 mDNS 广播的名称、全屏、画中画、缩放和悬浮菜单。"
       },
       {
         "alt": "OpenDisplay Android 应用正在镜像 Mac 屏幕，浏览器中显示的是本项目自己的 GitHub 仓库",

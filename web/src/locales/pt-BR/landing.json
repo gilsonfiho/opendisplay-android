@@ -67,8 +67,8 @@
         "caption": "Tela inicial do app — escutando em :9000, esperando o Mac encontrar via WiFi."
       },
       {
-        "alt": "Diálogo de configurações do app OpenDisplay Android mostrando status, o nome anunciado por mDNS e o endereço deste aparelho para depuração",
-        "caption": "Configurações: status da conexão, o nome anunciado via mDNS e o endereço deste aparelho para depuração."
+        "alt": "Configurações do app OpenDisplay Android em tablet: lista de seções à esquerda e, na aba Geral, o nome anunciado por mDNS, opções de vídeo e do menu flutuante",
+        "caption": "Configurações: o nome anunciado via mDNS, tela cheia, Picture-in-Picture, zoom e o menu flutuante."
       },
       {
         "alt": "App OpenDisplay Android espelhando a tela do Mac, mostrando o repositório GitHub deste projeto num navegador",
