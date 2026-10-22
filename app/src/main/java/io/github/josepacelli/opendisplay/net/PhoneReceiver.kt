@@ -140,6 +140,10 @@ class PhoneReceiver(context: Context) {
         private const val WATCHDOG_TIMEOUT_MS = 5_000L
         private const val PING_INTERVAL_MS = 2_000L
         private const val READ_BUFFER_SIZE = 64 * 1024
+        /** How long a newcomer gets to send its first bytes before it's dropped — the Mac
+         * answers `hello` with `welcome` within milliseconds, so this only bounds sockets that
+         * connect and go silent. */
+        private const val NEWCOMER_PROOF_TIMEOUT_MS = 10_000
         private const val CURSOR_DATAGRAM_BUFFER_SIZE = 2 * 1024
         private const val UNSTABLE_CLEAR_DELAY_MS = 3_000L
         private const val RTT_UNSTABLE_MS = 250.0
@@ -186,28 +190,28 @@ class PhoneReceiver(context: Context) {
             }
         }
 
-        /** Whether a newly accepted TCP connection from [newAddress] should take over the
-         * active session (see SECURITY.md/SCR-001: the control/video socket has no peer
-         * authentication). A reconnect from the same host is allowed — the Mac's `adb forward`
-         * tunnel or a WiFi blip both reconnect from the same address — but no other host may
-         * interrupt an active session; it must wait for a clean disconnect or the watchdog
-         * timeout to make [hasActiveSession] false again.
+        /** Whether a newly accepted TCP connection from [newAddress] has to prove itself before
+         * it replaces the active session (PROTOCOL.md §1 says a new connection is adopted; the
+         * official receiver, `Shared/StreamReceiver.swift`, only does so once a newcomer sends
+         * bytes back while a session is live). No session, or a reconnect from the same host
+         * (the Mac's `adb forward` tunnel, a WiFi blip), is adopted at once; anything else goes
+         * through [proveNewcomer].
          * @param currentAddress the active peer's address, or `null` if it has none (USB).
          * @param hasActiveSession whether a session is currently active, of any transport.
-         * @param newAddress the address of the connection being considered. */
-        internal fun shouldAccept(
+         * @param newAddress the address of the connection being considered.
+         * @return `true` when the connection must prove itself first. */
+        internal fun needsProof(
             currentAddress: InetAddress?,
             hasActiveSession: Boolean,
             newAddress: InetAddress,
         ): Boolean {
-            return !hasActiveSession || currentAddress == newAddress
+            return hasActiveSession && currentAddress != newAddress
         }
 
         /** Whether a UDP cursor datagram from [source] should be trusted (see SECURITY.md/
-         * SCR-001: the cursor channel has no auth either). The TCP control socket already
-         * pins the session to one peer via [shouldAccept] — this extends the same pinning to
-         * the connectionless UDP side, so a third host on the LAN can't spoof cursor input
-         * for an active session.
+         * SCR-001: the cursor channel has no auth either). Datagrams are only taken from the
+         * host the TCP session is with, so a third host on the LAN can't spoof cursor input
+         * for an active session without taking over the TCP session first.
          * @param tcpPeerAddress the active TCP peer's address, or `null` if there is none
          * (idle, or a USB session — UDP cursor is WiFi/LAN only either way).
          * @param source the datagram's source address. */
@@ -234,6 +238,10 @@ class PhoneReceiver(context: Context) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val running = AtomicBoolean(false)
     private val sendLock = Any()
+
+    /** Connections still proving themselves against a live session (see [proveNewcomer]).
+     * Tracked so adopting one, or [stop], can close the rest instead of leaving them parked. */
+    private val pendingNewcomers = mutableListOf<Link>()
 
     /** Two listeners instead of one bound to every interface (0.0.0.0): loopback for the
      * documented USB/`adb forward` path (adbd delivers forwarded traffic to 127.0.0.1 on the
@@ -460,6 +468,7 @@ class PhoneReceiver(context: Context) {
         connectivityCallback?.let { connectivityManager?.unregisterNetworkCallback(it) }
         connectivityCallback = null
         closeConnection()
+        closePendingNewcomers(keep = null)
         closeServerSocket(loopbackServerSocket)
         closeServerSocket(wifiServerSocket)
         closeCursorSocket()
@@ -862,9 +871,11 @@ class PhoneReceiver(context: Context) {
                         continue
                     }
                     val activeLink = link
-                    if (!shouldAccept(activeLink?.remoteAddress, activeLink != null, client.inetAddress)) {
-                        Log.warn("rejecting connection from ${client.remoteSocketAddress} — a session is already active")
-                        client.close()
+                    if (needsProof(activeLink?.remoteAddress, activeLink != null, client.inetAddress)) {
+                        Log.info("new connection from ${client.remoteSocketAddress} while a session is live — waiting for it to prove itself")
+                        val candidate = SocketLink(client)
+                        synchronized(pendingNewcomers) { pendingNewcomers += candidate }
+                        scope.launch(Dispatchers.IO) { proveNewcomer(candidate, client) }
                         continue
                     }
                     Log.info("new connection from ${client.remoteSocketAddress}")
@@ -940,10 +951,50 @@ class PhoneReceiver(context: Context) {
         advertise(port)
     }
 
-    /** Takes over the session with [newLink] — TCP accept or USB attach.
-     * Everything past this point is transport-blind.
+    /** Greets [candidate] with a provisional `hello` (no `cursorPort`, so no UDP flow can start
+     * before it wins) and adopts it as the session once it sends bytes back — the official
+     * receiver's rule, which keeps the twin IPv4/IPv6 dial the Mac races from evicting the
+     * winner with a connection that's already dying. A candidate that closes, errors or stays
+     * silent past [NEWCOMER_PROOF_TIMEOUT_MS] is dropped and the live session stays put.
+     * @param candidate the newcomer, already in [pendingNewcomers].
+     * @param socket [candidate]'s socket, for the read timeout. */
+    private fun proveNewcomer(candidate: Link, socket: Socket) {
+        val first = try {
+            socket.soTimeout = NEWCOMER_PROOF_TIMEOUT_MS
+            candidate.output.write(Framing.encode(helloMessage(includeCursorPort = false).toString().toByteArray(Charsets.UTF_8)))
+            candidate.output.flush()
+            val buf = ByteArray(READ_BUFFER_SIZE)
+            val n = candidate.input.read(buf)
+            socket.soTimeout = 0
+            if (n > 0) buf.copyOf(n) else null
+        } catch (e: IOException) {
+            null
+        }
+        val stillPending = synchronized(pendingNewcomers) { pendingNewcomers.remove(candidate) }
+        if (first == null || !stillPending || !running.get()) {
+            Log.info("ignored a newcomer from ${candidate.label} that closed or stayed silent")
+            candidate.close()
+            return
+        }
+        Log.info("newcomer ${candidate.label} proved itself — adopting it as the session")
+        acceptConnection(PrefixedLink(candidate, first))
+    }
+
+    /** Closes every connection still proving itself, except [keep].
+     * @param keep the one being adopted, or `null` to close them all. */
+    private fun closePendingNewcomers(keep: Link?) {
+        val rivals = synchronized(pendingNewcomers) {
+            pendingNewcomers.filter { it !== keep }.also { pendingNewcomers.clear() }
+        }
+        rivals.forEach { it.close() }
+    }
+
+    /** Takes over the session with [newLink] — TCP accept, a newcomer that proved itself, or
+     * USB attach. Everything past this point is transport-blind.
      * @param newLink the live connection to adopt as the current session. */
+    @Synchronized
     private fun acceptConnection(newLink: Link) {
+        closePendingNewcomers(keep = newLink)
         val previousLabel = link?.label
         closeConnection()
         if (previousLabel != null && previousLabel != newLink.label) {
@@ -1103,6 +1154,17 @@ class PhoneReceiver(context: Context) {
      * as `panel` (PROTOCOL.md §6.7) and as the deprecated top-level fields, which stay until
      * upstream drops them at the next protocol bump. */
     private fun sendHello() {
+        sendControl(helloMessage(includeCursorPort = true))
+        val ceilingLog = decodeCeiling?.let { (w, h) -> ", decode ceiling ${w}x$h" } ?: ""
+        val cursorLog = cursorPortBound?.let { ", cursor UDP :$it" } ?: ""
+        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x$ceilingLog$cursorLog)")
+    }
+
+    /** Builds the `hello` message (PROTOCOL.md §6.1).
+     * @param includeCursorPort whether to offer the UDP cursor channel — left out of the
+     * provisional `hello` a newcomer gets in [proveNewcomer], as the official receiver does.
+     * @return the message, ready to frame. */
+    private fun helloMessage(includeCursorPort: Boolean): JSONObject {
         val message = JSONObject()
             .put("type", WireMessage.HELLO)
             .put("pixelsWide", devicePixelsWide)
@@ -1116,11 +1178,8 @@ class PhoneReceiver(context: Context) {
             message.put("maxEncodeWide", maxWide)
             message.put("maxEncodeHigh", maxHigh)
         }
-        cursorPortBound?.let { message.put("cursorPort", it) }
-        sendControl(message)
-        val ceilingLog = decodeCeiling?.let { (w, h) -> ", decode ceiling ${w}x$h" } ?: ""
-        val cursorLog = cursorPortBound?.let { ", cursor UDP :$it" } ?: ""
-        Log.info("hello sent ($devicePixelsWide x $devicePixelsHigh @${deviceScale}x$ceilingLog$cursorLog)")
+        if (includeCursorPort) cursorPortBound?.let { message.put("cursorPort", it) }
+        return message
     }
 
     /** Finds the decoder [video.VideoDecoder][io.github.josepacelli.opendisplay.video.VideoDecoder]

@@ -1,11 +1,13 @@
 package io.github.josepacelli.opendisplay.net
 
 import android.os.ParcelFileDescriptor
+import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.SequenceInputStream
 import java.net.InetAddress
 import java.net.Socket
 
@@ -45,6 +47,22 @@ class SocketLink(private val socket: Socket) : Link {
 
     override fun close() {
         socket.close()
+    }
+}
+
+/** A [Link] whose first bytes were already read off the wire — a newcomer connection that
+ * proved itself by sending them (see `PhoneReceiver.proveNewcomer`). Replays [prefix] before
+ * the rest of [inner]'s stream so the session's framing starts at the very first byte.
+ * @param inner the connection being adopted.
+ * @param prefix the bytes already consumed from [inner]'s input. */
+class PrefixedLink(private val inner: Link, prefix: ByteArray) : Link {
+    override val input: InputStream = SequenceInputStream(ByteArrayInputStream(prefix), inner.input)
+    override val output: OutputStream = inner.output
+    override val label: String = inner.label
+    override val remoteAddress: InetAddress? = inner.remoteAddress
+
+    override fun close() {
+        inner.close()
     }
 }
 

@@ -33,7 +33,7 @@ Structured review against OWASP ASVS 4.0.3 / CWE Top 25, scoped to the network/p
 
 | ID | Title | Severity | CWE | Status |
 |---|---|---|---|---|
-| SCR-001 | No peer authentication on the control/video socket | Medium | CWE-306 | Accepted risk (inherited from upstream protocol) — UI now warns when a different peer replaces an active session, but doesn't block it |
+| SCR-001 | No peer authentication on the control/video socket | Medium | CWE-306 | Accepted risk (inherited from upstream protocol) — UI warns when a different peer replaces an active session. A newcomer from another host must send bytes before it replaces a live one, like the official receiver (#168), which filters out half-dead twin dials but doesn't authenticate |
 | SCR-002 | Cursor sprite bitmap decoded without dimension validation | Medium | CWE-400 | Fixed — bounds-only decode rejects oversized sprites before allocation |
 | SCR-003 | Unvalidated `store` URL forwarded from an untrusted peer | Low | CWE-601 | Fixed — validated against an `https://` + host allowlist at ingestion |
 | SCR-004 | Persistent install ID broadcast in cleartext over mDNS | Informational | CWE-200 | Accepted risk (required by protocol) |

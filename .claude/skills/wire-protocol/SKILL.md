@@ -202,7 +202,7 @@ object WireProtocol {
 
 | Area | Android behavior | Status |
 |---|---|---|
-| Newcomer while a session is live (§1) | Rejects any other IP while a session is active (#165) | **Diverges from §1**; to be aligned with the official receiver in #168 |
+| Newcomer while a session is live (§1) | Same host: adopted at once. Other host: provisional `hello` without `cursorPort`, adopted once it sends bytes, dropped after 10 s of silence (`needsProof`/`proveNewcomer`, #168) | Conformant, matches the official receiver; the 10 s cap is ours |
 | UDP cursor source | Only datagrams from the TCP peer's address | Stricter than spec, no wire change |
 | `updateRequired.store`/`message` | URL allow-list, message truncated | Display-side only |
 | `hello.videoCaps` / HEVC / `streamConfig` | Not offered / ignored | Optional, legacy H.264 |
