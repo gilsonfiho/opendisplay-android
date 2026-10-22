@@ -71,10 +71,19 @@
     <string name="about_mac_app">Mac 应用</string>
     <string name="about_close">关闭</string>
 
-    <string-array name="changelog_v0_0_54">
-        <item>更新日志现在用通俗的话说明改了什么，而不是怎么实现的。</item>
+    <string-array name="changelog_v0_0_55">
+        <item>全新外观：支持浅色和深色的海军蓝主题，等待界面上的状态灯，以及大字显示的设备名称——这就是你在 Mac 上要选的名字。</item>
+        <item>设置重新分组；在平板上，分区在左侧，内容在右侧。</item>
+        <item>悬浮菜单换上了正式图标和更大的按钮，“断开连接”与其他按钮分开。</item>
+        <item>新应用图标：一台从 Mac 接收窗口的平板。也会显示在状态栏，并支持 Android 主题图标。</item>
+        <item>如果 Mac 在会话中途切换网络（Wi-Fi 换成有线、开关 VPN），会立即接回会话，不用等旧连接超时。</item>
+        <item>为即将推出的 Mac 应用版本做好准备：Mac 会根据本应用新发送的屏幕信息来决定扩展桌面的大小。</item>
+        <item>“连接已被其他设备接管”的提示现在会在几秒后自动消失。</item>
+        <item>关闭 USB 调试时，本设备上的其他应用将无法再连接到 OpenDisplay。</item>
+        <item>处理超大视频帧时占用更少内存，也更能扛住来自网络的大量连接尝试。</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>更新日志现在用通俗的话说明改了什么，而不是怎么实现的。</item>
         <item>光标现在只跟随你所连接的 Mac。网络中其他设备发来的光标更新会被忽略。</item>
         <item>用于 Google Play 测试的版本，应用的使用方式没有变化。</item>
         <item>已在运行的会话不会再被另一台电脑抢走。只要有一台 Mac 已连接，其他 Mac 的连接请求都会被拒绝。</item>

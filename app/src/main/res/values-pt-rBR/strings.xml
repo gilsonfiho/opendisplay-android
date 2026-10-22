@@ -71,10 +71,19 @@
     <string name="about_mac_app">App do Mac</string>
     <string name="about_close">Fechar</string>
 
-    <string-array name="changelog_v0_0_54">
-        <item>O histórico de novidades agora explica o que mudou em linguagem simples, e não como foi feito.</item>
+    <string-array name="changelog_v0_0_55">
+        <item>Visual novo: tema azul-marinho nos modos claro e escuro, uma luz de status na tela de espera e o nome do aparelho em letras grandes, já que é ele que você escolhe no Mac.</item>
+        <item>As configurações foram reagrupadas e, no tablet, as seções ficam à esquerda com o conteúdo ao lado.</item>
+        <item>O menu flutuante ganhou ícones de verdade e botões maiores, com o Desconectar separado dos outros.</item>
+        <item>Ícone novo: um tablet recebendo uma janela do Mac. Também aparece na barra de status e funciona com os ícones temáticos do Android.</item>
+        <item>Se o Mac trocar de rede no meio da sessão (WiFi para cabo, uma VPN), ele retoma a sessão na hora, sem esperar a conexão antiga expirar.</item>
+        <item>Pronto para as próximas versões do app do Mac, que definem o tamanho da área estendida com novas informações da tela que este app agora envia.</item>
+        <item>O aviso de \"conexão assumida por outro dispositivo\" agora some sozinho depois de alguns segundos.</item>
+        <item>Com a depuração USB desligada, outros apps do aparelho não conseguem mais se conectar ao OpenDisplay.</item>
+        <item>Usa menos memória com quadros de vídeo muito grandes e aguenta melhor uma enxurrada de tentativas de conexão vindas da rede.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>O histórico de novidades agora explica o que mudou em linguagem simples, e não como foi feito.</item>
         <item>O cursor agora só segue o Mac ao qual você está conectado. Atualizações de cursor enviadas por qualquer outro aparelho da rede são ignoradas.</item>
         <item>Versão de teste para o Google Play. Nada muda no jeito que o app funciona.</item>
         <item>Outro computador não consegue mais tomar uma sessão que já está rodando. Se um Mac está conectado, tentativas de conexão de outro são recusadas.</item>

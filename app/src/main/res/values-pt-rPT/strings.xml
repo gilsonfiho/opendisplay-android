@@ -71,10 +71,19 @@
     <string name="about_mac_app">App do Mac</string>
     <string name="about_close">Fechar</string>
 
-    <string-array name="changelog_v0_0_54">
-        <item>O histórico de novidades passa a explicar o que mudou em linguagem simples, e não como foi feito.</item>
+    <string-array name="changelog_v0_0_55">
+        <item>Visual novo: tema azul-marinho nos modos claro e escuro, uma luz de estado no ecrã de espera e o nome do dispositivo em letras grandes, já que é esse que escolhe no Mac.</item>
+        <item>As definições foram reagrupadas e, no tablet, as secções ficam à esquerda com o conteúdo ao lado.</item>
+        <item>O menu flutuante ganhou ícones a sério e botões maiores, com o Desligar separado dos restantes.</item>
+        <item>Ícone novo: um tablet a receber uma janela do Mac. Também aparece na barra de estado e funciona com os ícones temáticos do Android.</item>
+        <item>Se o Mac mudar de rede a meio da sessão (Wi-Fi para cabo, uma VPN), retoma a sessão de imediato, sem esperar que a ligação antiga expire.</item>
+        <item>Preparado para as próximas versões da app do Mac, que definem o tamanho da área estendida com novas informações do ecrã que esta app agora envia.</item>
+        <item>O aviso de \"ligação assumida por outro dispositivo\" agora desaparece sozinho ao fim de alguns segundos.</item>
+        <item>Com a depuração USB desligada, outras apps do dispositivo já não conseguem ligar-se ao OpenDisplay.</item>
+        <item>Usa menos memória com fotogramas de vídeo muito grandes e aguenta melhor uma avalanche de tentativas de ligação vindas da rede.</item>
     </string-array>
     <string-array name="changelog_older_versions">
+        <item>O histórico de novidades passa a explicar o que mudou em linguagem simples, e não como foi feito.</item>
         <item>O cursor passa a seguir apenas o Mac ao qual está ligado. As atualizações de cursor enviadas por qualquer outro dispositivo da rede são ignoradas.</item>
         <item>Versão de teste para o Google Play. Nada muda no funcionamento da app.</item>
         <item>Outro computador já não consegue tomar uma sessão que está a decorrer. Se um Mac estiver ligado, as tentativas de ligação de outro são recusadas.</item>
