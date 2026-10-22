@@ -75,7 +75,7 @@
         <item>New look: a navy theme in light and dark, a status light on the waiting screen, and this device\'s name in large type, since that\'s what you pick on the Mac.</item>
         <item>Settings are regrouped, and on tablets the sections sit on the left with the content beside them.</item>
         <item>The floating menu has proper icons and bigger buttons, with Disconnect set apart from the rest.</item>
-        <item>New app icon: a tablet taking a window from the Mac. It also works with Android\'s themed icons.</item>
+        <item>New app icon: a tablet taking a window from the Mac. It also shows in the status bar and works with Android\'s themed icons.</item>
         <item>If your Mac switches networks mid-session (WiFi to Ethernet, a VPN), it can take the session back right away instead of waiting for the old connection to time out.</item>
         <item>Ready for upcoming versions of the Mac app, which size the extended desktop from new screen information this app now sends.</item>
         <item>The \"connection taken over by another device\" warning now goes away by itself after a few seconds.</item>
