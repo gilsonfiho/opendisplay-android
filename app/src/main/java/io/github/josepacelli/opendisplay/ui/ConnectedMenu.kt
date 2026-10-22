@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,10 @@ import io.github.josepacelli.opendisplay.ui.theme.OverlayColors
 
 private val GRIP_SIZE = 48.dp
 private val ACTION_SIZE = 52.dp
+
+/** Wide enough for the longest one-word caption in any locale ("Configurações") on one line at
+ * the default font size; past that it wraps with a hyphen instead of mid-word. */
+private val LABEL_MAX_WIDTH = 96.dp
 
 /**
  * Floating handle shown only while connected — otherwise the app has no chrome at all
@@ -142,8 +147,8 @@ fun ConnectedMenu(
                     }
                 },
         ) {
-            val grip = @Composable {
-                GripButton(expanded = expanded, onClick = { expanded = !expanded })
+            val grip = @Composable { gripModifier: Modifier ->
+                GripButton(expanded = expanded, onClick = { expanded = !expanded }, modifier = gripModifier)
             }
             val actionList = @Composable {
                 ZoomButton(enabled = zoomEnabled, onClick = { onToggleZoom(!zoomEnabled) })
@@ -158,7 +163,7 @@ fun ConnectedMenu(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.padding(8.dp),
                 ) {
-                    grip()
+                    grip(Modifier)
                     AnimatedVisibility(
                         visible = expanded,
                         enter = fadeIn(tween(200)) + expandVertically(tween(250, easing = FastOutSlowInEasing)),
@@ -172,18 +177,18 @@ fun ConnectedMenu(
                 }
             } else {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.padding(8.dp),
                 ) {
-                    grip()
+                    grip(Modifier.padding(top = (ACTION_SIZE - GRIP_SIZE) / 2))
                     AnimatedVisibility(
                         visible = expanded,
                         enter = fadeIn(tween(200)) + expandHorizontally(tween(250, easing = FastOutSlowInEasing)),
                         exit = fadeOut(tween(120)) + shrinkHorizontally(tween(160)),
                     ) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment = Alignment.Top,
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                         ) { actionList() }
                     }
@@ -193,13 +198,17 @@ fun ConnectedMenu(
     }
 }
 
-/** Round tap target that expands/collapses [ConnectedMenu] — a "more" icon on the strip. */
+/** Round tap target that expands/collapses [ConnectedMenu] — a "more" icon on the strip.
+ * @param expanded whether the pill is open, drawn as a light fill.
+ * @param onClick called when tapped.
+ * @param modifier applied before the grip's size — the horizontal strip uses it to drop the grip
+ * so its center lines up with the larger action buttons. */
 @Composable
-private fun GripButton(expanded: Boolean, onClick: () -> Unit) {
+private fun GripButton(expanded: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val label = stringResource(R.string.connected_menu_handle)
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(GRIP_SIZE)
             .clip(CircleShape)
             .background(if (expanded) OverlayColors.buttonOn else OverlayColors.button)
@@ -224,7 +233,7 @@ private fun MenuDivider(vertical: Boolean) {
         modifier = if (vertical) {
             Modifier.width(ACTION_SIZE - 16.dp).height(1.dp)
         } else {
-            Modifier.width(1.dp).height(ACTION_SIZE - 16.dp)
+            Modifier.padding(top = 8.dp).width(1.dp).height(ACTION_SIZE - 16.dp)
         }.background(OverlayColors.stripBorder),
     )
 }
@@ -316,10 +325,10 @@ private fun MenuActionButton(
         Text(
             text = label,
             color = OverlayColors.ink,
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelSmall.copy(hyphens = Hyphens.Auto),
             textAlign = TextAlign.Center,
             maxLines = 2,
-            modifier = Modifier.padding(top = 4.dp).widthIn(max = 68.dp),
+            modifier = Modifier.padding(top = 4.dp).widthIn(max = LABEL_MAX_WIDTH),
         )
     }
 }
