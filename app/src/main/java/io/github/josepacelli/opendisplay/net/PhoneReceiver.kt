@@ -316,6 +316,13 @@ class PhoneReceiver(context: Context) {
     private val _peerSignal = MutableStateFlow<PeerSignal?>(null)
     val peerSignal: StateFlow<PeerSignal?> = _peerSignal.asStateFlow()
 
+    /** Clears [signal] if it's still the one showing — a newer signal that arrived in the
+     * meantime stays.
+     * @param signal the signal the UI is done showing. */
+    fun dismissPeerSignal(signal: PeerSignal) {
+        _peerSignal.compareAndSet(signal, null)
+    }
+
     /** True while the video pipeline has recently had to resync (dropped/corrupt frame,
      * see [io.github.josepacelli.opendisplay.video.VideoDecoder]) — drives the "unstable
      * connection" banner. Clears itself [UNSTABLE_CLEAR_DELAY_MS] after the last resync. */

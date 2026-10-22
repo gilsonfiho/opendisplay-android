@@ -190,6 +190,12 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
         }
 
         peerSignal?.let { signal ->
+            if (signal is PeerSignal.PeerReplaced) {
+                LaunchedEffect(signal) {
+                    delay(PEER_REPLACED_BANNER_MS)
+                    receiver.dismissPeerSignal(signal)
+                }
+            }
             PeerSignalBanner(signal, modifier = Modifier.align(Alignment.TopCenter).padding(top = 32.dp))
         }
 
@@ -223,6 +229,10 @@ fun ReceiverScreen(receiver: PhoneReceiver) {
         SettingsDialog(receiver = receiver, initialTab = settingsInitialTab, onDismiss = { showSettings = false })
     }
 }
+
+/** How long the "taken over by another device" banner stays up (#185). It's information, not a
+ * call to action, unlike the update banners, which stay until the situation changes. */
+private const val PEER_REPLACED_BANNER_MS = 8_000L
 
 /** What the idle screen's indicator lamp is saying. */
 private enum class LampState { LISTENING, PROBLEM, OFF }
