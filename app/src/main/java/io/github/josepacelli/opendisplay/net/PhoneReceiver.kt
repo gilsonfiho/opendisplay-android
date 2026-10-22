@@ -144,6 +144,10 @@ class PhoneReceiver(context: Context) {
          * answers `hello` with `welcome` within milliseconds, so this only bounds sockets that
          * connect and go silent. */
         private const val NEWCOMER_PROOF_TIMEOUT_MS = 10_000
+        /** At most this many connections may be proving themselves at once (#156) — a Mac
+         * needs two (its twin IPv4/IPv6 dial), so this only stops a flood of silent sockets
+         * from each holding a coroutine and read buffer for [NEWCOMER_PROOF_TIMEOUT_MS]. */
+        private const val MAX_PENDING_NEWCOMERS = 4
         private const val CURSOR_DATAGRAM_BUFFER_SIZE = 2 * 1024
         private const val UNSTABLE_CLEAR_DELAY_MS = 3_000L
         private const val RTT_UNSTABLE_MS = 250.0
@@ -872,9 +876,16 @@ class PhoneReceiver(context: Context) {
                     }
                     val activeLink = link
                     if (needsProof(activeLink?.remoteAddress, activeLink != null, client.inetAddress)) {
-                        Log.info("new connection from ${client.remoteSocketAddress} while a session is live — waiting for it to prove itself")
                         val candidate = SocketLink(client)
-                        synchronized(pendingNewcomers) { pendingNewcomers += candidate }
+                        val admitted = synchronized(pendingNewcomers) {
+                            (pendingNewcomers.size < MAX_PENDING_NEWCOMERS).also { if (it) pendingNewcomers += candidate }
+                        }
+                        if (!admitted) {
+                            Log.warn("closing ${client.remoteSocketAddress} — $MAX_PENDING_NEWCOMERS connections are already waiting to prove themselves")
+                            candidate.close()
+                            continue
+                        }
+                        Log.info("new connection from ${client.remoteSocketAddress} while a session is live — waiting for it to prove itself")
                         scope.launch(Dispatchers.IO) { proveNewcomer(candidate, client) }
                         continue
                     }

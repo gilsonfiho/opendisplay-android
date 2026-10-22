@@ -92,13 +92,15 @@ object Framing {
             return frames
         }
 
-        /** Grows [buffer] (doubling) until it can hold at least [needed] bytes.
+        /** Grows [buffer] (doubling) until it can hold at least [needed] bytes, but never
+         * past one maximum-size frame plus header unless [needed] itself is larger — plain
+         * doubling took a peer trickling one 16 MiB frame to a 32 MiB buffer (#156).
          * @param needed minimum required buffer size, in bytes. */
         private fun ensureCapacity(needed: Int) {
             if (needed <= buffer.size) return
             var newSize = buffer.size * 2
             while (newSize < needed) newSize *= 2
-            buffer = buffer.copyOf(newSize)
+            buffer = buffer.copyOf(minOf(newSize, maxOf(needed, HEADER_SIZE + MAX_FRAME_SIZE)))
         }
     }
 }
