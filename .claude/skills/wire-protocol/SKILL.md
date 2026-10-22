@@ -101,7 +101,7 @@ tolerated; unparseable payload ignored. New fields arrive without a version bump
 
 | `type` | Fields we send | Notes |
 |---|---|---|
-| `hello` | `pixelsWide`, `pixelsHigh`, `scale`, `device: "Android"`, `id`, `pv: 3`, `maxEncodeWide/High`?, `cursorPort`? | First message on every connection. Re-sent on rotation / any panel change (`setPanelSize`). See below. |
+| `hello` | `pixelsWide`, `pixelsHigh`, `scale`, `device: "Android"`, `id`, `pv: 3`, `panel`?, `maxEncodeWide/High`?, `cursorPort`? | First message on every connection. Re-sent on rotation / any panel change (`setPanelSize`). See below. |
 | `ping` | `t` (ms since epoch, our clock) | Every 2 s. Mac answers `pong`. |
 | `touch` | `phase` (`began`/`moved`/`ended`/`cancelled`), `x`, `y` (normalized video space), `t`? (Mac clock, once offset is known) | |
 | `scroll` | `dx`, `dy` | **Video pixels**, natural-scrolling sign. |
@@ -113,8 +113,9 @@ tolerated; unparseable payload ignored. New fields arrive without a version bump
 **`hello` fields:**
 - `pixelsWide`, `pixelsHigh`, `scale`: **deprecated** (§6.1), removed at the next pv bump. Kept
   until then. A Mac that gets a valid `panel` ignores them.
-- `panel` (§6.7): **not sent yet** (#166). Should be `{pixelsWide, pixelsHigh, scale}` —
-  physical pixels of the window in the current orientation and the real density. `pointsWide/High` omitted (Android has no
+- `panel` (§6.7): `{pixelsWide, pixelsHigh, scale}` — physical pixels of the window in the
+  current orientation and the real density (`HelloPanel` in `protocol/WireProtocol.kt`). Left
+  out until the panel size is known. `hello` is re-sent when any of the three changes. `pointsWide/High` omitted (Android has no
   "looks like" desktop setting). The Mac builds a 2x desktop for `scale >= 1.5`, else 1x, and
   ignores the whole object unless pixels are integers `>= 2` and scale is finite `> 0`.
 - `maxEncodeWide/High` (§6.5): the AVC decoder's largest supported raster (legacy H.264 decode
@@ -202,7 +203,6 @@ object WireProtocol {
 | Area | Android behavior | Status |
 |---|---|---|
 | Newcomer while a session is live (§1) | Rejects any other IP while a session is active (#165) | **Diverges from §1**; to be aligned with the official receiver in #168 |
-| `hello.panel` (§6.7) | Not sent, only the deprecated fields | Works until the next pv bump; #166 |
 | UDP cursor source | Only datagrams from the TCP peer's address | Stricter than spec, no wire change |
 | `updateRequired.store`/`message` | URL allow-list, message truncated | Display-side only |
 | `hello.videoCaps` / HEVC / `streamConfig` | Not offered / ignored | Optional, legacy H.264 |
