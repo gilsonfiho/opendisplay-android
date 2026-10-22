@@ -74,7 +74,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-/** Settings content stops growing past this on tablets, so rows stay readable. */
+/** Tabs and settings content stop growing past this on tablets, so rows stay readable and the
+ * tabs sit right above the content they switch. */
 private val SETTINGS_MAX_WIDTH = 720.dp
 
 /** Choices offered by [ConnectedMenuIdlePicker], in seconds. */
@@ -158,7 +159,12 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = screenColor),
                 )
-                SecondaryTabRow(selectedTabIndex = selectedTab, containerColor = screenColor) {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                SecondaryTabRow(
+                    selectedTabIndex = selectedTab,
+                    containerColor = screenColor,
+                    modifier = Modifier.widthIn(max = SETTINGS_MAX_WIDTH).padding(horizontal = 16.dp),
+                ) {
                     Tab(
                         selected = selectedTab == SETTINGS_TAB_DETAILS,
                         onClick = { selectedTab = SETTINGS_TAB_DETAILS },
@@ -179,6 +185,7 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                         onClick = { selectedTab = SETTINGS_TAB_CHANGELOG },
                         text = { Text(stringResource(R.string.settings_tab_changelog)) },
                     )
+                }
                 }
                 Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                 Column(
