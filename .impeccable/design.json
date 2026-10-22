@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-22T16:35:46.400285+00:00",
+  "generatedAt": "2026-10-22T23:08:52.817709+00:00",
   "title": "Design System: OpenDisplay Android",
   "extensions": {
     "colorMeta": {
@@ -158,6 +158,48 @@
           "#FFB4AB",
           "#FFDAD5"
         ]
+      },
+      "brand-sky-light": {
+        "role": "tertiary",
+        "displayName": "Brand Sky Light",
+        "tonalRamp": [
+          "#0A1A4A",
+          "#14307F",
+          "#1A3FA8",
+          "#2A5FE0",
+          "#3A7BFF",
+          "#5E9BFF",
+          "#7CC0FF",
+          "#CFE6FF"
+        ]
+      },
+      "brand-sky": {
+        "role": "tertiary",
+        "displayName": "Brand Sky",
+        "tonalRamp": [
+          "#0A1A4A",
+          "#14307F",
+          "#1A3FA8",
+          "#2A5FE0",
+          "#3A7BFF",
+          "#5E9BFF",
+          "#7CC0FF",
+          "#CFE6FF"
+        ]
+      },
+      "brand-sky-deep": {
+        "role": "tertiary",
+        "displayName": "Brand Sky Deep",
+        "tonalRamp": [
+          "#0A1A4A",
+          "#14307F",
+          "#1A3FA8",
+          "#2A5FE0",
+          "#3A7BFF",
+          "#5E9BFF",
+          "#7CC0FF",
+          "#CFE6FF"
+        ]
       }
     },
     "typographyMeta": {
@@ -200,9 +242,48 @@
       "label-small": {
         "displayName": "Label Small",
         "purpose": "Captions under overlay buttons."
+      },
+      "web-display": {
+        "displayName": "Web Display",
+        "purpose": "Site hero headline only (3.25rem / 4.5rem sm / 5.5rem lg)."
+      },
+      "web-headline": {
+        "displayName": "Web Headline",
+        "purpose": "Every site section title (2rem / 2.75rem sm)."
+      },
+      "web-title": {
+        "displayName": "Web Title",
+        "purpose": "The two install steps."
+      },
+      "web-title-small": {
+        "displayName": "Web Title Small",
+        "purpose": "Feature names in the ruled list."
+      },
+      "web-body": {
+        "displayName": "Web Body",
+        "purpose": "Hero lead and section subs, muted, max 60ch."
+      },
+      "web-body-small": {
+        "displayName": "Web Body Small",
+        "purpose": "List descriptions, nav links, table cells."
+      },
+      "web-caption": {
+        "displayName": "Web Caption",
+        "purpose": "Install bar specs, install notes, footer locales and disclaimer."
       }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "strip-window",
+        "value": "0 18px 40px rgba(0,0,0,0.35)",
+        "purpose": "Site only: the captured window floating over the hero strip's desktop."
+      },
+      {
+        "name": "seam-glow",
+        "value": "0 0 18px var(--seam)",
+        "purpose": "Site only: the live seam between the Mac and tablet screens."
+      }
+    ],
     "motion": [
       {
         "name": "lamp-pulse",
@@ -218,6 +299,21 @@
         "name": "menu-collapse",
         "value": "fade 120ms + shrink 160ms",
         "purpose": "Connected menu closing."
+      },
+      {
+        "name": "strip-window-in",
+        "value": "translateX(-22%) to 0, 1100ms cubic-bezier(0.16, 1, 0.3, 1), 200ms delay, once",
+        "purpose": "Site hero window slides from the Mac side onto the seam on load. Off under prefers-reduced-motion."
+      },
+      {
+        "name": "theme-icon-swap",
+        "value": "300ms ease-out scale + rotate",
+        "purpose": "Site theme toggle icon change. Off under reduced motion."
+      },
+      {
+        "name": "back-to-top",
+        "value": "200ms opacity + translateY(8px)",
+        "purpose": "Site back-to-top button appearing."
       }
     ],
     "breakpoints": [
@@ -236,6 +332,26 @@
       {
         "name": "settings-max",
         "value": "720dp"
+      },
+      {
+        "name": "web-sm",
+        "value": "640px"
+      },
+      {
+        "name": "web-lg",
+        "value": "1024px"
+      },
+      {
+        "name": "web-xl",
+        "value": "1280px"
+      },
+      {
+        "name": "web-column",
+        "value": "1200px"
+      },
+      {
+        "name": "web-strip-cap",
+        "value": "1680px"
       }
     ]
   },
@@ -303,18 +419,50 @@
       "description": "Overlay readouts on video: tabular HUD and the unstable-connection pill.",
       "html": "<div class=\"ds-hud\">60 fps · 18 ms · rtt 4 ms</div><div class=\"ds-pill\"><span class=\"ds-dot\"></span>Connection unstable</div>",
       "css": ".ds-hud{font-family: Roboto, system-ui, sans-serif;display:inline-block;background:rgba(14,21,38,.88);color:#E8ECF4;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:12px}.ds-pill{font-family: Roboto, system-ui, sans-serif;display:flex;width:max-content;align-items:center;gap:12px;background:rgba(14,21,38,.88);color:#E8ECF4;border-radius:9999px;padding:12px 18px;font-size:14px}.ds-dot{width:10px;height:10px;border-radius:50%;background:#E5484D}"
+    },
+    {
+      "name": "Site Install Bar",
+      "kind": "custom",
+      "refersTo": "web-install-bar",
+      "description": "Two numbered download steps under the hero strip: Mac first (secondary), Android second (primary), specs at the end.",
+      "html": "<div class=\"ds-ib\"><div class=\"ds-ib-step\"><span class=\"ds-ib-n\">1</span><span>On your Mac</span><a class=\"ds-ib-btn ds-ib-sec\" href=\"#\">Download for Mac</a></div><span class=\"ds-ib-arrow\">&rarr;</span><div class=\"ds-ib-step\"><span class=\"ds-ib-n\">2</span><span>On your Android</span><a class=\"ds-ib-btn ds-ib-pri\" href=\"#\">Download APK (v0.0.55)</a></div><p class=\"ds-ib-spec\"><span>Free</span><br>GPL-3.0 &middot; Android 8.0+</p></div>",
+      "css": ".ds-ib{display:flex;align-items:center;gap:20px;background:#141C30;border:1px solid #2A3452;border-radius:9999px;padding:12px 12px 12px 20px;font-family:'Inter Variable',Inter,sans-serif;color:#E8ECF4;font-size:14px}.ds-ib-step{display:flex;align-items:center;gap:12px}.ds-ib-n{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:#E8ECF4;color:#0E1526;font-family:'Hanken Grotesk Variable','Hanken Grotesk',sans-serif;font-weight:600;font-variant-numeric:tabular-nums}.ds-ib-btn{display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:9999px;font-weight:500;text-decoration:none;font-variant-numeric:tabular-nums;transition:background .15s}.ds-ib-pri{background:#E8ECF4;color:#0E1526}.ds-ib-pri:hover{background:rgba(232,236,244,.8)}.ds-ib-sec{background:#1B2440;color:#E8ECF4}.ds-ib-sec:hover{background:#222C47}.ds-ib-btn:focus-visible{outline:3px solid rgba(76,141,255,.5);outline-offset:2px}.ds-ib-arrow{color:#9AA4B8}.ds-ib-spec{margin:0 16px 0 auto;text-align:right;font-size:12px;color:#9AA4B8}.ds-ib-spec span{color:#E8ECF4}"
+    },
+    {
+      "name": "Site Hero Extended Strip",
+      "kind": "custom",
+      "description": "The Mac desktop running onto the tablet, a glowing seam, and a window across it. Slides once; static under reduced motion.",
+      "html": "<figure class=\"ds-strip\"><div class=\"ds-strip-mac\"><div class=\"ds-strip-bar\"></div><span>Your Mac</span></div><div class=\"ds-strip-tab\"><span>Your Android tablet</span></div><div class=\"ds-strip-seam\"></div><div class=\"ds-strip-win\"></div></figure>",
+      "css": ".ds-strip{position:relative;margin:0;display:flex;aspect-ratio:1440/280;width:100%}.ds-strip-mac,.ds-strip-tab{position:relative;background:linear-gradient(180deg,#7CC0FF,#3A7BFF 60%,#1A3FA8)}.ds-strip-mac{flex:2.2}.ds-strip-tab{flex:1;border:10px solid #1B2440;border-left:0;border-radius:0 28px 28px 0}.ds-strip-bar{position:absolute;inset:0 0 auto 0;height:20px;background:rgba(14,21,38,.55)}.ds-strip span{position:absolute;left:16px;bottom:16px;font:500 12px/1 'Inter Variable',Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#fff}.ds-strip-seam{position:absolute;top:-12px;bottom:-12px;left:68.75%;width:3px;background:#4C8DFF;box-shadow:0 0 18px #4C8DFF}.ds-strip-win{position:absolute;top:12%;left:50%;width:32%;aspect-ratio:1056/480;border-radius:16px;background:#1f2328;box-shadow:0 18px 40px rgba(0,0,0,.35);animation:ds-win 1100ms cubic-bezier(.16,1,.3,1) 200ms both}@keyframes ds-win{from{transform:translateX(-22%)}to{transform:none}}@media (prefers-reduced-motion:reduce){.ds-strip-win{animation:none}}"
+    },
+    {
+      "name": "Site Ruled List",
+      "kind": "card",
+      "refersTo": "web-ruled-item",
+      "description": "Features, install steps and credits: a 1px top hairline per item instead of a card.",
+      "html": "<ul class=\"ds-rl\"><li><h3>Hardware H.264</h3><p>Decoded straight to the screen by MediaCodec.</p></li><li><h3>Real touch</h3><p>Tap, scroll and pinch go back to the Mac.</p></li><li><h3>No account</h3><p>No server, no sign-in, nothing collected.</p></li></ul>",
+      "css": ".ds-rl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:32px 40px;font-family:'Inter Variable',Inter,sans-serif}.ds-rl li{border-top:1px solid #2A3452;padding-top:20px}.ds-rl h3{margin:0;font:500 18px/1.55 'Hanken Grotesk Variable','Hanken Grotesk',sans-serif;color:#E8ECF4}.ds-rl p{margin:6px 0 0;font-size:14px;line-height:1.625;color:#9AA4B8}.ds-rl a{color:#4C8DFF;text-decoration:none}.ds-rl a:hover{text-decoration:underline}"
+    },
+    {
+      "name": "Site Section Heading",
+      "kind": "custom",
+      "refersTo": "web-section-heading",
+      "description": "Light Hanken title with an optional muted line; nothing above it.",
+      "html": "<div class=\"ds-sh\"><h2>Everything the Mac sends, on your Android</h2><p>Same protocol as the iPad app. Nothing changes on the Mac.</p></div>",
+      "css": ".ds-sh{max-width:44rem;margin-bottom:40px}.ds-sh h2{margin:0;font:300 2.75rem/1.05 'Hanken Grotesk Variable','Hanken Grotesk',sans-serif;letter-spacing:-.02em;color:#E8ECF4;text-wrap:balance}.ds-sh p{margin:12px 0 0;font:400 1rem/1.625 'Inter Variable',Inter,sans-serif;color:#9AA4B8}"
     }
   ],
   "narrative": {
     "northStar": "The Indicator Lamp",
-    "overview": "**Creative North Star: \"The Indicator Lamp\"**\n\nThe idle screen is built like a piece of desk hardware: one rounded navy panel, a single indicator lamp that tells the connection story, and the device's network name set large and light, because that name is the one thing the user has to find on the Mac. Everything else is quiet: two numbered steps, the network address and version in small tabular figures, Settings and About as pill buttons. Once the Mac connects, the panel unmounts and the screen is the Mac's desktop. The only chrome left is a slim dark strip and an optional HUD.\n\nThe palette is navy and blue, taken from the blue app icon. Saturated colour is spent only on state: signal blue when listening, red for a problem, slate when off. The one material is a perforated dot grille behind the steps. Depth comes from tonal steps of navy, not shadows. Components are stock Material 3 (Button, FilledTonalButton, Switch, TopAppBar, tabs) restyled by the theme, so the app reads as native Android.\n\nThis build diverges from the original direction contract in five places, all on purpose. (1) Graphite and amber became navy and blue, because the owner asked for a dark blue that matches the app icon. (2) The display face is Hanken Grotesk, not Roboto Flex: Roboto is the platform family and can't be the app's own display voice. It ships as four static weight files because `FontVariation` on a resource font did not apply weight on the test device. (3) The planned three-stage strip (Listening / Mac found / Streaming) became three lamp colours. The app has no real \"Mac found\" state, and the idle screen unmounts on connect, so a \"Streaming\" stage would never be seen. (4) Network and version meta sit bottom-left of the idle panel, in the slot the stage strip held, instead of in a card on the grille side. (5) Overlay chrome stays fixed dark navy whatever the system theme, because it sits on the Mac's desktop.",
+    "overview": "**Creative North Star: \"The Indicator Lamp\"**\n\nThe idle screen is built like a piece of desk hardware: one rounded navy panel, a single indicator lamp that tells the connection story, and the device's network name set large and light, because that name is the one thing the user has to find on the Mac. Everything else is quiet: two numbered steps, the network address and version in small tabular figures, Settings and About as pill buttons. Once the Mac connects, the panel unmounts and the screen is the Mac's desktop. The only chrome left is a slim dark strip and an optional HUD.\n\nThe palette is navy and blue, taken from the blue app icon. Saturated colour is spent only on state: signal blue when listening, red for a problem, slate when off. The one material is a perforated dot grille behind the steps. Depth comes from tonal steps of navy, not shadows. Components are stock Material 3 (Button, FilledTonalButton, Switch, TopAppBar, tabs) restyled by the theme, so the app reads as native Android.\n\nThis build diverges from the original direction contract in five places, all on purpose. (1) Graphite and amber became navy and blue, because the owner asked for a dark blue that matches the app icon. (2) The display face is Hanken Grotesk, not Roboto Flex: Roboto is the platform family and can't be the app's own display voice. It ships as four static weight files because `FontVariation` on a resource font did not apply weight on the test device. (3) The planned three-stage strip (Listening / Mac found / Streaming) became three lamp colours. The app has no real \"Mac found\" state, and the idle screen unmounts on connect, so a \"Streaming\" stage would never be seen. (4) Network and version meta sit bottom-left of the idle panel, in the slot the stage strip held, instead of in a card on the grille side. (5) Overlay chrome stays fixed dark navy whatever the system theme, because it sits on the Mac's desktop.\n\nThe site extends the app's world rather than starting a new one. Its one idea is the product's job drawn once: under a light display headline (\"One desktop. Two screens.\"), a full-bleed strip shows the Mac's desktop running past its own edge onto a tablet, with a glowing blue seam between them and a real captured window sitting across the seam. Right under it, a two-step pill bar installs both apps. Everything below is plain proof on a 1200px column: how it works, real screenshots, install, features, comparison, FAQ, contributing, support.\n\nIt is built in React with Tailwind v4 and shadcn/ui, retokened onto the navy and paper families. Like the app, it is flat, quiet and type-led. Content is always visible; the only entrance motion is the strip window's one slide. Where the build differs from its direction contract, the build is recorded here: the headline tops out at 88px (5.5rem), not the ~96px the contract named. The app's dot grille carries over as the site's one material: 2px dots on a 16px grid in `--grille`, filling the right 38% of the headline block from `lg`.",
     "keyCharacteristics": [
       "One panel, one lamp, one large name. The lamp colour is the status.",
       "Navy tonal layering, no shadows.",
       "Hanken Grotesk light for display, semibold for small titles. Body and labels use the system face.",
       "Tabular figures on every number: port, IP, version, step numbers, delays, HUD.",
       "Pill buttons. Off-white filled primary on dark, navy filled primary on light.",
-      "Overlay chrome on video is always dark navy, translucent, and hides itself."
+      "Overlay chrome on video is always dark navy, translucent, and hides itself.",
+      "The landing page (`web/`) is the same world on paper and navy: ink primary, blue only for links, the seam and live state, Hanken Grotesk light headings, ruled lists, one picture of the product's job."
     ],
     "rules": [
       {
@@ -325,6 +473,16 @@
       {
         "name": "The Desktop Rule",
         "body": "Anything drawn over the Mac's video uses the fixed overlay navy (`OverlayColors`), never the theme scheme. Whatever sits behind it is someone else's desktop.",
+        "section": "colors"
+      },
+      {
+        "name": "The Seam Rule",
+        "body": "On the site, signal blue (`--accent` / `--seam`) marks only links, the seam between the two screens, text selection and focus rings. Buttons, headings, icons and numbers stay ink or muted. This is the site's form of the Lamp Rule: blue means \"this goes somewhere\" or \"this is live\", never decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Primary Rule",
+        "body": "The primary action is filled with ink (`--primary`), never with blue. Navy on paper, mist on navy.",
         "section": "colors"
       },
       {
@@ -349,14 +507,24 @@
       "**Do** lift surfaces by stepping up the navy/paper container ramp: panel, raised, raised-high.",
       "**Do** use `OverlayColors` (translucent navy, hairline border, pill shapes) for anything on top of the video, in both themes.",
       "**Do** keep Hanken Grotesk light (300) at display size for the device name, and semibold (600) for small titles.",
-      "**Do** use stock Material 3 components restyled by the theme, with pill buttons at least 52dp tall and 48dp touch targets."
+      "**Do** use stock Material 3 components restyled by the theme, with pill buttons at least 52dp tall and 48dp touch targets.",
+      "**Do** build the site from the shared tokens in `web/src/index.css` (paper in light, navy in dark) and fill the primary action with ink.",
+      "**Do** keep site content on the 1200px column, left-aligned, with a Web Headline section title and an optional muted line under it.",
+      "**Do** lay site collections out as ruled lists: a 1px top hairline per item, no card fill.",
+      "**Do** show site content by default. The hero window's one slide is the only entrance motion, and reduced motion turns it off.",
+      "**Do** keep comparison verdicts in code (`FAVOURABLE`) and only the wording in the locale files."
     ],
     "donts": [
       "**Don't** use blue or red as decoration. If a colour isn't reporting connection state, it should be navy, mist or slate.",
       "**Don't** add shadows or elevation to separate surfaces.",
       "**Don't** theme overlay chrome from the system scheme, or show the idle panel while connected.",
       "**Don't** use the system face (Roboto) at display size, or Hanken Grotesk for body text.",
-      "**Don't** add a stage strip or a \"Mac found\" state. The app can't detect it, and the lamp already covers what it can."
+      "**Don't** add a stage strip or a \"Mac found\" state. The app can't detect it, and the lamp already covers what it can.",
+      "**Don't** use signal blue on the site for buttons, fills, headings or icons. It belongs to links, the seam, selection and focus.",
+      "**Don't** put an eyebrow, kicker or label above a section title.",
+      "**Don't** hide content behind scroll-triggered reveals.",
+      "**Don't** use third-party avatars or profile images. Credits are text handles.",
+      "**Don't** let the hero strip stretch into a thin band on wide screens: keep the 1680px cap and the aspect ratio."
     ]
   }
 }
