@@ -69,6 +69,5 @@ local.properties
 /CLAUDE.original.md
 
 # Impeccable scratch (decision mocks, review screenshots); design.json and surfaces/ are kept
-.impeccable/mocks/
-.impeccable/questions/
-.impeccable/review/
+.impeccable
+
