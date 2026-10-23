@@ -27,7 +27,7 @@ function ExtendedStrip() {
         </div>
         <div className="relative flex-1 rounded-r-[28px] border-[10px] border-l-0 border-[#1b2440] bg-[linear-gradient(180deg,#7cc0ff,#3a7bff_60%,#1a3fa8)]">
           <div className="absolute inset-x-0 top-[62%] h-0.5 bg-[#bfe0ff]/70" />
-          <span className="absolute bottom-4 left-4 text-xs font-medium tracking-[0.08em] text-white uppercase">
+          <span className="absolute right-4 bottom-4 text-right text-xs font-medium tracking-[0.08em] text-white uppercase">
             {t('hero.stripTablet')}
           </span>
         </div>
