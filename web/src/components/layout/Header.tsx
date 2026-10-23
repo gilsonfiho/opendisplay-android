@@ -68,7 +68,7 @@ export function Header() {
           ))}
           <a
             href="https://github.com/josepacelli/opendisplay-android"
-            className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md border border-border/60 bg-background/40 px-2.5 py-1.5 text-sm text-foreground no-underline backdrop-blur-sm transition-colors hover:bg-accent/60"
+            className="ml-auto flex shrink-0 items-center gap-1.5 rounded-md border border-border/60 bg-background/40 px-2.5 py-1.5 text-sm text-foreground no-underline backdrop-blur-sm transition-colors hover:bg-secondary"
           >
             <Star className="size-4" aria-hidden="true" />
             {t('nav.github')} <span className="text-muted-foreground">{stars ?? '···'}</span>
@@ -86,7 +86,7 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+              className="flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               {menuOpen ? (
                 <X className="size-5" aria-hidden="true" />
@@ -96,14 +96,14 @@ export function Header() {
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-border/60 bg-background/80 p-1.5 shadow-lg backdrop-blur-xl backdrop-saturate-150">
+              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-border/60 bg-background/80 p-1.5 backdrop-blur-xl backdrop-saturate-150">
                 {links.map((link) => (
                   <a
                     key={link.id}
                     href={`#${link.id}`}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      'block rounded-md px-3 py-2 text-sm no-underline transition-colors hover:bg-accent/60',
+                      'block rounded-md px-3 py-2 text-sm no-underline transition-colors hover:bg-secondary',
                       active === link.id
                         ? 'font-medium text-foreground'
                         : 'text-muted-foreground hover:text-foreground',
@@ -114,7 +114,7 @@ export function Header() {
                 ))}
                 <a
                   href="https://github.com/josepacelli/opendisplay-android"
-                  className="mt-1 flex items-center gap-1.5 border-t border-border/60 px-3 py-2 pt-2.5 text-sm text-foreground no-underline transition-colors hover:bg-accent/60"
+                  className="mt-1 flex items-center gap-1.5 border-t border-border/60 px-3 py-2 pt-2.5 text-sm text-foreground no-underline transition-colors hover:bg-secondary"
                 >
                   <Star className="size-4" aria-hidden="true" />
                   {t('nav.github')} <span className="text-muted-foreground">{stars ?? '···'}</span>

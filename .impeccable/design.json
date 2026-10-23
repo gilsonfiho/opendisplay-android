@@ -439,7 +439,7 @@
       "name": "Site Ruled List",
       "kind": "card",
       "refersTo": "web-ruled-item",
-      "description": "Features, install steps and credits: a 1px top hairline per item instead of a card.",
+      "description": "Features, how it works, install steps and credits: a 1px top hairline per item instead of a card.",
       "html": "<ul class=\"ds-rl\"><li><h3>Hardware H.264</h3><p>Decoded straight to the screen by MediaCodec.</p></li><li><h3>Real touch</h3><p>Tap, scroll and pinch go back to the Mac.</p></li><li><h3>No account</h3><p>No server, no sign-in, nothing collected.</p></li></ul>",
       "css": ".ds-rl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:32px 40px;font-family:'Inter Variable',Inter,sans-serif}.ds-rl li{border-top:1px solid #2A3452;padding-top:20px}.ds-rl h3{margin:0;font:500 18px/1.55 'Hanken Grotesk Variable','Hanken Grotesk',sans-serif;color:#E8ECF4}.ds-rl p{margin:6px 0 0;font-size:14px;line-height:1.625;color:#9AA4B8}.ds-rl a{color:#4C8DFF;text-decoration:none}.ds-rl a:hover{text-decoration:underline}"
     },

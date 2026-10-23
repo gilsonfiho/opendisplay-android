@@ -25,7 +25,7 @@ export function Support() {
       <Button
         render={<a href="https://ko-fi.com/Q3D5259MWT" target="_blank" rel="noopener" />}
         nativeButton={false}
-        className="mt-6 bg-[#72a4f2] text-white hover:bg-[#72a4f2]/85"
+        className="mt-6 h-11 rounded-full px-5"
       >
         <Coffee className="size-4" aria-hidden="true" />
         {t('support.cta')}

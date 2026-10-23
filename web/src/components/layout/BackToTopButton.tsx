@@ -13,7 +13,7 @@ export function BackToTopButton() {
       aria-label={t('backToTop')}
       onClick={scrollToTop}
       className={cn(
-        'fixed bottom-6 right-6 z-30 flex size-10 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-md transition-all duration-200 hover:bg-accent',
+        'fixed bottom-6 right-6 z-30 flex size-10 items-center justify-center rounded-full border border-border bg-background text-foreground transition-all duration-200 hover:bg-secondary',
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
       )}
     >

@@ -419,7 +419,7 @@ Spacing uses a 4dp base: 4, 8, 12, 16, 20, 24, 32, 40, 56. The contract asked fo
 
 One centred column, 1200px max with 24px side gutters, shared by the header, hero text, install bar, every section and the footer. Only the hero strip breaks out of it. Sections sit on a 48px vertical rhythm (64px from `sm`), with 40px between a section heading and its content. Headings and body text are left-aligned on the column; only the footer is centred. Anchored sections keep a 76px scroll margin for the sticky header.
 
-Collections are ruled lists, not card grids: each item is a 1px top hairline, then its content, in a grid of 1 / 2 (`sm`) / 3 (`lg`) columns with 40px column gaps. Features, install steps and contributor credits all use it.
+Collections are ruled lists, not card grids: each item is a 1px top hairline, then its content, in a grid of 1 / 2 (`sm`) / 3 (`lg`) columns with 40px column gaps. Features, how it works, install steps and contributor credits all use it.
 
 Breakpoints are Tailwind's: `sm` 640px (larger type, two-column lists), `lg` 1024px (three-column lists, the install bar becomes one row, the strip switches to aspect-ratio sizing, the grille appears), `xl` 1280px (the inline nav appears; below it, a menu button). The brand's "Android" suffix hides under 400px.
 
