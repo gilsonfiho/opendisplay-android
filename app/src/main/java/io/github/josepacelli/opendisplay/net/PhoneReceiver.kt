@@ -1060,10 +1060,17 @@ class PhoneReceiver(context: Context) {
 
     /** Starts a session from a `USB_ACCESSORY_ATTACHED` intent. No accept
      * loop for USB — the cable itself is the event.
-     * @param descriptor open file descriptor for the attached USB accessory. */
-    fun attachAccessory(descriptor: ParcelFileDescriptor) {
+     * @param descriptor open file descriptor for the attached USB accessory.
+     * @return false, with [descriptor] closed, when the receiver isn't running. */
+    fun attachAccessory(descriptor: ParcelFileDescriptor): Boolean {
+        if (!running.get()) {
+            Log.warn("USB accessory attached while stopped — ignoring it")
+            descriptor.close()
+            return false
+        }
         Log.info("USB accessory attached — starting session over the cable")
         acceptConnection(AccessoryLink(descriptor))
+        return true
     }
 
     /** Drains [current] until it closes, is superseded, or [running] flips off,

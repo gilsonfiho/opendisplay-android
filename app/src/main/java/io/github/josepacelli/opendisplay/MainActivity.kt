@@ -2,9 +2,11 @@ package io.github.josepacelli.opendisplay
 
 import android.Manifest
 import android.app.PictureInPictureParams
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -65,6 +67,18 @@ class MainActivity : ComponentActivity() {
     /** Accessory received before the service finished binding; opened once bound. */
     private var pendingAccessory: UsbAccessory? = null
 
+    /** The accessory that already served a session: one attachment is one session
+     * (PROTOCOL.md §2.3), so it isn't reopened until the cable detaches. */
+    private var usedAccessory: UsbAccessory? = null
+
+    private val accessoryDetached = object : BroadcastReceiver() {
+        /** @param context unused.
+         * @param intent `USB_ACCESSORY_DETACHED`, unused: only one accessory is ever served. */
+        override fun onReceive(context: Context?, intent: Intent?) {
+            usedAccessory = null
+        }
+    }
+
     /** Binds this Activity to [ReceiverService], surfacing its [PhoneReceiver] as [boundReceiver]. */
     private val connection = object : ServiceConnection {
         /** @param name the connected component, unused.
@@ -107,13 +121,27 @@ class MainActivity : ComponentActivity() {
     private fun openPendingAccessory(receiver: PhoneReceiver) {
         val accessory = pendingAccessory ?: return
         pendingAccessory = null
+        if (accessory == usedAccessory) {
+            Log.info("USB accessory already served a session — waiting for a new attachment")
+            return
+        }
         val manager = getSystemService(UsbManager::class.java)
-        val descriptor = manager?.openAccessory(accessory)
+        val descriptor = if (manager?.hasPermission(accessory) == true) {
+            try {
+                manager.openAccessory(accessory)
+            } catch (_: IllegalArgumentException) {
+                null
+            } catch (_: SecurityException) {
+                null
+            }
+        } else {
+            null
+        }
         if (descriptor == null) {
             Log.warn("USB accessory vanished before it could be opened")
             return
         }
-        receiver.attachAccessory(descriptor)
+        if (receiver.attachAccessory(descriptor)) usedAccessory = accessory
     }
 
     /** [UsbManager.EXTRA_ACCESSORY], via the type-safe overload on API 33+.
@@ -133,6 +161,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
 
+        ContextCompat.registerReceiver(
+            this,
+            accessoryDetached,
+            IntentFilter(UsbManager.ACTION_USB_ACCESSORY_DETACHED),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
         takeAccessory(intent)
 
         val serviceIntent = Intent(this, ReceiverService::class.java)
@@ -206,6 +240,7 @@ class MainActivity : ComponentActivity() {
 
     /** Unbinds from [ReceiverService], if bound — the service itself keeps running. */
     override fun onDestroy() {
+        unregisterReceiver(accessoryDetached)
         if (bound) {
             unbindService(connection)
             bound = false

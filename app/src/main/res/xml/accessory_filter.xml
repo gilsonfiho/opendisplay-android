@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Accessory identity this app answers for. Must match the Mac's AOA strings
-  (control request 52) byte-for-byte, or the system dialog never offers this
-  app. Reference values: `aoa_probe.py` (STRINGS).
--->
+<!-- Must match the identity the Mac sender sends in the AOA handshake (PROTOCOL.md §2.3). -->
 <resources>
-    <usb-accessory
-        manufacturer="OpenDisplay"
-        model="OpenDisplay Receiver"
-        version="1.0" />
+    <usb-accessory manufacturer="OpenDisplay" model="OpenDisplay Receiver" />
 </resources>
