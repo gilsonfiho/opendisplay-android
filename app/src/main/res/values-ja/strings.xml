@@ -71,7 +71,11 @@
     <string name="about_mac_app">Macアプリ</string>
     <string name="about_close">閉じる</string>
 
-    <string-array name="changelog_v0_0_55">
+    <string-array name="changelog_v0_0_56">
+        <item>USBケーブルで接続すると、Macがつながった時点でAndroidがOpenDisplayを開くか確認するようになりました。特定のサイズのフレームで映像が途切れる問題も直りました。Mac版アプリはv1.28以降が必要です。</item>
+        <item>すでに終わったケーブルのセッションを再び開くことはなくなり、アプリの起動中にケーブルが外れてもクラッシュしなくなりました。</item>
+    </string-array>
+    <string-array name="changelog_older_versions">
         <item>デザインを一新：ライト／ダーク両対応のネイビーテーマ、待機画面のステータスランプ、そして Mac で選ぶこの端末の名前を大きく表示。</item>
         <item>設定を整理し直しました。タブレットでは左にセクション、右に内容が並びます。</item>
         <item>フローティングメニューのアイコンを正式なものにし、ボタンも大きくしました。「切断」は他のボタンと離して配置。</item>
@@ -81,8 +85,6 @@
         <item>「別のデバイスに接続が引き継がれました」の警告は、数秒後に自動で消えるようになりました。</item>
         <item>USB デバッグがオフのとき、この端末の他のアプリは OpenDisplay に接続できなくなりました。</item>
         <item>非常に大きな映像フレームでのメモリ使用量を減らし、ネットワークからの大量の接続試行にも強くなりました。</item>
-    </string-array>
-    <string-array name="changelog_older_versions">
         <item>更新履歴は、実装の細かい話ではなく、何が変わったのかをやさしい言葉で書くようにしました。</item>
         <item>カーソルは、接続中のMacの動きだけに従うようになりました。ネットワーク上の他の機器から送られたカーソル更新は無視されます。</item>
         <item>Google Play 向けのテストビルドです。アプリの動作は変わりません。</item>

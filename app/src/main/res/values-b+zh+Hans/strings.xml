@@ -71,7 +71,11 @@
     <string name="about_mac_app">Mac 应用</string>
     <string name="about_close">关闭</string>
 
-    <string-array name="changelog_v0_0_55">
+    <string-array name="changelog_v0_0_56">
+        <item>使用 USB 数据线时，Mac 一连接，Android 就会询问是否打开 OpenDisplay，并且特定大小的帧不再导致画面中断。需要 Mac 应用 v1.28 或更高版本。</item>
+        <item>已经结束的数据线会话不会再被重新打开，应用启动时数据线被拔出也不再导致应用崩溃。</item>
+    </string-array>
+    <string-array name="changelog_older_versions">
         <item>全新外观：支持浅色和深色的海军蓝主题，等待界面上的状态灯，以及大字显示的设备名称——这就是你在 Mac 上要选的名字。</item>
         <item>设置重新分组；在平板上，分区在左侧，内容在右侧。</item>
         <item>悬浮菜单换上了正式图标和更大的按钮，“断开连接”与其他按钮分开。</item>
@@ -81,8 +85,6 @@
         <item>“连接已被其他设备接管”的提示现在会在几秒后自动消失。</item>
         <item>关闭 USB 调试时，本设备上的其他应用将无法再连接到 OpenDisplay。</item>
         <item>处理超大视频帧时占用更少内存，也更能扛住来自网络的大量连接尝试。</item>
-    </string-array>
-    <string-array name="changelog_older_versions">
         <item>更新日志现在用通俗的话说明改了什么，而不是怎么实现的。</item>
         <item>光标现在只跟随你所连接的 Mac。网络中其他设备发来的光标更新会被忽略。</item>
         <item>用于 Google Play 测试的版本，应用的使用方式没有变化。</item>

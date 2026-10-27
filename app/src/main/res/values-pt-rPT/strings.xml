@@ -71,7 +71,11 @@
     <string name="about_mac_app">App do Mac</string>
     <string name="about_close">Fechar</string>
 
-    <string-array name="changelog_v0_0_55">
+    <string-array name="changelog_v0_0_56">
+        <item>Com cabo USB, o Android passa a oferecer a abertura do OpenDisplay assim que o Mac liga, e o vídeo deixa de cair em imagens de certos tamanhos. Requer a app do Mac v1.28 ou mais recente.</item>
+        <item>Uma sessão por cabo que já terminou deixa de ser reaberta, e um cabo que desaparece enquanto a app arranca já não a faz falhar.</item>
+    </string-array>
+    <string-array name="changelog_older_versions">
         <item>Visual novo: tema azul-marinho nos modos claro e escuro, uma luz de estado no ecrã de espera e o nome do dispositivo em letras grandes, já que é esse que escolhe no Mac.</item>
         <item>As definições foram reagrupadas e, no tablet, as secções ficam à esquerda com o conteúdo ao lado.</item>
         <item>O menu flutuante ganhou ícones a sério e botões maiores, com o Desligar separado dos restantes.</item>
@@ -81,8 +85,6 @@
         <item>O aviso de \"ligação assumida por outro dispositivo\" agora desaparece sozinho ao fim de alguns segundos.</item>
         <item>Com a depuração USB desligada, outras apps do dispositivo já não conseguem ligar-se ao OpenDisplay.</item>
         <item>Usa menos memória com fotogramas de vídeo muito grandes e aguenta melhor uma avalanche de tentativas de ligação vindas da rede.</item>
-    </string-array>
-    <string-array name="changelog_older_versions">
         <item>O histórico de novidades passa a explicar o que mudou em linguagem simples, e não como foi feito.</item>
         <item>O cursor passa a seguir apenas o Mac ao qual está ligado. As atualizações de cursor enviadas por qualquer outro dispositivo da rede são ignoradas.</item>
         <item>Versão de teste para o Google Play. Nada muda no funcionamento da app.</item>
