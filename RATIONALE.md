@@ -12,8 +12,17 @@ Organized by file, in source order.
 - **`notificationPermissionLauncher`** (no-op result handler): if denied, the foreground service
   still runs fine — only its persistent notification (status/version/disconnect, see #22)
   silently won't show, same as before this permission request existed.
-- **`openPendingAccessory`**, `manager?.openAccessory(accessory)` returning `null`: means the
-  cable left before we got here — a normal race, not an error.
+- **`openPendingAccessory`**, `hasPermission` + the `IllegalArgumentException`/`SecurityException`
+  catch around `openAccessory`: the Mac resets the device to end a session, so a re-delivered
+  launch intent (recents after the process died) can name an attachment that's gone or lost its
+  permission — a normal race, not an error (PROTOCOL.md §2.3).
+- **`usedAccessory`**: one attachment is one session and MUST NOT be reused (§2.3). Cleared on
+  `USB_ACCESSORY_DETACHED`, since an equal-looking accessory after a replug is a new attachment.
+- **No `closing` on leaving the foreground**: §2.3 asks a receiver that leaves the foreground
+  with the screen on to announce `closing` on the cable so the Mac doesn't redial. Here the session
+  lives in `ReceiverService` and survives `onStop` (PiP), so that trigger never happens; `closing`
+  only goes out on swipe-away or the notification's Disconnect, after which the Mac won't redial
+  until a replug or a manual connect.
 - **`onCreate`**, the `takeAccessory(intent)` call before binding: the launch intent may carry the
   accessory; it's claimed once the service binds.
 - **`onCreate`**, the `FLAG_KEEP_SCREEN_ON` effect: mirrors iOS's `isIdleTimerDisabled = true` —
@@ -221,6 +230,14 @@ Organized by file, in source order.
   `MAX_FRAME_SIZE` itself stays at 16 MiB: the official receiver has no limit at all, and a lower
   cap would drop the whole session on a big legitimate keyframe. Lower it only after measuring
   the largest keyframe the real Mac sends.
+
+## net/PacketInputStream.kt
+
+- **Whole 16 KB reads, 0 bytes is not EOF**: PROTOCOL.md §2.3. The gadget driver keeps one 16 KB
+  request in flight and the Mac ends writes that are a multiple of the max packet size with a
+  zero-length packet; `FileInputStream` reports that as `-1` and dropped the session on any frame
+  sized in multiples of 512. 64 empty reads in a row still end the stream, so a vanished endpoint
+  can't spin forever.
 
 ## net/Link.kt
 

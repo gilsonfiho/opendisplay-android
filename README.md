@@ -82,7 +82,7 @@ For using an Android tablet as an external monitor, against the best-known alter
   (API 30-33)** — `WindowMetrics.getDensity()` was gated behind the wrong API level; fixed in
   v0.0.8, use that or newer (reported by [@gaeaearth](https://github.com/gaeaearth), fixed by
   [@edoardomich](https://github.com/edoardomich) in [#5](https://github.com/josepacelli/opendisplay-android/pull/5)).
-- Same WiFi network as the Mac (or a USB connection via `adb forward` — see below).
+- Same WiFi network as the Mac, or a USB cable (see below).
 - The original [OpenDisplay](https://github.com/peetzweg/opendisplay) Mac app, unmodified.
 - Tested on real hardware (Samsung Galaxy Tab S9 FE+ and Galaxy Note10+/Tab S7+, Android 12
   through 16) — not yet across a wide range of devices.
@@ -118,7 +118,9 @@ format, then run `./gradlew assembleRelease`.
    isn't blocking multicast/mDNS traffic — the Mac app has no manual IP-entry field, so WiFi
    discovery is the only supported path (USB is the fallback, see below).
 
-USB connection details (via `adb forward`, without requiring `usbmuxd`) are covered in
+Over USB, plug the cable in: the Mac app (v1.28.0 or newer) switches the device into Android
+Open Accessory mode and Android asks once whether to open OpenDisplay. No `adb`, no developer
+options. As an alternative, `adb forward` also works, without requiring `usbmuxd`; it's covered in
 [peetzweg/opendisplay's `Mac/OpenSidecarMacApp.swift`](https://github.com/peetzweg/opendisplay) —
 the Mac app dials plain TCP to a configured `host`/`port` override when set, which `adb forward`
 can tunnel over USB to this app's existing listener on port 9000.

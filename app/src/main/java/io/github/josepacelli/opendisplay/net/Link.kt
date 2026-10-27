@@ -1,8 +1,9 @@
 package io.github.josepacelli.opendisplay.net
 
 import android.os.ParcelFileDescriptor
+import android.system.ErrnoException
+import android.system.Os
 import java.io.ByteArrayInputStream
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -67,14 +68,20 @@ class PrefixedLink(private val inner: Link, prefix: ByteArray) : Link {
 }
 
 /**
- * USB accessory transport (AOA). The streams share one fd via reference
- * counting, so all three owners must be closed explicitly — otherwise the
+ * USB accessory transport (AOA). Reads go through [PacketInputStream] straight on the fd; the
+ * output stream and the descriptor share it, so both must be closed explicitly — otherwise the
  * GC finalizes them later, possibly after the fd number has been reused.
  *
  * @param descriptor open file descriptor for the attached USB accessory.
  */
 class AccessoryLink(private val descriptor: ParcelFileDescriptor) : Link {
-    override val input: InputStream = FileInputStream(descriptor.fileDescriptor)
+    override val input: InputStream = PacketInputStream { b, off, len ->
+        try {
+            Os.read(descriptor.fileDescriptor, b, off, len)
+        } catch (e: ErrnoException) {
+            throw IOException("accessory read: ${e.message}", e)
+        }
+    }
     override val output: OutputStream = FileOutputStream(descriptor.fileDescriptor)
 
     /** Single accessory host — no address to report. */
