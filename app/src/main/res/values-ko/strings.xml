@@ -71,7 +71,11 @@
     <string name="about_mac_app">Mac 앱</string>
     <string name="about_close">닫기</string>
 
-    <string-array name="changelog_v0_0_55">
+    <string-array name="changelog_v0_0_56">
+        <item>USB 케이블로 연결하면 Mac이 연결되는 즉시 Android가 OpenDisplay를 열지 물어봅니다. 특정 크기의 프레임에서 영상이 끊기던 문제도 해결했습니다. Mac 앱 v1.28 이상이 필요합니다.</item>
+        <item>이미 끝난 케이블 세션은 더 이상 다시 열리지 않으며, 앱이 시작되는 중에 케이블이 빠져도 앱이 종료되지 않습니다.</item>
+    </string-array>
+    <string-array name="changelog_older_versions">
         <item>새로운 디자인: 라이트/다크 모드의 네이비 테마, 대기 화면의 상태 표시등, 그리고 Mac에서 고르는 이 기기 이름을 크게 표시합니다.</item>
         <item>설정을 다시 묶었고, 태블릿에서는 왼쪽에 섹션, 오른쪽에 내용이 나옵니다.</item>
         <item>플로팅 메뉴에 제대로 된 아이콘과 더 큰 버튼을 넣었고, \'연결 해제\'는 다른 버튼과 떨어뜨려 두었습니다.</item>
@@ -81,8 +85,6 @@
         <item>\'다른 기기가 연결을 가져갔습니다\' 경고가 이제 몇 초 뒤 저절로 사라집니다.</item>
         <item>USB 디버깅이 꺼져 있으면 이 기기의 다른 앱이 더 이상 OpenDisplay에 연결할 수 없습니다.</item>
         <item>아주 큰 영상 프레임에서 메모리를 덜 쓰고, 네트워크에서 쏟아지는 연결 시도에도 더 잘 버팁니다.</item>
-    </string-array>
-    <string-array name="changelog_older_versions">
         <item>변경 내역이 이제 어떻게 만들었는지가 아니라, 무엇이 달라졌는지를 쉬운 말로 설명합니다.</item>
         <item>이제 커서는 연결된 Mac의 움직임만 따라갑니다. 네트워크의 다른 기기가 보낸 커서 업데이트는 무시됩니다.</item>
         <item>Google Play용 테스트 빌드입니다. 앱 동작은 달라지지 않습니다.</item>

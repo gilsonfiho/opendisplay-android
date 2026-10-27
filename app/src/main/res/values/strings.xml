@@ -71,7 +71,11 @@
     <string name="about_mac_app">Mac app</string>
     <string name="about_close">Close</string>
 
-    <string-array name="changelog_v0_0_55">
+    <string-array name="changelog_v0_0_56">
+        <item>With a USB cable, Android now offers to open OpenDisplay as soon as the Mac connects, and the video no longer drops on frames of certain sizes. Needs the Mac app v1.28 or newer.</item>
+        <item>A cable session that already ended is no longer reopened, and a cable that disappears while the app is starting no longer crashes it.</item>
+    </string-array>
+    <string-array name="changelog_older_versions">
         <item>New look: a navy theme in light and dark, a status light on the waiting screen, and this device\'s name in large type, since that\'s what you pick on the Mac.</item>
         <item>Settings are regrouped, and on tablets the sections sit on the left with the content beside them.</item>
         <item>The floating menu has proper icons and bigger buttons, with Disconnect set apart from the rest.</item>
@@ -81,8 +85,6 @@
         <item>The \"connection taken over by another device\" warning now goes away by itself after a few seconds.</item>
         <item>With USB debugging off, other apps on this device can no longer connect to OpenDisplay.</item>
         <item>Uses less memory with very large video frames, and shrugs off floods of connection attempts from the network.</item>
-    </string-array>
-    <string-array name="changelog_older_versions">
         <item>The changelog now says what changed in plain language, instead of how it was done.</item>
         <item>The cursor now only follows the Mac you\'re connected to. Cursor updates sent by any other device on your network are ignored.</item>
         <item>Test build for Google Play. Nothing changes in how the app works.</item>
