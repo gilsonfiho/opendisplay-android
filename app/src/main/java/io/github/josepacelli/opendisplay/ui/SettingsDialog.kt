@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +54,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,6 +77,9 @@ import androidx.compose.ui.window.DialogProperties
 import io.github.josepacelli.opendisplay.R
 import io.github.josepacelli.opendisplay.net.PerfHudPosition
 import io.github.josepacelli.opendisplay.net.PhoneReceiver
+import io.github.josepacelli.opendisplay.net.UpdateManager
+import io.github.josepacelli.opendisplay.net.UpdateState
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -114,6 +119,9 @@ const val SETTINGS_TAB_CHANGELOG = 3
  * immersive fullscreen are also reachable from that same floating menu, so the fullscreen
  * toggle exists in both places: here for setting it up front, there for flipping it mid-session.
  *
+ * Note: The "Save" button in the TopAppBar has been removed. All toggles and pickers are applied
+ * and saved immediately. Only the Device Name has a dedicated "Save" button next to its text field.
+ *
  * Rendered as an edge-to-edge [Dialog] rather than [androidx.compose.material3.AlertDialog]
  * so it can fill the screen while still getting back-press-to-dismiss for free.
  * [Modifier.safeDrawingPadding] on the root [Column] keeps the top app bar clear of the status
@@ -122,7 +130,7 @@ const val SETTINGS_TAB_CHANGELOG = 3
  *
  * @param receiver the session whose settings are shown/edited.
  * @param initialTab which tab is selected when the screen opens — one of the `SETTINGS_TAB_*` constants.
- * @param onDismiss called when the screen should close (back press/gesture, or Save).
+ * @param onDismiss called when the screen should close (back press/gesture).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,6 +145,7 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
     val zoomEnabled by receiver.zoomEnabled.collectAsState()
     val connectedMenuEnabled by receiver.connectedMenuEnabled.collectAsState()
     val connectedMenuIdleSeconds by receiver.connectedMenuIdleSeconds.collectAsState()
+    
     var draftName by remember { mutableStateOf(currentName) }
     var selectedTab by remember { mutableIntStateOf(initialTab) }
     val addressHint = remember { receiver.localAddressHint() }
@@ -156,16 +165,6 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                             )
                         }
                     },
-                    actions = {
-                        Button(
-                            onClick = {
-                                receiver.setServiceName(draftName)
-                                onDismiss()
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.padding(end = 12.dp),
-                        ) { Text(stringResource(R.string.settings_save)) }
-                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = screenColor),
                 )
                 val sections = listOf(
@@ -184,6 +183,11 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
                         SETTINGS_TAB_GENERAL -> GeneralTab(
                             draftName = draftName,
                             onNameChange = { draftName = it },
+                            currentName = currentName,
+                            onSaveName = { 
+                                receiver.setServiceName(it)
+                                // draftName is now in sync with currentName after flow emits
+                            },
                             showNotification = showNotification,
                             onToggleNotification = receiver::setShowNotification,
                             showPerfHud = showPerfHud,
@@ -244,8 +248,10 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
 
 /** "General" tab: every actionable setting, grouped under category headers with
  * traditional Android list rows (title/subtitle + trailing control).
- * @param draftName the name field's current (unsaved) value.
+ * @param draftName the name field's current value.
  * @param onNameChange called on every keystroke.
+ * @param currentName the currently saved name, used to determine if the save button should be enabled.
+ * @param onSaveName called when the save button is tapped.
  * @param showNotification current toggle state.
  * @param onToggleNotification called with the new state when the switch is flipped.
  * @param showPerfHud current toggle state.
@@ -266,6 +272,8 @@ fun SettingsDialog(receiver: PhoneReceiver, initialTab: Int = SETTINGS_TAB_GENER
 private fun GeneralTab(
     draftName: String,
     onNameChange: (String) -> Unit,
+    currentName: String,
+    onSaveName: (String) -> Unit,
     showNotification: Boolean,
     onToggleNotification: (Boolean) -> Unit,
     showPerfHud: Boolean,
@@ -284,13 +292,27 @@ private fun GeneralTab(
     onConnectedMenuIdleSecondsChange: (Int) -> Unit,
 ) {
     SettingsGroup {
-        OutlinedTextField(
-            value = draftName,
-            onValueChange = onNameChange,
-            singleLine = true,
-            label = { Text(stringResource(R.string.settings_name_label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = draftName,
+                onValueChange = onNameChange,
+                singleLine = true,
+                label = { Text(stringResource(R.string.settings_name_label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                onClick = { onSaveName(draftName) },
+                // Chỉ bật nút Save khi tên thực sự thay đổi và không được để trống
+                enabled = draftName != currentName && draftName.isNotBlank(),
+                modifier = Modifier.height(56.dp) // Chiều cao bằng với OutlinedTextField mặc định
+            ) {
+                Text(stringResource(R.string.settings_save))
+            }
+        }
         ToggleListItem(stringResource(R.string.settings_notification_show), showNotification, onToggleNotification)
     }
 
@@ -373,18 +395,20 @@ private fun DetailsTab(connected: Boolean, addressHint: String?, addressUnavaila
     }
 }
 
-/** "About" tab: app icon, tagline, version/license, and links to this client's repo and the
- * Mac sender's site. Merged back into [SettingsDialog] as a tab (issue #112) — was the
- * standalone `AboutDialog` split out in issue #48 to keep the (then single-column) dialog from
- * getting too long; tabs make that no longer a concern. */
+/** "About" tab: app icon, tagline, version/license, links to this client's repo and the
+ * Mac sender's site, and the update checker. */
 @Composable
 private fun AboutTab() {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val scope = rememberCoroutineScope()
+
     val versionName = remember {
         @Suppress("DEPRECATION")
         runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull()
     }
+
+    var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(top = 32.dp, start = 24.dp, end = 24.dp),
@@ -421,7 +445,73 @@ private fun AboutTab() {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.height(20.dp))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (val state = updateState) {
+            is UpdateState.Idle -> {
+                Button(onClick = {
+                    updateState = UpdateState.Checking
+                    scope.launch { updateState = UpdateManager.checkForUpdate() }
+                }) {
+                    Text(stringResource(R.string.update_check_button))
+                }
+            }
+            is UpdateState.Checking -> {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            }
+                        is UpdateState.UpdateAvailable -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.update_available_message, state.version),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    if (!state.releaseNotes.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = stringResource(R.string.update_whats_new),
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.align(Alignment.Start),
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = state.releaseNotes,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = {
+                        UpdateManager.downloadApk(context, state.downloadUrl, state.version)
+                        updateState = UpdateState.Idle
+                    }) {
+                        Text(stringResource(R.string.update_download_install))
+                    }
+                }
+            }
+            is UpdateState.Error -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = state.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { updateState = UpdateState.Idle }) {
+                        Text(stringResource(R.string.update_retry))
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedButton(onClick = {
                 uriHandler.openUri("https://github.com/josepacelli/opendisplay-android")
@@ -430,6 +520,7 @@ private fun AboutTab() {
                 Text(stringResource(R.string.about_mac_app))
             }
         }
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 

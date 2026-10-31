@@ -54,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -83,6 +84,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation("org.json:json:20240303")
 }
 
 jacoco {
@@ -96,9 +98,12 @@ val coverageExcludes = listOf(
     "**/service/**",
     "**/net/PhoneReceiver*.*",
     "**/net/Link*.*",
+    "**/net/PrefixedLink*.*", 
     "**/net/AccessoryLink*.*",
     "**/net/SocketLink*.*",
     "**/net/NetworkInfo*.*",
+    "**/net/UpdateManager*.*",
+    "**/net/UpdateState*.*",  
     "**/video/VideoDecoder*.*",
     "**/util/Log*.*",
 )
